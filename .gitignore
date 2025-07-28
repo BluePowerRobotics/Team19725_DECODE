@@ -80,5 +80,9 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-.DS_Store
+# Build files
+/FtcRobotController/build/*
+/TeamCode/build/*
+# IDEA settings
 /.idea
+/.vscode
