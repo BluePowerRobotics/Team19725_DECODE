@@ -262,4 +262,22 @@ public class Point2D {
 
         return new Point2D(x1, y1);
     }
+    /**
+     * 计算两点的点积
+     * @param p1 第一个点
+     * @param p2 第二个点
+     * @return 两点的点积
+     */
+    static double dot(Point2D p1, Point2D p2) {
+        return p1.x * p2.x + p1.y * p2.y;
+    }
+    /**
+     * 计算两点的叉积
+     * @param p1 第一个点
+     * @param p2 第二个点
+     * @return 两点的叉积，结果是一个新的Point2D对象，其x和y分别表示叉积的结果
+     */
+    static Point2D cross(Point2D p1, Point2D p2) {
+        return new Point2D(p1.x * p2.y - p1.y * p2.x, p1.y * p2.x - p1.x * p2.y);
+    }
 }
