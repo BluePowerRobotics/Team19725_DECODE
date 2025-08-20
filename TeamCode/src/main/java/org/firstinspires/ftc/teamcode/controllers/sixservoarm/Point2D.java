@@ -280,4 +280,54 @@ public class Point2D {
     static Point2D cross(Point2D p1, Point2D p2) {
         return new Point2D(p1.x * p2.y - p1.y * p2.x, p1.y * p2.x - p1.x * p2.y);
     }
+    /**
+     * 转化为三维点（使用平面法向量和一个平面上的点计算平面位置，并将平面上的二维点转化为三维点）
+     * @param p 原始二维点
+     * @param planeNormal 平面法向量
+     * @param planePoint 平面上的一个点
+     * @return 三维点
+     */
+    static Point3D toPoint3D(Point2D p, Point3D planeNormal, Point3D planePoint) {
+        // 归一化法向量
+        Point3D unitNormal = Point3D.normalize(planeNormal);
+
+        // 找到平面上的两个正交基向量
+        Point3D uAxis = findUAxis(unitNormal);
+        Point3D vAxis = Point3D.cross(unitNormal, uAxis);
+
+        // 将二维点坐标作为在平面基向量上的分量
+        Point3D offset = Point3D.translateXYZ(
+                Point3D.ZERO,
+                p.x * uAxis.x + p.y * vAxis.x,
+                p.x * uAxis.y + p.y * vAxis.y,
+                p.x * uAxis.z + p.y * vAxis.z
+        );
+
+        // 从平面原点加上偏移量
+        return Point3D.translate(planePoint, offset);
+    }
+
+    /**
+     * 辅助方法：找到与法向量正交的U轴
+     * 避免与法向量平行的情况
+     */
+    private static Point3D findUAxis(Point3D normal) {
+        // 尝试使用X轴作为参考
+        Point3D reference = new Point3D(1, 0, 0);
+
+        // 如果法向量与X轴几乎平行，改用Y轴
+        if (Math.abs(Point3D.dot(normal, reference)) > 0.9) {
+            reference = new Point3D(0, 1, 0);
+        }
+
+        // 计算U轴 = reference - (reference·normal) * normal
+        double dotProduct = Point3D.dot(reference, normal);
+        return Point3D.normalize(
+                new Point3D(
+                        reference.x - dotProduct * normal.x,
+                        reference.y - dotProduct * normal.y,
+                        reference.z - dotProduct * normal.z
+                )
+        );
+    }
 }
