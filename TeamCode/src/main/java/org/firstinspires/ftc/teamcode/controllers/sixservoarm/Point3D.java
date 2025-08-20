@@ -25,7 +25,15 @@ public class Point3D {
      * 点的极角（弧度，与z轴的夹角）
      */
     public double polar;
-
+    /**
+     * 判断是否为0
+     * @return 如果点的坐标都小于零容差，则认为它是零点
+     */
+    boolean isZero() {
+        return Math.abs(x) < zeroTolerance &&
+                Math.abs(y) < zeroTolerance &&
+                Math.abs(z) < zeroTolerance;
+    }
     /**
      * 构造函数，创建一个Point3D对象
      * @param x 点的x坐标
@@ -388,4 +396,42 @@ public class Point3D {
         // 计算叉积得到法向量
         return normalize(cross(v1, v2));
     }
+    /**
+     * 计算从原点出发、经过点p的直线，与由(planeNormal, planePoint)定义的平面的交点
+     *
+     * 直线：X = t * p   (t ∈ ℝ, 起点为原点O)
+     * 平面：n · (X - P0) = 0   (n = planeNormal, P0 = planePoint)
+     *
+     * 解方程可得：
+     *   t = -(n · P0) / (n · p)
+     *   交点 = t * p
+     *
+     * @param p 直线上的点（即方向向量，原点到p）
+     * @param planeNormal 平面法向量（不需要归一化）
+     * @param planePoint 平面上的任意一点
+     * @return 平面上的交点；如果直线与平面平行或方向无效，则返回null
+     */
+    static Point3D linePlaneIntersection(Point3D p, Point3D planeNormal, Point3D planePoint) {
+        // 特殊情况：方向为零向量时，直线无效
+        if (p.isZero()) return null;
+
+        // 平面方程：n · X + d = 0，其中 d = -(n · P0)
+        double d = -dot(planeNormal, planePoint);
+
+        // 计算分母 n · p
+        double denominator = dot(planeNormal, p);
+
+        // 如果分母接近0，说明直线与平面平行 → 没有交点
+        if (Math.abs(denominator) < 1e-9) {
+            return null;
+        }
+
+        // 参数t = -(n·P0) / (n·p)
+        double t = -d / denominator;
+
+        // 交点 = t * p
+        return scale(p, t);
+    }
+
+
 }
