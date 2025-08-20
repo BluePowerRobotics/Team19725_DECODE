@@ -365,4 +365,27 @@ public class Point3D {
         Point3D projection = projectToPlane(point, planeNormal, planePoint);
         return centralSymmetry(projection, point);
     }
+    /**
+     * 将三维点投影到平面上，并返回二维点
+     * @param p 三维点
+     * @param planeNormal 平面法向量（单位向量）
+     * @param planePoint 平面上的一点
+     * @return 投影后的二维点
+     */
+    static Point2D toPoint2D(Point3D p, Point3D planeNormal, Point3D planePoint) {
+        // 将点投影到平面上
+        Point3D projected = projectToPlane(p, planeNormal, planePoint);
+        // 返回投影后的点的x和y坐标
+        return new Point2D(projected.x, projected.y);
+    }
+    /**
+     * 给定三点计算平面法向量
+     */
+    static Point3D calculatePlaneNormal(Point3D p1, Point3D p2, Point3D p3) {
+        // 计算向量
+        Point3D v1 = translate(p2, centralSymmetry(p1));
+        Point3D v2 = translate(p3, centralSymmetry(p1));
+        // 计算叉积得到法向量
+        return normalize(cross(v1, v2));
+    }
 }
