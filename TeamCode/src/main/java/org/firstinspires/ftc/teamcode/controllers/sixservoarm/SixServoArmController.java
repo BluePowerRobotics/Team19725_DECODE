@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.sixservoarm;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -37,10 +39,53 @@ public class SixServoArmController{
         instance = new SixServoArmController(hardwareMap,telemetry);
     }//更新单例，使得每次启动OpMode都能够更新
 
+    /**
+     * 初始化机械臂
+     *
+     * @param x 机械臂初始位置x坐标
+     * @param y 机械臂初始位置y坐标
+     * @param z 机械臂初始位置z坐标
+     * @param ClipHeadingRadian 夹爪朝向与水平面间的弧度
+     * @param RadianAroundArm3 夹爪绕机械臂第三节旋转的弧度
+     */
+    public void setTargetPosition(double x,double y,double z,double ClipHeadingRadian,double RadianAroundArm3){
+        double[] result = Calculator.calculateToServo(new Point3D(x,y,z),ClipHeadingRadian);
+        Outputter.setRadian(result);
+        Outputter.setRadian(4,RadianAroundArm3);
+    }//设置机械臂目标位置
+
+    /**
+     * 设置夹爪锁定状态
+     * @param ifLocked 是否锁定
+     */
+    public void setClip(boolean ifLocked){
+        if(ifLocked){
+            Outputter.setPosition(5,SixServoArmOutputter.ClipLockPosition);
+        }else{
+            Outputter.setPosition(5,SixServoArmOutputter.ClipOpenPosition);
+        }
+    }//设置夹爪锁定状态
+
+    /**
+     * 更新机械臂状态
+     * @return 是否所有舵机都完成移动
+     */
+    public boolean update(){
+        return State.ifFinishedMoving();
+    }//更新机械臂状态，返回是否所有舵机都完成移动
+
+    /**
+     * 获取机械臂当前位置
+     * @return 机械臂当前位置
+     */
+    public Point3D getCurrentPosition(){
+        return Calculator.calculateFromServo(State.getServoNowDegree());
+    }//获取机械臂当前位置
 }
 /**
  * 用作输出的Class
  */
+@Config
 class SixServoArmOutputter{
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -56,6 +101,9 @@ class SixServoArmOutputter{
             }
         }//设置舵机及其方向
     }//构造函数
+
+    public static double ClipOpenPosition = 0;
+    public static double ClipLockPosition = 1;
 
     private Servo[] servo = new Servo[6];
     public static double[] servoZeroPositionDegree = {-28.92857,-63.529411,-43.71428,55.5882 , -77.83783783783785, 0};
@@ -106,7 +154,7 @@ class SixServoArmOutputter{
      * 设置多个舵机位置
      * @param Positions 舵机位置数组，长度应与舵机数量相同或更短
      */
-    public void setPosition (double[] Positions) {
+    public void setPosition (@NonNull double[] Positions) {
         if (Positions.length > servo.length) {
             telemetry.addData("Error", "Positions array length does not match servo count: " + Positions.length);
             return;
@@ -142,7 +190,7 @@ class SixServoArmOutputter{
      * 设置多个舵机角度
      * @param Degrees 舵机位置的度数值数组，长度应与舵机数量相同或更短
      */
-    public void setDegree(double[] Degrees) {
+    public void setDegree(@NonNull double[] Degrees) {
         if (Degrees.length > servo.length) {
             telemetry.addData("Error", "Degrees array length does not match servo count: " + Degrees.length);
             return;
@@ -174,7 +222,7 @@ class SixServoArmOutputter{
      * 设置多个舵机弧度
      * @param Radians 舵机位置的弧度值数组，长度应与舵机数量相同或更短
      */
-    public void setRadian(double[] Radians) {
+    public void setRadian(@NonNull double[] Radians) {
         if (Radians.length > servo.length) {
             telemetry.addData("Error", "Radians array length does not match servo count: " + Radians.length);
             return;
@@ -200,12 +248,12 @@ class SixServoArmCalculator {
     static double Arm2 = 143;
     static double Arm3 = 125;
     private double[] result = {0,0,0,0};
-    public double[] calculateToServo(double x, double y, double z, double RadianArm3ToHorizontal){
-        Point2D PointDxy = new Point2D(x,y);
+    public double[] calculateToServo(@NonNull Point3D PointD, double RadianArm3ToHorizontal){
+        Point2D PointDxy = new Point2D(PointD.x,PointD.y);
         double RadianArm = PointDxy.Radian;//计算水平面上与x轴的夹角
         double r = PointDxy.Distance;
         //计算第二臂末端坐标
-        Point2D PointDrz = new Point2D(r,z);
+        Point2D PointDrz = new Point2D(r,PointD.z);
         Point2D PointC = Point2D.translateRD(PointDrz,RadianArm3ToHorizontal,Arm3);
         //解三角形（C，C在R轴投影，原点）
         double RadianC = Math.atan2(PointC.y, PointC.x);
@@ -222,20 +270,16 @@ class SixServoArmCalculator {
         result = new double[]{RadianArm,RadianA,RadianB,PointCRadian};
         return result;
     }
-    public double getRadian0() {
-        return result[0];
-    }
-    public double getRadian1() {
-        return result[1];
-    }
-    public double getRadian2() {
-        return result[2];
-    }
-    public double getRadian3() {
-        return result[3];
-    }
-    Point3D calculateFromServo(){
-        return new Point3D(0,0,0);
+    Point3D calculateFromServo(@NonNull double[] Degree){
+        Point3D AB = Point3D.fromSpherical(Math.toRadians(Degree[0]),Math.toRadians(90-Degree[1]),Arm1);
+        double BCPolar = 270-Degree[2]-Degree[1];
+        Point3D BC = Point3D.fromSpherical(Math.toRadians(Degree[0]),Math.toRadians(BCPolar),Arm2);
+        Point3D CD = Point3D.fromSpherical(Math.toRadians(Degree[0]),Math.toRadians(180-Degree[3]+BCPolar),Arm3);
+        Point3D PointA = Point3D.ZERO;
+        Point3D PointB = Point3D.translate(PointA,AB);
+        Point3D PointC = Point3D.translate(PointB,BC);
+        Point3D PointD = Point3D.translate(PointC,CD);
+        return PointD;
     }
 }
 /**
@@ -256,24 +300,35 @@ class SixServoArmCalculator {
         return instance;
     }//获取单例，无论何时何地都是同一个
     //状态存储相关函数
-    double[] servoNowDegree = {0,0,0,0,0}; //舵机当前位置数组
-    double[] servoTargetDegree = {0,0,0,0,0}; //舵机目标位置数组
+    private double[] servoNowDegree = {0,0,0,0,0}; //舵机当前位置数组
+    public double[] getServoNowDegree() {
+        update();
+        return servoNowDegree;
+    } //获取舵机当前位置数组
+    private double[] servoTargetDegree = {0,0,0,0,0}; //舵机目标位置数组
     private double[] servoSpeed={0.36,0.24,0.24,0.24,0.24};//sec per 60 degree
     boolean[] servoFinishedMoving = {false, false, false, false, false}; //舵机是否完成正在移动
     boolean servoFinishedMovingAll = false; //所有舵机是否完成移动
     long lastUpdateTime = 0; //上次更新时间
+
+    /**
+     * 更新舵机状态
+     * 对于外部使用，除非特殊情况，否则不应直接调用此函数
+     * 特殊情况是指不会在很长一段时间内调用setServoTargetDegree和ifFinishedMoving函数
+     */
     void update(){
         servoFinishedMovingAll= true; //假设所有舵机都完成移动
+        long nowTime = System.currentTimeMillis();
         for (int i = 0; i < servoNowDegree.length; i++) {
             servoFinishedMoving[i] = false; //重置舵机是否完成移动标记
             if(servoTargetDegree[i]>servoNowDegree[i]){
-                servoNowDegree[i] += 60 * (System.currentTimeMillis() - lastUpdateTime) / 1000.0 / servoSpeed[i];
+                servoNowDegree[i] += 60 * (nowTime - lastUpdateTime) / 1000.0 / servoSpeed[i];
                 if(servoNowDegree[i]>=servoTargetDegree[i]){
                     servoNowDegree[i]=servoTargetDegree[i];
                     servoFinishedMoving[i] = true; //标记为完成移动
                 }
             }else if(servoTargetDegree[i]<servoNowDegree[i]) {
-                servoNowDegree[i] -= 60 * (System.currentTimeMillis() - lastUpdateTime) / 1000.0 / servoSpeed[i];
+                servoNowDegree[i] -= 60 * (nowTime - lastUpdateTime) / 1000.0 / servoSpeed[i];
                 if (servoNowDegree[i] <= servoTargetDegree[i]) {
                     servoNowDegree[i] = servoTargetDegree[i];
                     servoFinishedMoving[i] = true; //标记为完成移动
@@ -285,7 +340,7 @@ class SixServoArmCalculator {
                 servoFinishedMovingAll = false; //如果有一个舵机没有完成移动，则标记为未完成
             }
         }
-        lastUpdateTime = System.currentTimeMillis(); //更新上次更新时间
+        lastUpdateTime = nowTime; //更新上次更新时间
     }
     void setServoTargetDegree(int servoIndex, double targetDegree) {
         servoTargetDegree[servoIndex] = targetDegree;
