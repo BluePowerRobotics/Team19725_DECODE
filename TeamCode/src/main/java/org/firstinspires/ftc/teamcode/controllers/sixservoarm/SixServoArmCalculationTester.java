@@ -7,6 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class SixServoArmCalculationTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        initiate();
+        waitForStart();
+        while (opModeIsActive()){
 
+        }
+    }
+    public void initiate(){
+        
     }
 }
