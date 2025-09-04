@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.sixservoarm;
 
+import androidx.annotation.NonNull;
+
 public class Point3D {
     /**
      * 点的x坐标
@@ -25,6 +27,48 @@ public class Point3D {
      * 点的极角（弧度，与z轴的夹角）
      */
     public double polar;
+
+    /**
+     * 点坐标加法
+     * @param other 另一个点
+     */
+    public void add(Point3D other) {
+        this.x += other.x;
+        this.y += other.y;
+        this.z += other.z;
+        updateSphericalCoordinates();
+    }
+
+    /**
+     * 范围限制（长方体）
+     * @param min 最小点坐标
+     * @param max 最大点坐标
+     */
+    public void clamp(@NonNull Point3D min, @NonNull Point3D max) {
+        this.x = Math.max(min.x, Math.min(max.x, this.x));
+        this.y = Math.max(min.y, Math.min(max.y, this.y));
+        this.z = Math.max(min.z, Math.min(max.z, this.z));
+        updateSphericalCoordinates();
+    }
+
+    /**
+     * 范围限制（球体）
+     * @param maxDistance 最大距离
+     * @param p 参考点
+     */
+    public void clamp(double maxDistance, @NonNull Point3D p) {
+        double dist = distance(this, p);
+        if (dist > maxDistance) {
+            Point3D direction = translate(this, centralSymmetry(p));// 计算从p指向当前点的方向向量
+            direction = normalize(direction);// 归一化方向向量
+            // 将点移动到距离p为maxDistance的位置
+            this.x = p.x + direction.x * maxDistance;
+            this.y = p.y + direction.y * maxDistance;
+            this.z = p.z + direction.z * maxDistance;
+            updateSphericalCoordinates();
+        }
+    }
+
     /**
      * 判断是否为0
      * @return 如果点的坐标都小于零容差，则认为它是零点

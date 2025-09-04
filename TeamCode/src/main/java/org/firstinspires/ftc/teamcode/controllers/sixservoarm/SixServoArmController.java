@@ -42,14 +42,12 @@ public class SixServoArmController{
     /**
      * 初始化机械臂
      *
-     * @param x 机械臂初始位置x坐标
-     * @param y 机械臂初始位置y坐标
-     * @param z 机械臂初始位置z坐标
+     * @param TargetPoint 机械臂目标位置
      * @param ClipHeadingRadian 夹爪朝向与水平面间的弧度
      * @param RadianAroundArm3 夹爪绕机械臂第三节旋转的弧度
      */
-    public void setTargetPosition(double x,double y,double z,double ClipHeadingRadian,double RadianAroundArm3){
-        double[] result = Calculator.calculateToServo(new Point3D(x,y,z),ClipHeadingRadian);
+    public void setTargetPosition(Point3D TargetPoint,double ClipHeadingRadian,double RadianAroundArm3){
+        double[] result = Calculator.calculateToServo(TargetPoint,ClipHeadingRadian);
         Outputter.setRadian(result);
         Outputter.setRadian(4,RadianAroundArm3);
     }//设置机械臂目标位置
