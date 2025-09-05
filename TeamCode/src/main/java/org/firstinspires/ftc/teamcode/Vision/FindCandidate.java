@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -156,12 +157,14 @@ public class FindCandidate{
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
                 .setCamera(hardWareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
-        //FtcDashboard.getInstance().startCameraStream(processor, 0);
+
+        FtcDashboard.getInstance().startCameraStream(processor, 0);
     }
 
-    public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
 
-        //参考
+    //一个简单的摄像头画面处理器（processor），可以附加到vision portal上
+    // 功能：传输摄像头视频流到FTC dashboard（161行）； 在画面上画网格辅助观察
+    public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
         private final AtomicReference<Bitmap> lastFrame =
                 new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
 
