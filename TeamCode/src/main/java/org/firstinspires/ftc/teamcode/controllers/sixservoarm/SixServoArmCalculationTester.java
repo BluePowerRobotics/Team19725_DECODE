@@ -36,15 +36,22 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         last_time_ms=now_time_ms;
         now_time_ms=System.currentTimeMillis();
         telemetry.addData("FPS",1000.0/(now_time_ms-last_time_ms));
-        telemetry.addData("ServoNowDegree",sixServoArmState.getServoNowDegree());
+        telemetry.addLine();
+        telemetry.addData("TargetPoint",targetPoint);
+        telemetry.addData("TargetClipHeadingRadian",targetClipHeadingRadian);
+        telemetry.addData("TargetRadianAroundArm3",targetRadianAroundArm3);
+        telemetry.addLine();
+        telemetry.addData("Now Degree",sixServoArmState.getServoNowDegree());
+        telemetry.addData("target Degree",sixServoArmState.getServoTargetDegree());
+        telemetry.addData("Now Point",sixServoArmController.getCurrentPosition());
         telemetry.update();
     }
     public void setArm(){
-//        if(now_time_ms-last_set_time_ms>50){
-//            targetPoint.add(new Point3D(10*gamepad2.left_stick_x,-10*gamepad2.left_stick_y,-10*gamepad2.right_stick_y));
-//            targetPoint.clamp(300,Point3D.ZERO);
-//            last_set_time_ms=now_time_ms;
-//        }
+        if(now_time_ms-last_set_time_ms>50){
+            targetPoint.add(new Point3D(10*gamepad2.left_stick_x,-10*gamepad2.left_stick_y,-10*gamepad2.right_stick_y));
+            targetPoint.clamp(300,Point3D.ZERO);
+            last_set_time_ms=now_time_ms;
+        }
         if(gamepad1.dpadLeftWasPressed()){
             //find
             targetPoint = new Point3D(0, 150, 100);
