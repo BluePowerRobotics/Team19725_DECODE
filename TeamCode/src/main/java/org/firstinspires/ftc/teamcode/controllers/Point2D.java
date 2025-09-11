@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.controllers.sixservoarm;
+package org.firstinspires.ftc.teamcode.controllers;
 
 /**
  * Point2D类表示二维平面上的一个点，包含了点的坐标、极角和距离等属性。
@@ -50,18 +50,18 @@ public class Point2D {
     /**
      * 零点坐标
      */
-    static Point2D ZERO = new Point2D(0, 0);
+    public static Point2D ZERO = new Point2D(0, 0);
     /**
      * 用于判断是否为零的容差
      */
-    static double zeroTolerance = 1e-10;
+    public static double zeroTolerance = 1e-10;
     /**
      * 判断两个点是否相同
      * @param p1 第一个点
      * @param p2 第二个点
      * @return 如果两个点的坐标差小于零容差，则认为它们是相同的
      */
-    static boolean isSame(Point2D p1, Point2D p2) {
+    public static boolean isSame(Point2D p1, Point2D p2) {
         return Math.abs(p1.x - p2.x) < zeroTolerance && Math.abs(p1.y - p2.y) < zeroTolerance;
     }
     /**
@@ -70,7 +70,7 @@ public class Point2D {
      * @param p2 第二个点
      * @return 两点之间的欧几里得距离
      */
-    static double distance(Point2D p1, Point2D p2) {
+    public static double distance(Point2D p1, Point2D p2) {
         return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
     }
 
@@ -80,7 +80,7 @@ public class Point2D {
      * @param offset 平移偏移量
      * @return 平移后的新点
      */
-    static Point2D translate(Point2D p, Point2D offset) {
+    public static Point2D translate(Point2D p, Point2D offset) {
         return new Point2D(p.x + offset.x, p.y + offset.y);
     }
     /**
@@ -90,7 +90,7 @@ public class Point2D {
      * @param dy y轴方向的平移量
      * @return 平移后的新点
      */
-    static Point2D translateXY(Point2D p, double dx, double dy) {
+    public static Point2D translateXY(Point2D p, double dx, double dy) {
         return new Point2D(p.x + dx, p.y + dy);
     }
     /**
@@ -100,7 +100,7 @@ public class Point2D {
      * @param Distance 平移的距离
      * @return 平移后的新点
      */
-    static Point2D translateRD(Point2D p, double Radian, double Distance) {
+    public static Point2D translateRD(Point2D p, double Radian, double Distance) {
         return new Point2D(p.x + Distance * Math.cos(Radian), p.y + Distance * Math.sin(Radian));
     }
     /**
@@ -109,7 +109,7 @@ public class Point2D {
      * @param Radian 平移的弧度
      * @return 平移后的新点
      */
-    static Point2D rotate(Point2D p, double Radian) {
+    public static Point2D rotate(Point2D p, double Radian) {
         return new Point2D(p.x * Math.cos(Radian) - p.y * Math.sin(Radian), p.x * Math.sin(Radian) + p.y * Math.cos(Radian));
     }
     /**
@@ -119,7 +119,7 @@ public class Point2D {
      * @param center 旋转中心点
      * @return 旋转后的新点
      */
-    static Point2D rotate(Point2D p, double Radian, Point2D center) {
+    public static Point2D rotate(Point2D p, double Radian, Point2D center) {
         Point2D translated = translateXY(p, -center.x, -center.y);
         Point2D rotated = rotate(translated, Radian);
         return translateXY(rotated, center.x, center.y);
@@ -130,7 +130,7 @@ public class Point2D {
      * @param p2 第二个点
      * @return 两点的中点
      */
-    static Point2D midpoint(Point2D p1, Point2D p2) {
+    public static Point2D midpoint(Point2D p1, Point2D p2) {
         return new Point2D((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
     }
     /**
@@ -139,7 +139,7 @@ public class Point2D {
      * @param factor 缩放因子
      * @return 缩放后的新点
      */
-    static Point2D scale(Point2D p, double factor) {
+    public static Point2D scale(Point2D p, double factor) {
         return new Point2D(p.x * factor, p.y * factor);
     }
     /**
@@ -149,7 +149,7 @@ public class Point2D {
      * @param center 缩放中心点
      * @return 缩放后的新点
      */
-    static Point2D scale(Point2D p, double factor, Point2D center) {
+    public static Point2D scale(Point2D p, double factor, Point2D center) {
         Point2D translated = translateXY(p, -center.x, -center.y);
         Point2D scaled = scale(translated, factor);
         return translateXY(scaled, center.x, center.y);
@@ -160,7 +160,7 @@ public class Point2D {
      * @param Distance 距离原点的距离
      * @return 笛卡尔坐标系中的点
      */
-    static Point2D fromPolar(double Radian, double Distance) {
+    public static Point2D fromPolar(double Radian, double Distance) {
         return new Point2D(Distance * Math.cos(Radian), Distance * Math.sin(Radian));
     }
     /**
@@ -169,7 +169,7 @@ public class Point2D {
      * @param center 中心点
      * @return 中心对称点
      */
-    static Point2D centralSymmetry(Point2D p, Point2D center) {
+    public static Point2D centralSymmetry(Point2D p, Point2D center) {
         return new Point2D(2 * center.x - p.x, 2 * center.y - p.y);
     }
     /**
@@ -177,7 +177,7 @@ public class Point2D {
      * @param p 原始点
      * @return 中心对称点
      */
-    static Point2D centralSymmetry(Point2D p) {
+    public static Point2D centralSymmetry(Point2D p) {
         return new Point2D(-p.x, -p.y);
     }
     /**
@@ -211,7 +211,7 @@ public class Point2D {
      * @param b 直线截距（对于垂直线，b表示x坐标）
      * @return 对称点
      */
-    static Point2D axisSymmetry(Point2D p, double k, double b) {
+    public static Point2D axisSymmetry(Point2D p, double k, double b) {
         // 处理垂直线（斜率无限大）
         if (Double.isInfinite(k)) {
             return axisSymmetryVertical(p, b);
@@ -268,7 +268,7 @@ public class Point2D {
      * @param p2 第二个点
      * @return 两点的点积
      */
-    static double dot(Point2D p1, Point2D p2) {
+    public static double dot(Point2D p1, Point2D p2) {
         return p1.x * p2.x + p1.y * p2.y;
     }
     /**
@@ -277,7 +277,7 @@ public class Point2D {
      * @param p2 第二个点
      * @return 两点的叉积，结果是一个新的Point2D对象，其x和y分别表示叉积的结果
      */
-    static Point2D cross(Point2D p1, Point2D p2) {
+    public static Point2D cross(Point2D p1, Point2D p2) {
         return new Point2D(p1.x * p2.y - p1.y * p2.x, p1.y * p2.x - p1.x * p2.y);
     }
     /**
@@ -287,7 +287,7 @@ public class Point2D {
      * @param planePoint 平面上的一个点
      * @return 三维点
      */
-    static Point3D toPoint3D(Point2D p, Point3D planeNormal, Point3D planePoint) {
+    public static Point3D toPoint3D(Point2D p, Point3D planeNormal, Point3D planePoint) {
         // 归一化法向量
         Point3D unitNormal = Point3D.normalize(planeNormal);
 
@@ -331,3 +331,4 @@ public class Point2D {
         );
     }
 }
+
