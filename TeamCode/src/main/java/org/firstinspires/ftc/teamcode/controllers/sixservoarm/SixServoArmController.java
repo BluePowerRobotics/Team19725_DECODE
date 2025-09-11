@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.controllers.Point3D;
 public class SixServoArmController{
     private HardwareMap hardwareMap;//硬件地图
     private Telemetry telemetry;//遥测
-    private SixServoArmOutputter Outputter = new SixServoArmOutputter(hardwareMap, telemetry);//舵机输出器
+    private SixServoArmOutputter Outputter;//舵机输出器
     private SixServoArmCalculator Calculator = new SixServoArmCalculator();//三角函数计算器
     private SixServoArmState State = SixServoArmState.getInstance();//机械臂状态存储器
     public SixServoArmOutputter getOutputter() {
@@ -32,6 +32,7 @@ public class SixServoArmController{
     private SixServoArmController(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap=hardwareMap;
         this.telemetry=telemetry;
+        this.Outputter = new SixServoArmOutputter(hardwareMap, telemetry);
     }//构造函数
     private static SixServoArmController instance; //实例，用以单例模式
     public static SixServoArmController getInstance(){
@@ -93,7 +94,7 @@ class SixServoArmOutputter{
         this.hardwareMap=hardwareMap;
         this.telemetry=telemetry;
         for(int i = 0; i < servo.length; i++){
-            servo[i] = hardwareMap.get(Servo.class, "servoe" + i);
+            servo[i] = hardwareMap.get(Servo.class, "servoc" + i);
             if(i == 2 || i == 3 || i == 4){
                 servo[i].setDirection(Servo.Direction.REVERSE);
             }else{
