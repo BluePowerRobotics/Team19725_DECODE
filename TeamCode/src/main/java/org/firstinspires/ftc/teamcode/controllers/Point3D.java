@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.controllers.sixservoarm;
+package org.firstinspires.ftc.teamcode.controllers;
 
 import androidx.annotation.NonNull;
 
@@ -112,11 +112,11 @@ public class Point3D {
     /**
      * 零点坐标
      */
-    static Point3D ZERO = new Point3D(0, 0, 0);
+    public static Point3D ZERO = new Point3D(0, 0, 0);
     /**
      * 用于判断是否为零的容差
      */
-    static double zeroTolerance = 1e-10;
+    public static double zeroTolerance = 1e-10;
 
     /**
      * 判断两个点是否相同
@@ -124,7 +124,7 @@ public class Point3D {
      * @param p2 第二个点
      * @return 如果两个点的坐标差小于零容差，则认为它们是相同的
      */
-    static boolean isSame(Point3D p1, Point3D p2) {
+    public static boolean isSame(Point3D p1, Point3D p2) {
         return Math.abs(p1.x - p2.x) < zeroTolerance &&
                 Math.abs(p1.y - p2.y) < zeroTolerance &&
                 Math.abs(p1.z - p2.z) < zeroTolerance;
@@ -136,7 +136,7 @@ public class Point3D {
      * @param p2 第二个点
      * @return 两点之间的欧几里得距离
      */
-    static double distance(Point3D p1, Point3D p2) {
+    public static double distance(Point3D p1, Point3D p2) {
         return Math.sqrt(Math.pow(p1.x - p2.x, 2) +
                 Math.pow(p1.y - p2.y, 2) +
                 Math.pow(p1.z - p2.z, 2));
@@ -148,7 +148,7 @@ public class Point3D {
      * @param p2 第二个向量
      * @return 点积结果
      */
-    static double dot(Point3D p1, Point3D p2) {
+    public static double dot(Point3D p1, Point3D p2) {
         return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
     }
 
@@ -158,7 +158,7 @@ public class Point3D {
      * @param p2 第二个向量
      * @return 叉积结果向量
      */
-    static Point3D cross(Point3D p1, Point3D p2) {
+    public static Point3D cross(Point3D p1, Point3D p2) {
         return new Point3D(
                 p1.y * p2.z - p1.z * p2.y,
                 p1.z * p2.x - p1.x * p2.z,
@@ -171,7 +171,7 @@ public class Point3D {
      * @param p 向量
      * @return 向量的模长
      */
-    static double magnitude(Point3D p) {
+    public static double magnitude(Point3D p) {
         return Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
     }
 
@@ -180,7 +180,7 @@ public class Point3D {
      * @param p 向量
      * @return 单位向量
      */
-    static Point3D normalize(Point3D p) {
+    public static Point3D normalize(Point3D p) {
         double mag = magnitude(p);
         if (mag < zeroTolerance) return ZERO;
         return new Point3D(p.x / mag, p.y / mag, p.z / mag);
@@ -192,7 +192,7 @@ public class Point3D {
      * @param offset 平移偏移量
      * @return 平移后的新点
      */
-    static Point3D translate(Point3D p, Point3D offset) {
+    public static Point3D translate(Point3D p, Point3D offset) {
         return new Point3D(p.x + offset.x, p.y + offset.y, p.z + offset.z);
     }
 
@@ -204,7 +204,7 @@ public class Point3D {
      * @param dz z轴方向的平移量
      * @return 平移后的新点
      */
-    static Point3D translateXYZ(Point3D p, double dx, double dy, double dz) {
+    public static Point3D translateXYZ(Point3D p, double dx, double dy, double dz) {
         return new Point3D(p.x + dx, p.y + dy, p.z + dz);
     }
 
@@ -214,7 +214,7 @@ public class Point3D {
      * @param angle 旋转角度（弧度）
      * @return 旋转后的点
      */
-    static Point3D rotateX(Point3D p, double angle) {
+    public static Point3D rotateX(Point3D p, double angle) {
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
         return new Point3D(
@@ -230,7 +230,7 @@ public class Point3D {
      * @param angle 旋转角度（弧度）
      * @return 旋转后的点
      */
-    static Point3D rotateY(Point3D p, double angle) {
+    public static Point3D rotateY(Point3D p, double angle) {
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
         return new Point3D(
@@ -246,7 +246,7 @@ public class Point3D {
      * @param angle 旋转角度（弧度）
      * @return 旋转后的点
      */
-    static Point3D rotateZ(Point3D p, double angle) {
+    public static Point3D rotateZ(Point3D p, double angle) {
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
         return new Point3D(
@@ -263,7 +263,7 @@ public class Point3D {
      * @param angle 旋转角度（弧度）
      * @return 旋转后的点
      */
-    static Point3D rotateAroundAxis(Point3D p, Point3D axis, double angle) {
+    public static Point3D rotateAroundAxis(Point3D p, Point3D axis, double angle) {
         Point3D unitAxis = normalize(axis);
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
@@ -285,7 +285,7 @@ public class Point3D {
      * @param p2 第二个点
      * @return 两点的中点
      */
-    static Point3D midpoint(Point3D p1, Point3D p2) {
+    public static Point3D midpoint(Point3D p1, Point3D p2) {
         return new Point3D(
                 (p1.x + p2.x) / 2,
                 (p1.y + p2.y) / 2,
@@ -299,7 +299,7 @@ public class Point3D {
      * @param factor 缩放因子
      * @return 缩放后的新点
      */
-    static Point3D scale(Point3D p, double factor) {
+    public static Point3D scale(Point3D p, double factor) {
         return new Point3D(p.x * factor, p.y * factor, p.z * factor);
     }
 
@@ -310,7 +310,7 @@ public class Point3D {
      * @param center 缩放中心点
      * @return 缩放后的新点
      */
-    static Point3D scale(Point3D p, double factor, Point3D center) {
+    public static Point3D scale(Point3D p, double factor, Point3D center) {
         Point3D translated = translateXYZ(p, -center.x, -center.y, -center.z);
         Point3D scaled = scale(translated, factor);
         return translateXYZ(scaled, center.x, center.y, center.z);
@@ -323,7 +323,7 @@ public class Point3D {
      * @param distance 距离
      * @return 笛卡尔坐标系中的点
      */
-    static Point3D fromSpherical(double azimuth, double polar, double distance) {
+    public static Point3D fromSpherical(double azimuth, double polar, double distance) {
         double sinPolar = Math.sin(polar);
         return new Point3D(
                 distance * sinPolar * Math.cos(azimuth),
@@ -338,7 +338,7 @@ public class Point3D {
      * @param center 中心点
      * @return 中心对称点
      */
-    static Point3D centralSymmetry(Point3D p, Point3D center) {
+    public static Point3D centralSymmetry(Point3D p, Point3D center) {
         return new Point3D(
                 2 * center.x - p.x,
                 2 * center.y - p.y,
@@ -351,7 +351,7 @@ public class Point3D {
      * @param p 原始点
      * @return 中心对称点
      */
-    static Point3D centralSymmetry(Point3D p) {
+    public static Point3D centralSymmetry(Point3D p) {
         return new Point3D(-p.x, -p.y, -p.z);
     }
 
@@ -360,7 +360,7 @@ public class Point3D {
      * @param p 原始点
      * @return 对称点
      */
-    static Point3D symmetryAboutXYPlane(Point3D p) {
+    public static Point3D symmetryAboutXYPlane(Point3D p) {
         return new Point3D(p.x, p.y, -p.z);
     }
 
@@ -369,7 +369,7 @@ public class Point3D {
      * @param p 原始点
      * @return 对称点
      */
-    static Point3D symmetryAboutYZPlane(Point3D p) {
+    public static Point3D symmetryAboutYZPlane(Point3D p) {
         return new Point3D(-p.x, p.y, p.z);
     }
 
@@ -378,7 +378,7 @@ public class Point3D {
      * @param p 原始点
      * @return 对称点
      */
-    static Point3D symmetryAboutXZPlane(Point3D p) {
+    public static Point3D symmetryAboutXZPlane(Point3D p) {
         return new Point3D(p.x, -p.y, p.z);
     }
 
@@ -389,7 +389,7 @@ public class Point3D {
      * @param planePoint 平面上的一点
      * @return 点到平面的距离
      */
-    static double distanceToPlane(Point3D point, Point3D planeNormal, Point3D planePoint) {
+    public static double distanceToPlane(Point3D point, Point3D planeNormal, Point3D planePoint) {
         Point3D diff = translate(point, centralSymmetry(planePoint));
         return Math.abs(dot(diff, planeNormal));
     }
@@ -401,7 +401,7 @@ public class Point3D {
      * @param planePoint 平面上的一点
      * @return 点在平面上的投影
      */
-    static Point3D projectToPlane(Point3D point, Point3D planeNormal, Point3D planePoint) {
+    public static Point3D projectToPlane(Point3D point, Point3D planeNormal, Point3D planePoint) {
         Point3D diff = translate(point, centralSymmetry(planePoint));
         double distance = dot(diff, planeNormal);
         return translate(point, scale(planeNormal, -distance));
@@ -413,7 +413,7 @@ public class Point3D {
      * @param planePoint 平面上的一点
      * @return 点对于平面的对称点
      */
-    static Point3D symmetryAboutPlane(Point3D point, Point3D planeNormal, Point3D planePoint) {
+    public static Point3D symmetryAboutPlane(Point3D point, Point3D planeNormal, Point3D planePoint) {
         Point3D projection = projectToPlane(point, planeNormal, planePoint);
         return centralSymmetry(projection, point);
     }
@@ -424,7 +424,7 @@ public class Point3D {
      * @param planePoint 平面上的一点
      * @return 投影后的二维点
      */
-    static Point2D toPoint2D(Point3D p, Point3D planeNormal, Point3D planePoint) {
+    public static Point2D toPoint2D(Point3D p, Point3D planeNormal, Point3D planePoint) {
         // 将点投影到平面上
         Point3D projected = projectToPlane(p, planeNormal, planePoint);
         // 返回投影后的点的x和y坐标
@@ -433,7 +433,7 @@ public class Point3D {
     /**
      * 给定三点计算平面法向量
      */
-    static Point3D calculatePlaneNormal(Point3D p1, Point3D p2, Point3D p3) {
+    public static Point3D calculatePlaneNormal(Point3D p1, Point3D p2, Point3D p3) {
         // 计算向量
         Point3D v1 = translate(p2, centralSymmetry(p1));
         Point3D v2 = translate(p3, centralSymmetry(p1));
@@ -455,7 +455,7 @@ public class Point3D {
      * @param planePoint 平面上的任意一点
      * @return 平面上的交点；如果直线与平面平行或方向无效，则返回null
      */
-    static Point3D linePlaneIntersection(Point3D p, Point3D planeNormal, Point3D planePoint) {
+    public static Point3D linePlaneIntersection(Point3D p, Point3D planeNormal, Point3D planePoint) {
         // 特殊情况：方向为零向量时，直线无效
         if (p.isZero()) return null;
 
@@ -479,3 +479,4 @@ public class Point3D {
 
 
 }
+

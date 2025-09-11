@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.controllers.sixservoarm;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.teamcode.controllers.Point3D;
 
 @TeleOp(name = "SixServoArmCalculationTester", group = "Test")
 public class SixServoArmCalculationTester extends LinearOpMode {

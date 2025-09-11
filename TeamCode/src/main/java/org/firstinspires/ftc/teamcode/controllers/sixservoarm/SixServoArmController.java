@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.controllers.Point2D;
+import org.firstinspires.ftc.teamcode.controllers.Point3D;
 
 /**
  * 用作为其他Class提供函数的Class
@@ -46,7 +48,7 @@ public class SixServoArmController{
      * @param ClipHeadingRadian 夹爪朝向与水平面间的弧度
      * @param RadianAroundArm3 夹爪绕机械臂第三节旋转的弧度
      */
-    public void setTargetPosition(Point3D TargetPoint,double ClipHeadingRadian,double RadianAroundArm3){
+    public void setTargetPosition(Point3D TargetPoint, double ClipHeadingRadian, double RadianAroundArm3){
         double[] result = Calculator.calculateToServo(TargetPoint,ClipHeadingRadian);
         Outputter.setRadian(result);
         Outputter.setRadian(4,RadianAroundArm3);
@@ -236,8 +238,6 @@ class SixServoArmOutputter{
  */
 @Config
 class SixServoArmCalculator {
-    private HardwareMap hardwareMap;
-    private Telemetry telemetry;
 
     SixServoArmCalculator() {
         //无需地图、遥测，纯计算
