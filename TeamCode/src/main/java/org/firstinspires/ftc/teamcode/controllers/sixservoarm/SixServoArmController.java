@@ -299,16 +299,16 @@ class SixServoArmCalculator {
         return instance;
     }//获取单例，无论何时何地都是同一个
     //状态存储相关函数
-    private double[] servoNowDegree = {0,0,0,0,0}; //舵机当前位置数组
+    private double[] servoNowDegree = {0,0,0,0,0,0}; //舵机当前位置数组
     public double[] getServoNowDegree() {
         update();
         return servoNowDegree;
     } //获取舵机当前位置数组
-    private double[] servoTargetDegree = {0,0,0,0,0}; //舵机目标位置数组
+    private double[] servoTargetDegree = {0,0,0,0,0,0}; //舵机目标位置数组
     public double[] getServoTargetDegree() {
         return servoTargetDegree;
     } //获取舵机目标位置数组
-    private double[] servoSpeed={0.36,0.24,0.24,0.24,0.24};//sec per 60 degree
+    private double[] servoSpeed={0.36,0.24,0.24,0.24,0.24,0.24};//sec per 60 degree
     boolean[] servoFinishedMoving = {false, false, false, false, false}; //舵机是否完成正在移动
     boolean servoFinishedMovingAll = false; //所有舵机是否完成移动
     long lastUpdateTime = 0; //上次更新时间
