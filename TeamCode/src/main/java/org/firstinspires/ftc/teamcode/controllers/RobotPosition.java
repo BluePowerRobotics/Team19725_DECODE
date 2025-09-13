@@ -4,12 +4,12 @@ public class RobotPosition {
     private RobotPosition(){
 
     }
-    RobotPosition instance;
+    private static RobotPosition instance;
     public static RobotPosition getInstance(){
-        if(getInstance().instance==null){
-            getInstance().instance=new RobotPosition();
+        if(instance==null){
+            instance=new RobotPosition();
         }
-        return getInstance().instance;
+        return instance;
     }
     public Point3D position=new Point3D(0,0,0);
     public double headingRadian=0;
