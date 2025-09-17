@@ -14,12 +14,12 @@ import java.util.Arrays;
 @Config
 @TeleOp(name = "SixServoArmCalculationTester", group = "Test")
 public class SixServoArmCalculationTester extends LinearOpMode {
-    FindCandidate findCandidate = new FindCandidate();
+    //FindCandidate findCandidate = new FindCandidate();
     SixServoArmController sixServoArmController;
     SixServoArmOutputter sixServoArmOutputter;
     SixServoArmState sixServoArmState;
     public void initiate(){
-        findCandidate.init(hardwareMap, telemetry, 0);
+        //findCandidate.init(hardwareMap, telemetry, 0);
         SixServoArmController.setInstance(hardwareMap,telemetry);
         sixServoArmController=SixServoArmController.getInstance();
         sixServoArmOutputter = sixServoArmController.getOutputter();
@@ -79,8 +79,11 @@ public class SixServoArmCalculationTester extends LinearOpMode {
     }
     public void setArm(){
         if(now_time_ms-last_set_time_ms>50){
-            targetPoint.add(new Point3D(10*gamepad2.left_stick_x,-10*gamepad2.left_stick_y,-10*gamepad2.right_stick_y));
+            targetPoint.add(new Point3D(10*gamepad1.left_stick_x,-10*gamepad1.left_stick_y,-10*gamepad1.right_stick_y));
             targetPoint.clamp(300,Point3D.ZERO);
+
+            targetClipHeadingRadian+=gamepad1.right_stick_x*0.1;
+            targetClipHeadingRadian= Math.max(-Math.PI,Math.min(Math.PI,targetClipHeadingRadian));
             last_set_time_ms=now_time_ms;
         }
         if(gamepad1.dpadLeftWasPressed()){
@@ -91,7 +94,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         }
         if(gamepad1.dpadUpWasPressed()){
             //go to sample
-            ArmAction target = findCandidate.findCandidate();
+            ArmAction target = new ArmAction(0,0,0,150,0);//findCandidate.findCandidate();
 
             //???
             targetPoint = new Point3D(target.GoToX, target.GoToY, 10);
@@ -136,6 +139,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         }
         if(now_time_ms-last_set_time_ms>50){
             test_servo_positions[test_servo_id]-=gamepad1.left_stick_y*0.05;
+            test_servo_positions[test_servo_id]= Math.max(0,Math.min(1,test_servo_positions[test_servo_id]));
             last_set_time_ms=now_time_ms;
         }
         sixServoArmController.getOutputter().setPosition(test_servo_id,test_servo_positions[test_servo_id]);

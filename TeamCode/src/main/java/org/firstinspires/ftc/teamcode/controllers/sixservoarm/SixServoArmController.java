@@ -95,7 +95,7 @@ class SixServoArmOutputter{
         this.telemetry=telemetry;
         for(int i = 0; i < servo.length; i++){
             servo[i] = hardwareMap.get(Servo.class, "servoc" + i);
-            if(i == 2 || i == 3 || i == 4){
+            if(i == 1 || i == 4){
                 servo[i].setDirection(Servo.Direction.REVERSE);
             }else{
                 servo[i].setDirection(Servo.Direction.FORWARD);
@@ -107,9 +107,8 @@ class SixServoArmOutputter{
     public static double ClipLockPosition = 1;
 
     private Servo[] servo = new Servo[6];
-    public static double[] servoZeroPositionDegree = {-28.92857,-63.529411,-43.71428,55.5882 , -77.83783783783785, 0};
-    public static double[] servoRangeDegree = {321.42857, 264.70588, 257.142847142857142857, 264.70588, 243.24324324324328, 170};//舵机总旋转角度
-    public static double[] x1 ={0.09,0.24,0.87,0.47,0.32};
+    public static double[] servoZeroPositionDegree = {19.90211745904914,-44.9752747253,33.5013262599,48.535188216,-72.58297644539614,0};
+    public static double[] servoRangeDegree = {179.7842588893328, 247.2527472527472, 265.25198938992037, 245.4991816693945, 240.89935760171304, 170};//舵机总旋转角度    public static double[] x1 ={0.09,0.24,0.87,0.47,0.32};
     public static double[] y1 ={0,0,180,180,0};
     public static double[] x2 ={0.37,0.58,0.52,0.13,0.69};
     public static double[] y2 ={90,90,90,90,90};
@@ -253,7 +252,7 @@ class SixServoArmCalculator {
         double r = PointDxy.Distance;
         //计算第二臂末端坐标
         Point2D PointDrz = new Point2D(r,PointD.z);
-        Point2D PointC = Point2D.translateRD(PointDrz,RadianArm3ToHorizontal,Arm3);
+        Point2D PointC = Point2D.translateRD(PointDrz,Math.PI+RadianArm3ToHorizontal,Arm3);
         //解三角形（C，C在R轴投影，原点）
         double RadianC = Math.atan2(PointC.y, PointC.x);
         double PointCRadian = 0;
@@ -309,7 +308,7 @@ class SixServoArmCalculator {
         return servoTargetDegree;
     } //获取舵机目标位置数组
     private double[] servoSpeed={0.36,0.24,0.24,0.24,0.24,0.24};//sec per 60 degree
-    boolean[] servoFinishedMoving = {false, false, false, false, false}; //舵机是否完成正在移动
+    boolean[] servoFinishedMoving = {false, false, false, false, false, false}; //舵机是否完成正在移动
     boolean servoFinishedMovingAll = false; //所有舵机是否完成移动
     long lastUpdateTime = 0; //上次更新时间
 
