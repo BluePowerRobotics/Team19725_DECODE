@@ -10,11 +10,13 @@ public class TestGmaepad extends LinearOpMode {
     Gamepad currentGamepad2 = new Gamepad();
     Gamepad previousGamepad1 = new Gamepad();
     Gamepad previousGamepad2 = new Gamepad();
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.addData("test gamepad1", "Press start to begin");
         telemetry.update();
         waitForStart();
+
         while( opModeIsActive() ) {
             previousGamepad1.copy(currentGamepad1);
             previousGamepad2.copy(currentGamepad2);

@@ -64,7 +64,7 @@ public class FindCandidate{
     public static double PixeltoMM = 1 / MMtoPixel;
 
     //摄像头中心像素点
-    public static int MidX = 400;
+    public static  int MidX = 400;
     public static int MidY = 300;
 
     //图像预处理参数

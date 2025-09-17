@@ -8,18 +8,27 @@ import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 import org.firstinspires.ftc.teamcode.controllers.Point3D;
 
 import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
+import org.firstinspires.ftc.teamcode.controllers.Shooter;
 
 import java.util.Arrays;
 
 @Config
-@TeleOp(name = "SixServoArmCalculationTester", group = "Test")
+@TeleOp(name = "918TeamDisplay", group = "Show")
 public class SixServoArmCalculationTester extends LinearOpMode {
     //FindCandidate findCandidate = new FindCandidate();
+    static Point3D SearchPoint = new Point3D(0, 220, 70);
+    public static double deltaX = 15;//夹子到手臂中心的距离
+    public static double deltaY = 0;
     SixServoArmController sixServoArmController;
     SixServoArmOutputter sixServoArmOutputter;
     SixServoArmState sixServoArmState;
+    FindCandidate Cv = new FindCandidate();
+    Shooter shooter = null;
+    public static double initSpeed = 380;
+    double targetSpeed = 0;
     public void initiate(){
-        //findCandidate.init(hardwareMap, telemetry, 0);
+        shooter = new Shooter(hardwareMap, telemetry);
+        Cv.init(hardwareMap, telemetry, 0);
         SixServoArmController.setInstance(hardwareMap,telemetry);
         sixServoArmController=SixServoArmController.getInstance();
         sixServoArmOutputter = sixServoArmController.getOutputter();
@@ -40,6 +49,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
             if(gamepad1.xWasReleased()){
                 TestMode=!TestMode;
             }
+            shoot();
         }
     }
     boolean TestMode=true;
@@ -77,6 +87,21 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         }
         telemetry.update();
     }
+    public void shoot(){
+        if(gamepad2.a){
+            targetSpeed = 0;
+        }
+        if(gamepad2.b){
+            targetSpeed = initSpeed;
+        }
+        if(gamepad2.xWasPressed()){
+            targetSpeed -= 50;
+        }
+        if(gamepad2.yWasPressed()){
+            targetSpeed += 50;
+        }
+        shooter.shoot(targetSpeed);
+    }
     public void setArm(){
         if(now_time_ms-last_set_time_ms>50){
             targetPoint.add(new Point3D(10*gamepad1.left_stick_x,-10*gamepad1.left_stick_y,-10*gamepad1.right_stick_y));
@@ -88,7 +113,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         }
         if(gamepad1.dpadLeftWasPressed()){
             //find
-            targetPoint = new Point3D(0, 150, 100);
+            targetPoint = SearchPoint;
             targetClipHeadingRadian = -Math.PI / 2;
             targetRadianAroundArm3 = 0;
         }
@@ -96,8 +121,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
             //go to sample
             ArmAction target = new ArmAction(0,0,0,150,0);//findCandidate.findCandidate();
 
-            //???
-            targetPoint = new Point3D(target.GoToX, target.GoToY, 10);
+            targetPoint = new Point3D(target.GoToX - deltaX, target.GoToY - deltaY, 10);
             targetClipHeadingRadian = -Math.PI / 2;
             targetRadianAroundArm3 = target.ClipAngle;
         }
