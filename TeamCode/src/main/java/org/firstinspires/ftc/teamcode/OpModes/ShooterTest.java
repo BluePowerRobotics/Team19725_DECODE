@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.controllers.Shooter;
 @Config
 public class ShooterTest extends LinearOpMode {
     public Shooter shooter;
-    public static double initSpeed = 500;
+    public static double initSpeed = 300;
     @Override
     public void runOpMode() throws InterruptedException {
         shooter = new Shooter(hardwareMap, telemetry);
@@ -32,6 +32,7 @@ public class ShooterTest extends LinearOpMode {
                 targetSpeed += 50;
             }
             shooter.shoot(targetSpeed);
+            telemetry.update();
         }
     }
 }

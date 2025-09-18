@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.controllers;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class Shooter {
     public DcMotorEx shooterMotor;
+    TelemetryPacket packet = new TelemetryPacket();
 
     Telemetry telemetry;
     double current_time;
@@ -64,7 +67,11 @@ public class Shooter {
         telemetry.addData("degree", shooterMotor.getVelocity(AngleUnit.DEGREES));
         telemetry.addData("postion", shooterMotor.getCurrentPosition());
         telemetry.addData("Position Vel", current_error / ((System.currentTimeMillis() - previous_time) / 1000));
-        telemetry.update();
+        //telemetry.update();
+
+        packet.put("Shooter Power", Power);
+        packet.put("Shooter Speed", shooterMotor.getVelocity(AngleUnit.DEGREES));
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
         if(Math.abs(current_error) < 50){
             return true;
         } else {
