@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.controllers.sixservoarm;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,9 +18,9 @@ import java.util.Arrays;
 @TeleOp(name = "918TeamDisplay", group = "Show")
 public class SixServoArmCalculationTester extends LinearOpMode {
     //FindCandidate findCandidate = new FindCandidate();
-    static Point3D SearchPoint = new Point3D(0, 220, 70);
-    public static double deltaX = 15;//夹子到手臂中心的距离
-    public static double deltaY = 0;
+    static Point3D SearchPoint = new Point3D(0, 150, 100);
+    public static double deltaX = 15;//
+    public static double deltaY = 125;
     SixServoArmController sixServoArmController;
     SixServoArmOutputter sixServoArmOutputter;
     SixServoArmState sixServoArmState;
@@ -27,6 +29,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
     public static double initSpeed = 380;
     double targetSpeed = 0;
     public void initiate(){
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooter = new Shooter(hardwareMap, telemetry);
         Cv.init(hardwareMap, telemetry, 0);
         SixServoArmController.setInstance(hardwareMap,telemetry);
@@ -105,7 +108,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
     public void setArm(){
         if(now_time_ms-last_set_time_ms>50){
             targetPoint.add(new Point3D(10*gamepad1.left_stick_x,-10*gamepad1.left_stick_y,-10*gamepad1.right_stick_y));
-            targetPoint.clamp(300,Point3D.ZERO);
+            targetPoint.clamp(450,Point3D.ZERO);
 
             targetClipHeadingRadian+=gamepad1.right_stick_x*0.1;
             targetClipHeadingRadian= Math.max(-Math.PI,Math.min(Math.PI,targetClipHeadingRadian));
@@ -114,14 +117,14 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         if(gamepad1.dpadLeftWasPressed()){
             //find
             targetPoint = SearchPoint;
-            targetClipHeadingRadian = -Math.PI / 2;
+            targetClipHeadingRadian = -Math.PI / 2 + Math.toRadians(15);
             targetRadianAroundArm3 = 0;
         }
         if(gamepad1.dpadUpWasPressed()){
             //go to sample
-            ArmAction target = new ArmAction(0,0,0,150,0);//findCandidate.findCandidate();
+            ArmAction target = Cv.findCandidate();//findCandidate.findCandidate();
 
-            targetPoint = new Point3D(target.GoToX - deltaX, target.GoToY - deltaY, 10);
+            targetPoint = new Point3D(-target.GoToX - deltaX, target.GoToY + deltaY, 0);
             targetClipHeadingRadian = -Math.PI / 2;
             targetRadianAroundArm3 = target.ClipAngle;
         }
@@ -177,7 +180,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         }
     }
     public long now_time_ms,last_time_ms,last_set_time_ms;
-    Point3D targetPoint = new Point3D(0,100,20);
+    Point3D targetPoint = new Point3D(0,150,20);
     double targetClipHeadingRadian=0;
     double targetRadianAroundArm3=0;
 }

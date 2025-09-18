@@ -60,7 +60,7 @@ public class FindCandidate{
 
 
     //距离换算的比例系数，随摄像头距离地面高度和分辨率变化
-    public static double MMtoPixel = 1.486;
+    public static double MMtoPixel = 3.125;
     public static double PixeltoMM = 1 / MMtoPixel;
 
     //摄像头中心像素点
