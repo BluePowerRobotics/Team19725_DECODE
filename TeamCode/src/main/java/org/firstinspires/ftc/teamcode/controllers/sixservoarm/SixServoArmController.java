@@ -142,8 +142,12 @@ class SixServoArmOutputter{
             telemetry.addData("Error", "Servo index out of range: " + servoIndex);
             return;
         }
+        if (Double.isNaN(Position)){
+            telemetry.addData("Error", "Servo" + servoIndex + "position is NaN");
+            return;
+        }
         if (Position < 0 || Position > 1) {
-            telemetry.addData("Error", "Servo position out of range: " + Position);
+            telemetry.addData("Error", "Servo"+servoIndex+"position out of range: " + Position);
             Position=Range.clip(Position, 0, 1); // 确保位置在0到1之间
         }
         SixServoArmState.getInstance().setServoTargetDegree(servoIndex, toDegree(servoIndex, Position));
@@ -160,6 +164,10 @@ class SixServoArmOutputter{
             return;
         }
         for (int i = 0; i < Positions.length; i++) {
+            if (Double.isNaN(Positions[i])){
+                telemetry.addData("Error", "Servo" + i + "position is NaN");
+                continue;
+            }
             if (Positions[i] < 0 || Positions[i] > 1) {
                 telemetry.addData("Error", "Servo position out of range at index " + i + ": " + Positions[i]);
                 Positions[i]=Range.clip(Positions[i], 0, 1); // 确保位置在0到1之间
@@ -176,6 +184,10 @@ class SixServoArmOutputter{
     public void setDegree(int servoIndex, double Degree) {
         if (servoIndex < 0 || servoIndex >= servo.length) {
             telemetry.addData("Error", "Servo index out of range: " + servoIndex);
+            return;
+        }
+        if (Double.isNaN(Degree)){
+            telemetry.addData("Error", "Servo" + servoIndex + "Degree is NaN");
             return;
         }
         if (Degree < servoZeroPositionDegree[servoIndex] || Degree > servoZeroPositionDegree[servoIndex] + servoRangeDegree[servoIndex]) {
@@ -197,6 +209,10 @@ class SixServoArmOutputter{
         for (int i = 0; i < Degrees.length; i++) {
             if (Degrees[i] < servoZeroPositionDegree[i] || Degrees[i] > servoZeroPositionDegree[i] + servoRangeDegree[i]) {
                 telemetry.addData("Error", "Servo degree out of range at index " + i + ": " + Degrees[i]);
+            }
+            if (Double.isNaN(Degrees[i])){
+                telemetry.addData("Error", "Servo" + i + "Degree is NaN");
+                continue;
             }
             SixServoArmState.getInstance().setServoTargetDegree(i, Degrees[i]);
             double Position = toPosition(i, Degrees[i]);
