@@ -103,8 +103,8 @@ class SixServoArmOutputter{
         }//设置舵机及其方向
     }//构造函数
 
-    public static double ClipOpenPosition = 0;
-    public static double ClipLockPosition = 1;
+    public static double ClipOpenPosition = 0.3;
+    public static double ClipLockPosition = 0.8;
 
     private Servo[] servo = new Servo[6];
     public static double[] servoZeroPositionDegree = {19.90211745904914,-44.9752747253,33.5013262599,48.535188216,-72.58297644539614,0};
