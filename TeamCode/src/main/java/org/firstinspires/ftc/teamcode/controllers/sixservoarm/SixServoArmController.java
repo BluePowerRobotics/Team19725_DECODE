@@ -180,7 +180,6 @@ class SixServoArmOutputter{
         }
         if (Degree < servoZeroPositionDegree[servoIndex] || Degree > servoZeroPositionDegree[servoIndex] + servoRangeDegree[servoIndex]) {
             telemetry.addData("Error", "Servo degree out of range: " + Degree);
-            return;
         }
         SixServoArmState.getInstance().setServoTargetDegree(servoIndex, Degree);
         double Position = toPosition(servoIndex, Degree);
@@ -198,7 +197,6 @@ class SixServoArmOutputter{
         for (int i = 0; i < Degrees.length; i++) {
             if (Degrees[i] < servoZeroPositionDegree[i] || Degrees[i] > servoZeroPositionDegree[i] + servoRangeDegree[i]) {
                 telemetry.addData("Error", "Servo degree out of range at index " + i + ": " + Degrees[i]);
-                continue; // 跳过不合法的角度
             }
             SixServoArmState.getInstance().setServoTargetDegree(i, Degrees[i]);
             double Position = toPosition(i, Degrees[i]);
