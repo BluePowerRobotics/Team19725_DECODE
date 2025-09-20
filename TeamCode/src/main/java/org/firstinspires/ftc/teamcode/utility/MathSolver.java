@@ -87,25 +87,16 @@ y_2
         double C = F * F - 3 * D * E * E;
         double delta = B * B - 4 * A * C;
 
-        System.out.println("D: " + D);
-        System.out.println("E: " + E);
-        System.out.println("F: " + F);
-        System.out.println("A: " + A);
-        System.out.println("B: " + B);
-        System.out.println("C: " + C);
-        System.out.println("delta: " + delta);
 
         // 情况1: 四重根
         //D=E=F=0
         if (Math.abs(D) < EPSILON && Math.abs(E) < EPSILON && Math.abs(F) < EPSILON) {
-            System.out.println("四重根");
             return new double[]{-b / (4 * a)};
         }
 
         // 情况2: 三重根+单根
         //A=B=C=0,D*E*F!=0
         if (Math.abs(A) < EPSILON && Math.abs(B) < EPSILON && Math.abs(C) < EPSILON && (Math.abs(D) >= EPSILON || Math.abs(E) >= EPSILON || Math.abs(F) >= EPSILON)) {
-            System.out.println("三重根+单根");
             double x1 = (-b * D + 9 * E) / (4 * a * D);
             double x2 = (-b * D - 3 * E) / (4 * a * D);
             return new double[]{x1, x2};
@@ -113,7 +104,6 @@ y_2
 
         // 情况3: 两对二重根
         if (Math.abs(E) < EPSILON && Math.abs(F) < EPSILON && Math.abs(D) >= EPSILON) {
-            System.out.println("两对二重根");
             if (D > 0) {
                 double sqrtD = Math.sqrt(D);
                 return new double[]{(-b + sqrtD) / (4 * a), (-b - sqrtD) / (4 * a)};
@@ -123,7 +113,6 @@ y_2
 
         // 情况4: 一对二重根+两个不等实根
         if (Math.abs(delta) < EPSILON && A * B > 0) {
-            System.out.println("一对二重根+两个不等实根");
             double x1 = (-b + 2 * A * E / B + Math.sqrt(2 * B / A)) / (4 * a);
             double x2 = (-b + 2 * A * E / B - Math.sqrt(2 * B / A)) / (4 * a);
             double x3 = (-b - 2 * A * E / B) / (4 * a);
@@ -132,7 +121,6 @@ y_2
 
         // 情况5: 两个不等实根+一对共轭虚根
         if (delta > 0) {
-            System.out.println("两个不等实根+一对共轭虚根");
             double sqrtDelta = Math.sqrt(delta);
             double z1 = A * D + 3 * ((-B + sqrtDelta) / 2);
             double z2 = A * D + 3 * ((-B - sqrtDelta) / 2);
@@ -151,7 +139,6 @@ y_2
 
         // 情况6: 四个不等实根 (仅当D>0且F>0时)
         if (delta < 0 && D > 0 && F > 0) {
-            System.out.println("四个不等实根");
             double theta = Math.acos((3 * B - 2 * A * D) / (2 * A * Math.sqrt(A)));
             double y1 = (D - 2 * Math.sqrt(A) * Math.cos(theta / 3)) / 3;
             double y2 = (D + Math.sqrt(A) * (Math.cos(theta / 3) + Math.sqrt(3) * Math.sin(theta / 3))) / 3;
@@ -174,7 +161,6 @@ y_2
                 };
             }
         }
-        System.out.println("其他情况");
         return new double[]{}; // 其他情况都是虚根
     }
 
