@@ -6,11 +6,10 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
-import org.firstinspires.ftc.teamcode.utility.Point3D;
-
 import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
+import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 import org.firstinspires.ftc.teamcode.controllers.Shooter;
+import org.firstinspires.ftc.teamcode.utility.Point3D;
 
 import java.util.Arrays;
 
