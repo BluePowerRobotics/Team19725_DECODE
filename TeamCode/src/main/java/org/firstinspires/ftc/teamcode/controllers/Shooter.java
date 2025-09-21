@@ -31,9 +31,10 @@ public class Shooter {
 
     /**
      *
-     * 单位：°/s
+     * 单位：与°/s线性相关，但大概率不是°/s(idk)
      *应该比预期转速高80-100
      */
+    //todo:fix low velocity issue
     public boolean shoot(double targetSpeed){
         current_time = System.currentTimeMillis();
 
