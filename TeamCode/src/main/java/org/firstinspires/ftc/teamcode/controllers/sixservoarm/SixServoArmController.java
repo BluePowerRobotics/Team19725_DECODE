@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.controllers.Point2D;
-import org.firstinspires.ftc.teamcode.controllers.Point3D;
+import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Point3D;
 
 /**
  * 用作为其他Class提供函数的Class
