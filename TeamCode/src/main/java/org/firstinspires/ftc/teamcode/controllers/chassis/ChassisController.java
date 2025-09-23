@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.controllers.RobotPosition;
-import org.firstinspires.ftc.teamcode.controllers.Data;
+import org.firstinspires.ftc.teamcode.controllers.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
@@ -16,12 +14,19 @@ public class ChassisController {
     @Config
     public static class Params{
         //todo 调整参数
-
+        public static double maxV=0.5; // 最大线速度 (m/s)
+        public static double maxA=0.5; // 最大加速度 (m/s²)
+        public static double maxOmega=Math.PI*3/4; // 最大角速度 (rad/s)
+        public static double zeroThresholdV =0.05; // 速度零点阈值 (m/s)
+        public static double zeroThresholdOmega =Math.toRadians(5); // 角速度零点阈值 (rad/s)
     }
     RobotPosition robotPosition;
     HardwareMap hardwareMap;
     boolean fullyAutoMode = false;
+    boolean useNoHeadMode=false;
+    boolean runningToPoint=false;
     ChassisCalculator chassisCalculator= new ChassisCalculator();
+    ChassisOutputter chassisOutputter;
 
     /**
      * OpMode初始化时调用
@@ -29,6 +34,7 @@ public class ChassisController {
     public ChassisController(HardwareMap hardwareMap){
         robotPosition= RobotPosition.refresh(hardwareMap,robotPosition.initialPosition,robotPosition.initialHeadingRadian);
         this.hardwareMap=hardwareMap;
+        chassisOutputter=new ChassisOutputter(hardwareMap);
     }
 
     /**
@@ -41,6 +47,29 @@ public class ChassisController {
         robotPosition= RobotPosition.refresh(hardwareMap,initialPosition,initialHeadingRadian);
         this.hardwareMap=hardwareMap;
         fullyAutoMode=true;
+        chassisOutputter=new ChassisOutputter(hardwareMap);
+    }
+    public void gamepadInput(double vx,double vy,double omega){
+        vx=vx*Params.maxV;
+        vy=vy*Params.maxV;
+        omega=omega*Params.maxOmega;
+        if(!fullyAutoMode){
+            if(runningToPoint){
+                if (Math.hypot(vx, vy) > Params.zeroThresholdV && Math.abs(omega) > Params.zeroThresholdOmega) {
+                    runningToPoint = false;//打断自动驾驶
+                }else{
+                    //todo 调用自动驾驶
+                }
+            }
+            if(!runningToPoint) {
+                double[] wheelSpeeds;
+                if (useNoHeadMode)
+                    wheelSpeeds = chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian);
+                else
+                    wheelSpeeds = chassisCalculator.solveChassis(vx, vy, omega);
+                chassisOutputter.setWheelVelocities(wheelSpeeds);
+            }
+        }
     }
 
 }
@@ -84,6 +113,14 @@ class ChassisCalculator {
         return new double[]{v_fl, v_fr, v_bl, v_br};
     }
 
+    /**
+     * 逆运动学公式（地面坐标系）
+     * @param vx 机器人相对于地面的横移速度 (m/s) —— +右
+     * @param vy 机器人相对于地面的前进速度 (m/s) —— +前
+     * @param omega 机器人旋转角速度 (rad/s) —— +逆时针
+     * @param headingRadian 机器人朝向，弧度制
+     * @return 各个车轮的线速度 (m/s)
+     */
     public double[] solveGround(double vx, double vy, double omega, double headingRadian) {
         double vxPro = vx * Math.cos(headingRadian) + vy * Math.sin(headingRadian);
         double vyPro = -vx * Math.sin(headingRadian) + vy * Math.cos(headingRadian);
@@ -139,12 +176,10 @@ class ChassisOutputter {
     }
 
     HardwareMap hardwareMap;
-    Telemetry telemetry;
     DcMotorEx leftFront, rightFront, leftBack, rightBack;
 
-    ChassisOutputter(HardwareMap hardwareMap, Telemetry telemetry) {
+    ChassisOutputter(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        this.telemetry = telemetry;
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
         leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -179,10 +214,10 @@ class ChassisOutputter {
             v_bl = v_bl / maxV * Params.maxRpm / 60 * Params.CPR;
             v_br = v_br / maxV * Params.maxRpm / 60 * Params.CPR;
         }
-        telemetry.addData("v_fl", v_fl);
-        telemetry.addData("v_fr", v_fr);
-        telemetry.addData("v_bl", v_bl);
-        telemetry.addData("v_br", v_br);
+//        telemetry.addData("v_fl", v_fl);
+//        telemetry.addData("v_fr", v_fr);
+//        telemetry.addData("v_bl", v_bl);
+//        telemetry.addData("v_br", v_br);
         leftFront.setVelocity(v_fl);
         rightFront.setVelocity(v_fr);
         leftBack.setVelocity(v_bl);
