@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 public class MoveAction {
     Point2D targetPoint;
     Point2D startPoint;
+    Point2D nowSpeed;
     double targetRadian;
     double startRadian;
     long startTimeMS;
@@ -18,6 +19,7 @@ public class MoveAction {
     private MoveAction(Builder builder) {
         this.targetPoint = builder.targetPoint;
         this.startPoint = builder.startPoint;
+        this.nowSpeed = builder.nowSpeed;
         this.targetRadian = builder.targetRadian;
         this.startRadian = builder.startRadian;
         this.startTimeMS = System.currentTimeMillis();
@@ -26,6 +28,7 @@ public class MoveAction {
         this.maxOmega = builder.maxOmega;
         this.arriveThresholdV = builder.arriveThresholdV;
         this.arriveRadianThreshold = builder.arriveRadianThreshold;
+        calculatePath();
     }
     private void calculatePath(){
         //todo 计算路径(梯形速度曲线)
@@ -34,6 +37,10 @@ public class MoveAction {
         //     3. 计算是否需要匀速的时间和距离
         //     4. 对称减速的时间和距离
         //     5. 计算总体分段
+        Error=Point2D.translate(targetPoint,Point2D.centralSymmetry(startPoint));
+        double speedAngleError = Math.abs(Error.Radian-nowSpeed.Radian);
+        double nowSpeedTowardsError = nowSpeed.Distance*Math.cos(speedAngleError);
+
     }
     long speedUpEndTimeMS;
     long speedDownStartTimeMS;
@@ -44,6 +51,7 @@ public class MoveAction {
     public static class Builder {
         Point2D targetPoint = new Point2D(0, 0);
         Point2D startPoint = new Point2D(0, 0);
+        Point2D nowSpeed = new Point2D(0,0);
         double targetRadian = 0;
         double startRadian = 0;
         double maxV = ChassisController.Params.maxV;
@@ -59,6 +67,11 @@ public class MoveAction {
 
         public Builder setTargetRadian(double targetRadian) {
             this.targetRadian = targetRadian;
+            return this;
+        }
+
+        public Builder setNowSpeed(Point2D speed){
+            this.nowSpeed=speed;
             return this;
         }
 

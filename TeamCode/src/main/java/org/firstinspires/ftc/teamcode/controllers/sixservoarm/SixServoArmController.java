@@ -256,6 +256,8 @@ class SixServoArmCalculator {
     SixServoArmCalculator() {
         //无需地图、遥测，纯计算
     }//构造函数
+    static double endErrorToR=0;//末端偏离r轴距离（右正）
+    static double Arm1ErrorToZ=0;//第一臂偏离z轴距离（前正）
     static double Arm1 = 153;
     static double Arm2 = 143;
     static double Arm3 = 125;
