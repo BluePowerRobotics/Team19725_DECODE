@@ -29,7 +29,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
     double targetSpeed = 0;
     public void initiate(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        shooter = new Shooter(hardwareMap, telemetry);
+        shooter = new Shooter(hardwareMap, telemetry, "shooterMotor1", false);
         Cv.init(hardwareMap, telemetry, 0);
         SixServoArmController.setInstance(hardwareMap,telemetry);
         sixServoArmController=SixServoArmController.getInstance();

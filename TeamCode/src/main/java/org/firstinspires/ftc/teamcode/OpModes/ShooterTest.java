@@ -18,12 +18,14 @@ public class ShooterTest extends LinearOpMode {
     public static double R = 48 * Math.sqrt(2);
     public static double x = 24;
     public static double y = 0;
-    public Shooter shooter;
+    public Shooter shooter1;
+    public Shooter shooter2;
     public static double initSpeed = 300;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        shooter = new Shooter(hardwareMap, telemetry);
+        shooter1 = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
+        shooter2 = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
         telemetry.addData("RED:ANSX, ANSY, ANSTheta", solveShootPoint.solveREDShootPoint(new Pose2d(x, y, 0), R));
         telemetry.addData("BLUE:ANSX, ANSY, ANSTheta", solveShootPoint.solveBLUEShootPoint(new Pose2d(x, y, 0), R));
 
@@ -43,7 +45,8 @@ public class ShooterTest extends LinearOpMode {
             if(gamepad1.yWasPressed()){
                 targetSpeed += 50;
             }
-            shooter.shoot(targetSpeed);
+            shooter1.shoot(targetSpeed);
+            shooter2.shoot(targetSpeed);
             telemetry.update();
         }
     }

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -27,8 +28,12 @@ public class Shooter {
     public static double i;
     public static double max_i = 1 ;
     public double Isum = 0;
-    public Shooter(HardwareMap hardwareMap, Telemetry telemetryrc){
-        shooterMotor = hardwareMap.get(DcMotorEx.class, "shooterMotor");
+    public Shooter(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse){
+        shooterMotor = hardwareMap.get(DcMotorEx.class, motorName);
+        if(ifReverse)
+            shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        else
+            shooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         this.telemetry = telemetryrc;
     }
 
