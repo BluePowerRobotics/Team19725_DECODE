@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.chassis.model;
 
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
+import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
 public class MoveAction {
@@ -40,6 +41,7 @@ public class MoveAction {
         Error=Point2D.translate(targetPoint,Point2D.centralSymmetry(startPoint));
         double speedAngleError = Math.abs(Error.Radian-nowSpeed.Radian);
         double nowSpeedTowardsError = nowSpeed.Distance*Math.cos(speedAngleError);
+        double signSpeed = MathSolver.sgn(maxV-nowSpeedTowardsError);
 
     }
     long speedUpEndTimeMS;
