@@ -164,5 +164,9 @@ y_2
         }
         return new double[]{}; // 其他情况都是虚根
     }
+    public double[][] solve4i(double a, double b, double c, double d, double e) {
+        //4行2列，实部和虚部
+        return new double[4][2];
+    }
 
 }
