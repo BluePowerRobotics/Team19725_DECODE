@@ -43,7 +43,7 @@ public class RobotPosition {
         instance=new RobotPosition(hardwareMap);
         instance.initialPosition=initialPosition;
         instance.initialHeadingRadian=initialHeadingRadian;
-        instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.x,instance.initialPosition.y,instance.initialHeadingRadian));
+        instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.y,-instance.initialPosition.x,instance.initialHeadingRadian));
         instance.pinpointLocalizer.setUnits(DistanceUnit.MM, UnnormalizedAngleUnit.RADIANS);
         Data.instance.position=initialPosition;
         Data.instance.headingRadian=initialHeadingRadian;
@@ -58,7 +58,7 @@ public class RobotPosition {
         instance=new RobotPosition(hardwareMap);
         instance.initialPosition= Data.instance.position;
         instance.initialHeadingRadian= Data.instance.headingRadian;
-        instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.x,instance.initialPosition.y,instance.initialHeadingRadian));
+        instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.y,-instance.initialPosition.x,instance.initialHeadingRadian));
         instance.pinpointLocalizer.setUnits(DistanceUnit.MM, UnnormalizedAngleUnit.RADIANS);
         return instance;
     }
@@ -81,7 +81,7 @@ public class RobotPosition {
         Data.instance.headingSpeedRadianPerSec=pinpointLocalizer.update().angVel;
         Data.instance.speed=pinpointLocalizer.getWorldVelocity();
         Pose2d pose=pinpointLocalizer.getPose();
-        Data.instance.position=new Point2D(pose.position.x,pose.position.y);
+        Data.instance.position=new Point2D(-pose.position.y,+pose.position.x);
         Data.instance.headingRadian=pose.heading.log();//==toDouble()... what can I say, man?
         lastUpdateTime=System.currentTimeMillis();
     }
