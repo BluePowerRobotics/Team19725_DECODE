@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.controllers;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,19 +18,26 @@ public class Shooter {
     TelemetryPacket packet = new TelemetryPacket();
 
     Telemetry telemetry;
+    double Power = 0;
+    double current_speed = 0;
     double current_time;
     double previous_time;
+    double current_encoder = 0;
+    double previous_encoder = 0;
     double current_error;
     double previous_error;
     public static double degreePertick = 0;
-    public static double k_p = 0.01;
+    //public static double k_p = 0.01;
+    public static double k_p = 50;
     public static double k_i = 0;
-    public static double k_d = 0.007;
+    //public static double k_d = 0.007;
+    public static double k_d = 0;
     public static double i;
     public static double max_i = 1 ;
     public double Isum = 0;
     public Shooter(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse){
         shooterMotor = hardwareMap.get(DcMotorEx.class, motorName);
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         if(ifReverse)
             shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         else
@@ -44,12 +52,14 @@ public class Shooter {
      */
     //todo:fix low velocity issue
     public boolean shoot(double targetSpeed){
-        current_time = System.currentTimeMillis();
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        current_time = System.nanoTime();
+        current_encoder = shooterMotor.getCurrentPosition();
+        current_speed = (current_encoder - previous_encoder) / (current_time - previous_time);
 
-
-        current_error = targetSpeed - (shooterMotor.getVelocity(AngleUnit.DEGREES));
-        telemetry.addData("CurrentError", current_error);
-        telemetry.addLine();
+        current_error = targetSpeed - current_speed;
+//        telemetry.addData("CurrentError", current_error);
+//        telemetry.addLine();
         double P = k_p * current_error;
 
         Isum += k_i * (current_error * (current_time - previous_time));
@@ -62,28 +72,39 @@ public class Shooter {
 
         double D = k_d * (current_error - previous_error) / (current_time - previous_time);
 
-        double Power = P + Isum + D;
+        Power = P + Isum + D;
         Power = Range.clip(Power, -1, 1);
         shooterMotor.setPower(Power);
         previous_error = current_error;
         previous_time = current_time;
 
 
-        telemetry.addData("power", Power);
-        telemetry.addData("degree", shooterMotor.getVelocity(AngleUnit.DEGREES));
-        telemetry.addData("postion", shooterMotor.getCurrentPosition());
-        telemetry.addData("Position Vel", current_error / ((System.currentTimeMillis() - previous_time) / 1000));
-        //telemetry.update();
-
-        packet.put("Shooter Power", Power);
-        packet.put("Shooter Speed", shooterMotor.getVelocity(AngleUnit.DEGREES));
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+//        telemetry.addData("power * 100", Power * 100);
+//        telemetry.addData("degree", current_speed);
+//        telemetry.addData("postion", shooterMotor.getCurrentPosition());
+//        telemetry.addData("Position Vel", current_speed / 1000000000);
+//        //telemetry.update();
+//
+//        packet.put("Shooter Power * 100", Power * 100);
+//        packet.put("Shooter Speed", shooterMotor.getVelocity(AngleUnit.DEGREES));
+//        FtcDashboard.getInstance().sendTelemetryPacket(packet);
         if(Math.abs(current_error) < 50){
             return true;
         } else {
             return false;
         }
     }
+    public double getCurrent_encoder(){
+        return current_encoder;
+    }
+    public double getPower(){
+        return Power;
+    }
+    public double getCurrent_speed(){
+        return current_speed;
+    }
+
+
 
 
 }

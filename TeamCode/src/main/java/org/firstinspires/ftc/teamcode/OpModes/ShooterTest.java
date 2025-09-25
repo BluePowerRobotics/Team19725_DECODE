@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,7 +21,7 @@ public class ShooterTest extends LinearOpMode {
     public static double y = 0;
     public Shooter shooter1;
     public Shooter shooter2;
-    public static double initSpeed = 300;
+    public static double initSpeed = 10000;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -40,14 +41,21 @@ public class ShooterTest extends LinearOpMode {
                 targetSpeed = 0;
             }
             if(gamepad1.xWasPressed()){
-                targetSpeed -= 50;
+                targetSpeed -= 0.001;
             }
             if(gamepad1.yWasPressed()){
-                targetSpeed += 50;
+                targetSpeed += 0.001;
             }
             shooter1.shoot(targetSpeed);
             shooter2.shoot(targetSpeed);
+            telemetry.addData("1-postion", shooter1.getCurrent_encoder());
+            telemetry.addData("1-power", shooter1.getPower());
+            telemetry.addData("1-speed", shooter1.getCurrent_speed());
+//            TelemetryPacket packet = new TelemetryPacket();
+//            packet.put("1-power", shooter1.getPower());
+//            packet.put("1-speed", shooter1.getCurrent_speed());
             telemetry.update();
+            sleep(50);
         }
     }
 }
