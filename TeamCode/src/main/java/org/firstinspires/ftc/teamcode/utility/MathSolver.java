@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.utility;
 
 public class MathSolver {
     private static final double EPSILON = 1e-10; // 误差容限
+    public static double sgn(double n){return Math.abs(n)/n;}
 
     // 求解四次方程 ax^4 + bx^3 + cx^2 + dx + e = 0 的实根
     public static double[] solve4(double a, double b, double c, double d, double e) {
@@ -128,7 +129,7 @@ y_2
             double cbrtZ2 = Math.cbrt(z2);
             double z = D * D - D * (cbrtZ1 + cbrtZ2) + (cbrtZ1 + cbrtZ2) * (cbrtZ1 + cbrtZ2) - 3 * A;
 
-            double signE = Math.abs(E) <= EPSILON ? 0 : Math.abs(E)/E; // E的符号因子
+            double signE = sgn(E); // E的符号因子
             double realPart = (-b + signE * Math.sqrt((D + cbrtZ1 + cbrtZ2) / 3)) / (4 * a);
             double imagPart = Math.sqrt((2 * D - (cbrtZ1 + cbrtZ2) + 2 * Math.sqrt(z)) / 3) / (4 * a);
 
@@ -152,7 +153,7 @@ y_2
                         (-b - Math.sqrt(D - 2 * Math.sqrt(F))) / (4 * a)
                 };
             } else {
-                double signE = E > 0 ? 1 : -1;
+                double signE = sgn(E);
                 return new double[]{
                         (-b + signE * Math.sqrt(y1) + Math.sqrt(y2) + Math.sqrt(y3)) / (4 * a),
                         (-b + signE * Math.sqrt(y1) - Math.sqrt(y2) - Math.sqrt(y3)) / (4 * a),
@@ -162,6 +163,10 @@ y_2
             }
         }
         return new double[]{}; // 其他情况都是虚根
+    }
+    public double[][] solve4i(double a, double b, double c, double d, double e) {
+        //4行2列，实部和虚部
+        return new double[4][2];
     }
 
 }

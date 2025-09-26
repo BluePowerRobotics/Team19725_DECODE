@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.chassis.model;
 
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
+import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
 public class MoveAction {
@@ -39,13 +40,69 @@ public class MoveAction {
         //     5. 计算总体分段
         Error=Point2D.translate(targetPoint,Point2D.centralSymmetry(startPoint));
         double speedAngleError = Math.abs(Error.Radian-nowSpeed.Radian);
-        double nowSpeedTowardsError = nowSpeed.Distance*Math.cos(speedAngleError);
+        startSpeed = nowSpeed.Distance*Math.cos(speedAngleError);
+        double speedError = maxV-startSpeed;
+        double speedUpTimeS = speedError/maxA;
+        speedUpDistance = (startSpeed+maxV)*speedUpTimeS/2;
+        double speedDownTimeS = maxV/maxA;
+        speedDownDistance = maxV*speedDownTimeS/2;
 
+        if((speedDownDistance+speedUpDistance)>=Error.Distance){
+            if(MathSolver.sgn(speedError)!=1){
+                // 起始速度大于等于巡航速度，以最大加速度调整为巡航速度过缓，直接通过匀减速运动计算
+                double allTimeS=2*Error.Distance/(startSpeed);
+                speedUpEndTimeMS=(long)((1.0-(maxV/startSpeed))*allTimeS*1000)+System.currentTimeMillis();
+                speedDownStartTimeMS=speedUpEndTimeMS;
+                arriveTimeMS = System.currentTimeMillis()+(long)(allTimeS*1000);
+            }else{
+                // 起始速度小于巡航速度，计算可达到的最大速度
+                double t1 = Math.sqrt((2*maxA*Error.Distance+startSpeed*startSpeed)/(2*maxA*maxA))-startSpeed/maxA;
+                double t2 = Math.sqrt((2*maxA*Error.Distance+startSpeed*startSpeed)/(2*maxA*maxA));
+                maxV=startSpeed+maxA*t1;
+                speedUpEndTimeMS=(long)(t1*1000)+System.currentTimeMillis();
+                speedDownStartTimeMS=speedUpEndTimeMS;
+                arriveTimeMS = System.currentTimeMillis()+(long)((t1+t2)*1000);
+            }
+        }else{
+            cruiseDistance = Error.Distance - speedUpDistance - speedDownDistance;
+            double cruiseTimeS = cruiseDistance/maxV;
+            speedUpEndTimeMS=(long)(speedUpTimeS*1000)+System.currentTimeMillis();
+            speedDownStartTimeMS=(long)((speedUpTimeS+cruiseTimeS)*1000)+System.currentTimeMillis();
+            arriveTimeMS = System.currentTimeMillis()+(long)((speedUpTimeS+cruiseTimeS+speedDownTimeS)*1000);
+        }
     }
+    double startSpeed;
     long speedUpEndTimeMS;
     long speedDownStartTimeMS;
     long arriveTimeMS;
     Point2D Error;
+
+    public Point2D getHopeCurrentPoint(){
+        long nowTimeMS = System.currentTimeMillis();
+        if(nowTimeMS>=arriveTimeMS){
+            hopeCurrentPoint=targetPoint;
+            return hopeCurrentPoint;
+        }
+
+        if(nowTimeMS<=speedUpEndTimeMS){
+            //加速阶段
+            double distance = (startSpeed+maxV)*(nowTimeMS-startTimeMS)/2000;
+            hopeCurrentPoint=Point2D.translate(startPoint,Point2D.fromPolar(Error.Radian,distance));
+        }else if(nowTimeMS<=speedDownStartTimeMS){
+            //匀速阶段
+            double distance = speedUpDistance + maxV*(nowTimeMS-speedUpEndTimeMS)/1000;
+            hopeCurrentPoint=Point2D.translate(startPoint,Point2D.fromPolar(Error.Radian,distance));
+        }else{
+            //减速阶段
+            double distance = speedUpDistance + cruiseDistance + (maxV)*(arriveTimeMS-nowTimeMS)/2000;
+            hopeCurrentPoint=Point2D.translate(startPoint,Point2D.fromPolar(Error.Radian,distance));
+        }
+
+        return hopeCurrentPoint;
+    }
+    double speedUpDistance;
+    double speedDownDistance;
+    double cruiseDistance=0;
     Point2D hopeCurrentPoint;
 
     public static class Builder {
