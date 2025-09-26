@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Shooter {
     public DcMotorEx shooterMotor;
     TelemetryPacket packet = new TelemetryPacket();
+    double[] speedBuffer = new double[10];
 
     Telemetry telemetry;
     double Power = 0;
@@ -27,11 +28,11 @@ public class Shooter {
     double current_error;
     double previous_error;
     public static double degreePertick = 0;
-    //public static double k_p = 0.01;
-    public static double k_p = 50;
+    public static double k_p = 0.005;
+    //public static double k_p = 50;
     public static double k_i = 0;
-    //public static double k_d = 0.007;
     public static double k_d = 0;
+    //public static double k_d = 0;
     public static double i;
     public static double max_i = 1 ;
     public double Isum = 0;
@@ -53,13 +54,12 @@ public class Shooter {
     //todo:fix low velocity issue
     public boolean shoot(double targetSpeed){
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        current_time = System.nanoTime();
+        current_time = System.currentTimeMillis();
         current_encoder = shooterMotor.getCurrentPosition();
-        current_speed = (current_encoder - previous_encoder) / (current_time - previous_time);
+        current_speed = shooterMotor.getVelocity(AngleUnit.DEGREES);
 
         current_error = targetSpeed - current_speed;
-//        telemetry.addData("CurrentError", current_error);
-//        telemetry.addLine();
+
         double P = k_p * current_error;
 
         Isum += k_i * (current_error * (current_time - previous_time));
