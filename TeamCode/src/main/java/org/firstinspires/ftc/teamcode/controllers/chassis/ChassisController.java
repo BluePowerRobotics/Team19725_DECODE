@@ -20,7 +20,7 @@ public class ChassisController {
         public static double zeroThresholdV =0.05; // 速度零点阈值 (m/s)
         public static double zeroThresholdOmega =Math.toRadians(5); // 角速度零点阈值 (rad/s)
     }
-    RobotPosition robotPosition;
+    public RobotPosition robotPosition;
     HardwareMap hardwareMap;
     boolean fullyAutoMode = false;
     boolean useNoHeadMode=false;
@@ -32,6 +32,7 @@ public class ChassisController {
      * OpMode初始化时调用
      */
     public ChassisController(HardwareMap hardwareMap){
+        robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
         robotPosition= RobotPosition.refresh(hardwareMap,robotPosition.initialPosition,robotPosition.initialHeadingRadian);
         this.hardwareMap=hardwareMap;
         chassisOutputter=new ChassisOutputter(hardwareMap);
@@ -44,6 +45,7 @@ public class ChassisController {
      * @param initialHeadingRadian 初始朝向，弧度制
      */
     public ChassisController(HardwareMap hardwareMap, Point2D initialPosition, double initialHeadingRadian){
+        robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
         robotPosition= RobotPosition.refresh(hardwareMap,initialPosition,initialHeadingRadian);
         this.hardwareMap=hardwareMap;
         fullyAutoMode=true;
