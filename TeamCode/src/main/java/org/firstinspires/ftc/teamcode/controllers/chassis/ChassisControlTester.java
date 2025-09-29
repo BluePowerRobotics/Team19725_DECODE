@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Config
-@TeleOp(name = "ChassisControlTester", group = "Test")
+@TeleOp(name = "ChassisControlTester", group = "TEST")
 public class ChassisControlTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,9 +20,12 @@ public class ChassisControlTester extends LinearOpMode {
             double strafe = gamepad1.left_stick_x; // 左右
             double rotate = gamepad1.right_stick_x; // 旋转
             chassis.gamepadInput(strafe, drive, rotate);
+            if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();
             telemetry.addData("y-power",drive);
             telemetry.addData("x-power",strafe);
             telemetry.addData("r-power",rotate);
+            telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
+            telemetry.addData("Mode",chassis.useNoHeadMode?"NoHead":"Manual");
             telemetry.addData("",chassis.robotPosition.getData().toString());
             telemetry.update();
         }

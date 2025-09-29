@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utility.Point3D;
 import java.util.Arrays;
 
 @Config
-@TeleOp(name = "918TeamDisplay", group = "Show")
+@TeleOp(name = "sixServoArmTest", group = "TEST")
 public class SixServoArmCalculationTester extends LinearOpMode {
     //FindCandidate findCandidate = new FindCandidate();
     static Point3D SearchPoint = new Point3D(0, 150, 100);

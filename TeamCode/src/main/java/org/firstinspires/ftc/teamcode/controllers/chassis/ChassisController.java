@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.controllers.chassis;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.controllers.locate.Data;
 import org.firstinspires.ftc.teamcode.controllers.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
@@ -16,7 +18,7 @@ public class ChassisController {
         //todo 调整参数
         public static double maxV=0.5; // 最大线速度 (m/s)
         public static double maxA=0.5; // 最大加速度 (m/s²)
-        public static double maxOmega=Math.PI*3/4; // 最大角速度 (rad/s)
+        public static double maxOmega=Math.PI*1/2; // 最大角速度 (rad/s)
         public static double zeroThresholdV =0.05; // 速度零点阈值 (m/s)
         public static double zeroThresholdOmega =Math.toRadians(5); // 角速度零点阈值 (rad/s)
     }
@@ -25,6 +27,7 @@ public class ChassisController {
     boolean fullyAutoMode = false;
     boolean useNoHeadMode=false;
     boolean runningToPoint=false;
+    double noHeadModeStartError=0;
     ChassisCalculator chassisCalculator= new ChassisCalculator();
     ChassisOutputter chassisOutputter;
 
@@ -32,8 +35,8 @@ public class ChassisController {
      * OpMode初始化时调用
      */
     public ChassisController(HardwareMap hardwareMap){
-        robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
-        robotPosition= RobotPosition.refresh(hardwareMap,robotPosition.initialPosition,robotPosition.initialHeadingRadian);
+        //robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
+        robotPosition= RobotPosition.refresh(hardwareMap);
         this.hardwareMap=hardwareMap;
         chassisOutputter=new ChassisOutputter(hardwareMap);
     }
@@ -45,12 +48,17 @@ public class ChassisController {
      * @param initialHeadingRadian 初始朝向，弧度制
      */
     public ChassisController(HardwareMap hardwareMap, Point2D initialPosition, double initialHeadingRadian){
-        robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
+        //robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
         robotPosition= RobotPosition.refresh(hardwareMap,initialPosition,initialHeadingRadian);
         this.hardwareMap=hardwareMap;
         fullyAutoMode=true;
         chassisOutputter=new ChassisOutputter(hardwareMap);
     }
+    public void exchangeNoHeadMode(){
+        useNoHeadMode=!useNoHeadMode;
+        noHeadModeStartError=robotPosition.getData().headingRadian;
+    }
+
     public void gamepadInput(double vx,double vy,double omega){
         vx=vx*Params.maxV;
         vy=vy*Params.maxV;
@@ -66,7 +74,7 @@ public class ChassisController {
             if(!runningToPoint) {
                 double[] wheelSpeeds;
                 if (useNoHeadMode)
-                    wheelSpeeds = chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian);
+                    wheelSpeeds = chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian-noHeadModeStartError);
                 else
                     wheelSpeeds = chassisCalculator.solveChassis(vx, vy, omega);
                 chassisOutputter.setWheelVelocities(wheelSpeeds);
@@ -107,10 +115,10 @@ class ChassisCalculator {
      * @return 各个车轮的线速度 (m/s)
      */
     public double[] solveChassis(double vx, double vy, double omega) {
-        double v_fl = vy - vx + (2 * Params.rb * omega);
-        double v_bl = vy + vx + (2 * Params.rb * omega);
-        double v_br = vy - vx - (2 * Params.rb * omega);
-        double v_fr = vy + vx - (2 * Params.rb * omega);
+        double v_fl = vy + vx + (2 * Params.rb * omega);
+        double v_bl = vy - vx + (2 * Params.rb * omega);
+        double v_br = vy + vx - (2 * Params.rb * omega);
+        double v_fr = vy - vx - (2 * Params.rb * omega);
 
         return new double[]{v_fl, v_fr, v_bl, v_br};
     }
@@ -124,6 +132,7 @@ class ChassisCalculator {
      * @return 各个车轮的线速度 (m/s)
      */
     public double[] solveGround(double vx, double vy, double omega, double headingRadian) {
+
         double vxPro = vx * Math.cos(headingRadian) + vy * Math.sin(headingRadian);
         double vyPro = -vx * Math.sin(headingRadian) + vy * Math.cos(headingRadian);
         return solveChassis(vxPro, vyPro, omega);
@@ -173,7 +182,7 @@ class ChassisOutputter {
         //todo 调整参数
         static double CPR = ((((1.0 + (46.0 / 17.0))) * (1.0 + (46.0 / 11.0))) * 28.0); // 电机每转一圈的编码器脉冲数
         static double wheelDiameter = 104; // 轮子直径 (mm)
-        static double mmPerTick = (wheelDiameter * Math.PI) / CPR; // 每个编码器脉冲对应的线性位移 (m)
+        static double mmPerTick = (wheelDiameter * Math.PI) / CPR; // 每个编码器脉冲对应的线性位移 (mm)
         static double maxRpm = 312; // 电机最大转速 (RPM)
     }
 
@@ -190,14 +199,14 @@ class ChassisOutputter {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
     }
 
     /**
-     * 设置各个车轮的线速度 (mm/s)
+     * 设置各个车轮的线速度 (m/s)
      *
      * @param v_fl 左前轮速度
      * @param v_fr 右前轮速度
@@ -205,10 +214,10 @@ class ChassisOutputter {
      * @param v_br 右后轮速度
      */
     public void setWheelVelocities(double v_fl, double v_fr, double v_bl, double v_br) {
-        v_fl = v_fl / Params.mmPerTick;
-        v_fr = v_fr / Params.mmPerTick;
-        v_bl = v_bl / Params.mmPerTick;
-        v_br = v_br / Params.mmPerTick;
+        v_fl = v_fl / Params.mmPerTick * 1000;
+        v_fr = v_fr / Params.mmPerTick * 1000;
+        v_bl = v_bl / Params.mmPerTick * 1000;
+        v_br = v_br / Params.mmPerTick * 1000;
         if (Math.abs(v_fl) > Params.maxRpm / 60 * Params.CPR || Math.abs(v_fr) > Params.maxRpm / 60 * Params.CPR || Math.abs(v_bl) > Params.maxRpm / 60 * Params.CPR || Math.abs(v_br) > Params.maxRpm / 60 * Params.CPR) {
             double maxV = Math.max(Math.max(Math.abs(v_fl), Math.abs(v_fr)), Math.max(Math.abs(v_bl), Math.abs(v_br)));
             v_fl = v_fl / maxV * Params.maxRpm / 60 * Params.CPR;
@@ -220,10 +229,14 @@ class ChassisOutputter {
 //        telemetry.addData("v_fr", v_fr);
 //        telemetry.addData("v_bl", v_bl);
 //        telemetry.addData("v_br", v_br);
-        leftFront.setVelocity(v_fl);
-        rightFront.setVelocity(v_fr);
-        leftBack.setVelocity(v_bl);
-        rightBack.setVelocity(v_br);
+//        leftFront.setVelocity(v_fl);
+//        rightFront.setVelocity(v_fr);
+//        leftBack.setVelocity(v_bl);
+//        rightBack.setVelocity(v_br);
+        leftFront.setPower(v_fl/Params.CPR);
+        rightFront.setPower(v_fr/Params.CPR);
+        leftBack.setPower(v_bl/Params.CPR);
+        rightBack.setPower(v_br/Params.CPR);
     }
 
     public void setWheelVelocities(double[] velocities) {
