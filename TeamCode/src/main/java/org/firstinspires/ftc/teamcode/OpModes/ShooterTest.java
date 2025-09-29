@@ -15,22 +15,19 @@ import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 @TeleOp
 @Config
 public class ShooterTest extends LinearOpMode {
-    public SolveShootPoint solveShootPoint = new SolveShootPoint();
-    public static double R = 48 * Math.sqrt(2);
-    public static double x = 24;
-    public static double y = 0;
+    public static int TimePerFrame = 20;
     public Shooter shooter1;
     public Shooter shooter2;
-    public static double initSpeed = 500;
+    public static double initSpeed = 800;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooter1 = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter2 = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
-        telemetry.addData("RED:ANSX, ANSY, ANSTheta", solveShootPoint.solveREDShootPoint(new Pose2d(x, y, 0), R));
-        telemetry.addData("BLUE:ANSX, ANSY, ANSTheta", solveShootPoint.solveBLUEShootPoint(new Pose2d(x, y, 0), R));
-
-        telemetry.update();
+//        telemetry.addData("RED:ANSX, ANSY, ANSTheta", solveShootPoint.solveREDShootPoint(new Pose2d(x, y, 0), R));
+//        telemetry.addData("BLUE:ANSX, ANSY, ANSTheta", solveShootPoint.solveBLUEShootPoint(new Pose2d(x, y, 0), R));
+//
+//        telemetry.update();
         waitForStart();
         double targetSpeed = 0;
         while (opModeIsActive()) {
@@ -55,11 +52,8 @@ public class ShooterTest extends LinearOpMode {
             telemetry.addData("2-postion", shooter2.getCurrent_encoder());
             telemetry.addData("2-power", shooter2.getPower());
             telemetry.addData("2-speed", shooter2.getCurrent_speed());
-//            TelemetryPacket packet = new TelemetryPacket();
-//            packet.put("1-power", shooter1.getPower());
-//            packet.put("1-speed", shooter1.getCurrent_speed());
             telemetry.update();
-            sleep(50);
+            sleep(TimePerFrame);
         }
     }
 }
