@@ -100,6 +100,12 @@ public class MoveAction {
 
         return hopeCurrentPoint;
     }
+    public double getHopeCurrentHeadingRadian(){
+        if(System.currentTimeMillis()-arriveTimeMS>=0){
+            return targetRadian;
+        }
+        return (targetRadian-startRadian)*(System.currentTimeMillis()-startTimeMS)/(arriveTimeMS-startTimeMS)+startRadian;
+    }
     double speedUpDistance;
     double speedDownDistance;
     double cruiseDistance=0;
@@ -116,6 +122,9 @@ public class MoveAction {
         double maxOmega = ChassisController.Params.maxOmega;
         double arriveThresholdV = ChassisController.Params.zeroThresholdV;
         double arriveRadianThreshold = Math.toRadians(5);
+        public Builder() {
+
+        }
 
         public Builder setTargetPoint(Point2D targetPoint) {
             this.targetPoint = targetPoint;

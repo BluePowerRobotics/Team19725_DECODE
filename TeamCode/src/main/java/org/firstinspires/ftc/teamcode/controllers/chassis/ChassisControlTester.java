@@ -6,6 +6,10 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.controllers.chassis.model.MoveAction;
+import org.firstinspires.ftc.teamcode.utility.Point2D;
+
 @Config
 @TeleOp(name = "ChassisControlTester", group = "TEST")
 public class ChassisControlTester extends LinearOpMode {
@@ -21,11 +25,21 @@ public class ChassisControlTester extends LinearOpMode {
             double rotate = gamepad1.right_stick_x; // 旋转
             chassis.gamepadInput(strafe, drive, rotate);
             if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();
+            if(gamepad1.yWasReleased()) {
+                MoveAction builder = new MoveAction.Builder()
+                        .setStartPoint(chassis.robotPosition.getData().getPosition(DistanceUnit.MM))
+                        .setStartRadian(chassis.robotPosition.getData().headingRadian)
+                        .setTargetPoint(new Point2D(0,0))
+                        .setTargetRadian(0)
+                        .build();
+                chassis.setTargetPoint(builder);
+            }
             telemetry.addData("y-power",drive);
             telemetry.addData("x-power",strafe);
             telemetry.addData("r-power",rotate);
             telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
-            telemetry.addData("Mode",chassis.useNoHeadMode?"NoHead":"Manual");
+            telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
+            telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
             telemetry.addData("",chassis.robotPosition.getData().toString());
             telemetry.update();
         }

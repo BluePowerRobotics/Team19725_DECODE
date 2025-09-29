@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.controllers.chassis.model.MoveAction;
 import org.firstinspires.ftc.teamcode.controllers.locate.Data;
 import org.firstinspires.ftc.teamcode.controllers.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
@@ -28,6 +30,7 @@ public class ChassisController {
     boolean useNoHeadMode=false;
     boolean runningToPoint=false;
     double noHeadModeStartError=0;
+    MoveAction moveAction;
     ChassisCalculator chassisCalculator= new ChassisCalculator();
     ChassisOutputter chassisOutputter;
 
@@ -58,7 +61,12 @@ public class ChassisController {
         useNoHeadMode=!useNoHeadMode;
         noHeadModeStartError=robotPosition.getData().headingRadian;
     }
+    public void setTargetPoint(MoveAction moveAction){
+        runningToPoint = true;
+        this.moveAction=moveAction;
+    }
 
+    public double[] wheelSpeeds={0,0,0,0};
     public void gamepadInput(double vx,double vy,double omega){
         vx=vx*Params.maxV;
         vy=vy*Params.maxV;
@@ -69,17 +77,19 @@ public class ChassisController {
                     runningToPoint = false;//打断自动驾驶
                 }else{
                     //todo 调用自动驾驶
+                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(moveAction.getHopeCurrentPoint(), robotPosition.getData().getPosition(DistanceUnit.MM)),
+                            chassisCalculator.calculatePIDRadian(moveAction.getHopeCurrentHeadingRadian(),robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
                 }
             }
             if(!runningToPoint) {
-                double[] wheelSpeeds;
                 if (useNoHeadMode)
                     wheelSpeeds = chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian-noHeadModeStartError);
                 else
                     wheelSpeeds = chassisCalculator.solveChassis(vx, vy, omega);
-                chassisOutputter.setWheelVelocities(wheelSpeeds);
+
             }
         }
+        chassisOutputter.setWheelVelocities(wheelSpeeds);
     }
 
 }
@@ -136,6 +146,9 @@ class ChassisCalculator {
         double vxPro = vx * Math.cos(headingRadian) + vy * Math.sin(headingRadian);
         double vyPro = -vx * Math.sin(headingRadian) + vy * Math.cos(headingRadian);
         return solveChassis(vxPro, vyPro, omega);
+    }
+    public double[] solveGround(double[] vxy,double vomega,double headingRadian){
+        return solveGround(vxy[0],vxy[1],vomega,headingRadian);
     }
 
     long lastTimeXY = 0;
