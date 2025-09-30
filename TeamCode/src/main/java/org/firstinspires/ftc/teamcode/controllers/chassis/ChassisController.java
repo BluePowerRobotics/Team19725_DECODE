@@ -126,10 +126,10 @@ class ChassisCalculator {
      * @return 各个车轮的线速度 (m/s)
      */
     public double[] solveChassis(double vx, double vy, double omega) {
-        double v_fl = vy - vx + (2 * Params.rb * omega);
-        double v_bl = vy + vx + (2 * Params.rb * omega);
-        double v_br = vy - vx - (2 * Params.rb * omega);
-        double v_fr = vy + vx - (2 * Params.rb * omega);
+        double v_fl = vy + vx + (2 * Params.rb * omega);
+        double v_bl = vy - vx + (2 * Params.rb * omega);
+        double v_br = vy + vx - (2 * Params.rb * omega);
+        double v_fr = vy - vx - (2 * Params.rb * omega);
 
         return new double[]{v_fl, v_fr, v_bl, v_br};
     }
