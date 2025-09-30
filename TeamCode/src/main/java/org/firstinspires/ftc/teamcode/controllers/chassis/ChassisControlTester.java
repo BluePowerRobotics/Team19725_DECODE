@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 public class ChassisControlTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
+        //MecanumDrive mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
         ChassisController chassis = new ChassisController(hardwareMap,new Point2D(0,0),0);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //chassis.init(hardwareMap);
@@ -48,8 +48,8 @@ public class ChassisControlTester extends LinearOpMode {
             telemetry.addData("",chassis.robotPosition.getData().toString());
             //telemetry.update();
 
-            mecanumDrive.updatePoseEstimate();
-            Pose2d pose = mecanumDrive.localizer.getPose();
+            //mecanumDrive.updatePoseEstimate();
+            Pose2d pose = chassis.robotPosition.mecanumDrive.localizer.getPose();
             telemetry.addData("x", pose.position.x);
             telemetry.addData("y", pose.position.y);
             telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
