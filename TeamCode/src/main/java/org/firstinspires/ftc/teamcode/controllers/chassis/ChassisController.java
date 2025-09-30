@@ -77,8 +77,8 @@ public class ChassisController {
                     runningToPoint = false;//打断自动驾驶
                 }else{
                     //todo 调用自动驾驶
-                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(moveAction.getHopeCurrentPoint(), robotPosition.getData().getPosition(DistanceUnit.MM)),
-                            chassisCalculator.calculatePIDRadian(moveAction.getHopeCurrentHeadingRadian(),robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
+                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(moveAction.targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM)),
+                            chassisCalculator.calculatePIDRadian(moveAction.targetRadian,robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
                 }
             }
             if(!runningToPoint) {
@@ -100,12 +100,12 @@ class ChassisCalculator {
         //todo 调整参数
         public static double rb = 0.23; // rb 车轮中心到机器人中心的基本半径 (m)
         // rb 车轮中心到机器人中心的基本半径 (m)
-        public static double pkP = 0.005;//point k
+        public static double pkP = 0.002;//point k
         public static double pkI = 0;
-        public static double pkD = 0.01;
-        public static double rkP = 1;//radian k
+        public static double pkD = 0.00025;
+        public static double rkP = -0.7;//radian k
         public static double rkI = 0;
-        public static double rkD = 0;
+        public static double rkD = -0.1;
     }
 
     PIDController pidPoint;

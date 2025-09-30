@@ -5,10 +5,10 @@ import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
 public class MoveAction {
-    Point2D targetPoint;
+    public Point2D targetPoint;
     Point2D startPoint;
     Point2D nowSpeed;
-    double targetRadian;
+    public double targetRadian;
     double startRadian;
     long startTimeMS;
     double maxV;
