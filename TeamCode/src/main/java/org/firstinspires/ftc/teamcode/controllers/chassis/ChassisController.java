@@ -3,12 +3,10 @@ package org.firstinspires.ftc.teamcode.controllers.chassis;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.chassis.model.MoveAction;
-import org.firstinspires.ftc.teamcode.controllers.locate.Data;
 import org.firstinspires.ftc.teamcode.controllers.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
@@ -38,7 +36,6 @@ public class ChassisController {
      * OpMode初始化时调用
      */
     public ChassisController(HardwareMap hardwareMap){
-        //robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
         robotPosition= RobotPosition.refresh(hardwareMap);
         this.hardwareMap=hardwareMap;
         chassisOutputter=new ChassisOutputter(hardwareMap);
@@ -51,7 +48,6 @@ public class ChassisController {
      * @param initialHeadingRadian 初始朝向，弧度制
      */
     public ChassisController(HardwareMap hardwareMap, Point2D initialPosition, double initialHeadingRadian){
-        //robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
         robotPosition= RobotPosition.refresh(hardwareMap,initialPosition,initialHeadingRadian);
         this.hardwareMap=hardwareMap;
         //fullyAutoMode=true;
@@ -228,29 +224,21 @@ class ChassisOutputter {
      * @param v_br 右后轮速度
      */
     public void setWheelVelocities(double v_fl, double v_fr, double v_bl, double v_br) {
-        v_fl = v_fl / Params.mmPerTick * 1000;
-        v_fr = v_fr / Params.mmPerTick * 1000;
-        v_bl = v_bl / Params.mmPerTick * 1000;
-        v_br = v_br / Params.mmPerTick * 1000;
-        if (Math.abs(v_fl) > Params.maxRpm / 60 * Params.CPR || Math.abs(v_fr) > Params.maxRpm / 60 * Params.CPR || Math.abs(v_bl) > Params.maxRpm / 60 * Params.CPR || Math.abs(v_br) > Params.maxRpm / 60 * Params.CPR) {
+        v_fl = v_fl * 1000 / Params.wheelDiameter;// (m/s) -> (r/s)
+        v_fr = v_fr * 1000 / Params.wheelDiameter;
+        v_bl = v_bl * 1000 / Params.wheelDiameter;
+        v_br = v_br * 1000 / Params.wheelDiameter;
+        if(Math.abs(v_fl) > Params.maxRpm / 60 || Math.abs(v_fr) > Params.maxRpm / 60 || Math.abs(v_bl) > Params.maxRpm / 60 || Math.abs(v_br) > Params.maxRpm / 60){
             double maxV = Math.max(Math.max(Math.abs(v_fl), Math.abs(v_fr)), Math.max(Math.abs(v_bl), Math.abs(v_br)));
-            v_fl = v_fl / maxV * Params.maxRpm / 60 * Params.CPR;
-            v_fr = v_fr / maxV * Params.maxRpm / 60 * Params.CPR;
-            v_bl = v_bl / maxV * Params.maxRpm / 60 * Params.CPR;
-            v_br = v_br / maxV * Params.maxRpm / 60 * Params.CPR;
+            v_fl = v_fl / maxV * Params.maxRpm / 60;// range to [-maxRpm/60, maxRpm/60]
+            v_fr = v_fr / maxV * Params.maxRpm / 60;
+            v_bl = v_bl / maxV * Params.maxRpm / 60;
+            v_br = v_br / maxV * Params.maxRpm / 60;
         }
-//        telemetry.addData("v_fl", v_fl);
-//        telemetry.addData("v_fr", v_fr);
-//        telemetry.addData("v_bl", v_bl);
-//        telemetry.addData("v_br", v_br);
-//        leftFront.setVelocity(v_fl);
-//        rightFront.setVelocity(v_fr);
-//        leftBack.setVelocity(v_bl);
-//        rightBack.setVelocity(v_br);
-        leftFront.setPower(v_fl/Params.CPR);
-        rightFront.setPower(v_fr/Params.CPR);
-        leftBack.setPower(v_bl/Params.CPR);
-        rightBack.setPower(v_br/Params.CPR);
+        leftFront.setPower(v_fl / (Params.maxRpm / 60));
+        rightFront.setPower(v_fr / (Params.maxRpm / 60));
+        leftBack.setPower(v_bl / (Params.maxRpm / 60));
+        rightBack.setPower(v_br / (Params.maxRpm / 60));
     }
 
     public void setWheelVelocities(double[] velocities) {

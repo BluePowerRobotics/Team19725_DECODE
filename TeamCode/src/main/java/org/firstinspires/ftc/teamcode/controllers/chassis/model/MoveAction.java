@@ -31,6 +31,31 @@ public class MoveAction {
         this.arriveRadianThreshold = builder.arriveRadianThreshold;
         calculatePath();
     }
+    @Override
+    public String toString() {
+        return "MoveAction{" +
+                "\ntargetPoint=" + targetPoint +
+                "\nstartPoint=" + startPoint +
+                "\nnowSpeed=" + nowSpeed +
+                "\ntargetRadian=" + targetRadian +
+                "\nstartRadian=" + startRadian +
+                "\nstartTimeMS=" + startTimeMS +
+                "\nmaxV=" + maxV +
+                "\nmaxA=" + maxA +
+                "\nmaxOmega=" + maxOmega +
+                "\narriveThresholdV=" + arriveThresholdV +
+                "\narriveRadianThreshold=" + arriveRadianThreshold +
+                "\nstartSpeed=" + startSpeed +
+                "\nspeedUpEndTimeMS=" + speedUpEndTimeMS +
+                "\nspeedDownStartTimeMS=" + speedDownStartTimeMS +
+                "\narriveTimeMS=" + arriveTimeMS +
+                "\nError=" + Error +
+                "\nspeedUpDistance=" + speedUpDistance +
+                "\nspeedDownDistance=" + speedDownDistance +
+                "\ncruiseDistance=" + cruiseDistance +
+                "\nhopeCurrentPoint=" + getHopeCurrentPoint().toString() +
+                "\n}";
+    }
     private void calculatePath(){
         //todo 计算路径(梯形速度曲线)
         //     1. 计算直线距离和角度差

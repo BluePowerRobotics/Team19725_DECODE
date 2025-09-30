@@ -73,7 +73,6 @@ public class RobotPosition {
         }
 
     private HardwareMap hardwareMap;
-    private PinpointLocalizer pinpointLocalizer;
     public MecanumDrive mecanumDrive;
     public Point2D initialPosition=new Point2D(0,0);
     public double initialHeadingRadian=0;

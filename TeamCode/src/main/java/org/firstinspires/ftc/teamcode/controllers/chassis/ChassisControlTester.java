@@ -45,15 +45,11 @@ public class ChassisControlTester extends LinearOpMode {
             telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
             telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
             telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
-            telemetry.addData("",chassis.robotPosition.getData().toString());
-            //telemetry.update();
-
-            //mecanumDrive.updatePoseEstimate();
-            Pose2d pose = chassis.robotPosition.mecanumDrive.localizer.getPose();
-            telemetry.addData("x", pose.position.x);
-            telemetry.addData("y", pose.position.y);
-            telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
+            telemetry.addData("Position",chassis.robotPosition.getData().toString());
+            telemetry.addData("HopeCurrent",chassis.moveAction.toString());
             telemetry.update();
+
+            Pose2d pose = chassis.robotPosition.mecanumDrive.localizer.getPose();
 
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay().setStroke("#3F51B5");
