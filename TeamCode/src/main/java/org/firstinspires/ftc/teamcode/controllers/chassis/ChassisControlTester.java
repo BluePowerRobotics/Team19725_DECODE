@@ -15,13 +15,13 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 public class ChassisControlTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        ChassisController chassis = new ChassisController(hardwareMap);
+        ChassisController chassis = new ChassisController(hardwareMap,new Point2D(0,0),0);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //chassis.init(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
             double drive = -gamepad1.left_stick_y-gamepad2.left_stick_y; // 前后
-            double strafe = gamepad1.left_stick_x; // 左右
+            double strafe =-gamepad1.left_stick_x; // 左右
             double rotate = gamepad1.right_stick_x; // 旋转
             chassis.gamepadInput(strafe, drive, rotate);
             if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();

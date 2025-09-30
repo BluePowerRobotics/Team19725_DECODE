@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.controllers.locate;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
-
+@Config
 public class Data {
     private Data(){}
     @Override

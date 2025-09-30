@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 
 @Config
 public class ChassisController {
-    @Config
+
     public static class Params{
         //todo 调整参数
         public static double maxV=0.5; // 最大线速度 (m/s)
@@ -54,7 +54,7 @@ public class ChassisController {
         //robotPosition=RobotPosition.refresh(hardwareMap,new Point2D(0,0),0);
         robotPosition= RobotPosition.refresh(hardwareMap,initialPosition,initialHeadingRadian);
         this.hardwareMap=hardwareMap;
-        fullyAutoMode=true;
+        //fullyAutoMode=true;
         chassisOutputter=new ChassisOutputter(hardwareMap);
     }
     public void exchangeNoHeadMode(){
@@ -73,7 +73,7 @@ public class ChassisController {
         omega=omega*Params.maxOmega;
         if(!fullyAutoMode){
             if(runningToPoint){
-                if (Math.hypot(vx, vy) > Params.zeroThresholdV && Math.abs(omega) > Params.zeroThresholdOmega) {
+                if (vx!=0||vy!=0||omega!=0) {
                     runningToPoint = false;//打断自动驾驶
                 }else{
                     //todo 调用自动驾驶
@@ -93,15 +93,16 @@ public class ChassisController {
     }
 
 }
-@Config
+
 class ChassisCalculator {
+    @Config
     public static class Params {
         //todo 调整参数
         public static double rb = 0.23; // rb 车轮中心到机器人中心的基本半径 (m)
         // rb 车轮中心到机器人中心的基本半径 (m)
-        public static double pkP = 1;//point k
+        public static double pkP = 0.005;//point k
         public static double pkI = 0;
-        public static double pkD = 0;
+        public static double pkD = 0.01;
         public static double rkP = 1;//radian k
         public static double rkI = 0;
         public static double rkD = 0;
@@ -125,10 +126,10 @@ class ChassisCalculator {
      * @return 各个车轮的线速度 (m/s)
      */
     public double[] solveChassis(double vx, double vy, double omega) {
-        double v_fl = vy + vx + (2 * Params.rb * omega);
-        double v_bl = vy - vx + (2 * Params.rb * omega);
-        double v_br = vy + vx - (2 * Params.rb * omega);
-        double v_fr = vy - vx - (2 * Params.rb * omega);
+        double v_fl = vy - vx + (2 * Params.rb * omega);
+        double v_bl = vy + vx + (2 * Params.rb * omega);
+        double v_br = vy - vx - (2 * Params.rb * omega);
+        double v_fr = vy + vx - (2 * Params.rb * omega);
 
         return new double[]{v_fl, v_fr, v_bl, v_br};
     }
