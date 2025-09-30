@@ -1,4 +1,4 @@
-# FTC19725-25-26-1
+# FTC19725-25-26-DECODE
 
 (Before Season Edition-赛季前版本)
 
