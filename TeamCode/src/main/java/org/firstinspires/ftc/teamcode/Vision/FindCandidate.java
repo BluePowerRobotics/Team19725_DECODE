@@ -115,7 +115,7 @@ public class FindCandidate{
 
 
 
-    // 初始化，原理参见FTC19725-25-26-1\FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\ConceptVisionColorLocator.java
+    // 初始化，原理参见FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\ConceptVisionColorLocator.java
     Telemetry Mytelemetry;
     ColorBlobLocatorProcessor colorLocator;
     VisionPortal portal;

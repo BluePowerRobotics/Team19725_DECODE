@@ -1,0 +1,102 @@
+package org.firstinspires.ftc.teamcode.Vision;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.util.Size;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.Vision.model.AprilTagInfo;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+@Config
+public class AprilTagDetector {
+    //todo 可以参考的文件：FindCandidate.java  && FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\ConceptAprilTagLocalization.java
+    //画面大小
+    public static int resolutionwidth = 800;
+    public static int resolutionheight= 600;
+    VisionPortal portal;
+
+
+    //一个简单的摄像头画面处理器（processor），可以附加到vision portal上
+    // 功能：传输摄像头视频流到FTC dashboard
+    //todo ：不用做修改，传输视频的功能已经实现
+    public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
+        private final AtomicReference<Bitmap> lastFrame =
+                new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
+
+        @Override
+        public void init(int width, int height, CameraCalibration calibration) {
+            lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+        }@Override
+        public Object processFrame(Mat frame, long captureTimeNanos) {
+            Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(frame, b);
+            lastFrame.set(b);
+            return null;
+        }@Override
+        public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight,
+                                float scaleBmpPxToCanvasPx, float scaleCanvasDensity,
+                                Object userContext) {
+
+        }@Override
+        public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
+            continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
+        }
+    }
+    public enum MOTIFTYPE{
+       PPG, PGP, GPP,UNKNOWN
+    }
+
+
+    //todo 在这里进行初始化
+    public void init(HardwareMap hardWareMap){
+        CameraStreamProcessor processor = new CameraStreamProcessor();
+        portal = new VisionPortal.Builder()
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                //.addProcessor(colorLocator) todo 在这里换成AprilTag识别的
+                .addProcessor(processor)
+                .setCameraResolution(new Size(resolutionwidth, resolutionheight))
+                .setCamera(hardWareMap.get(WebcamName.class, "Webcam 1"))
+                .build();
+        FtcDashboard.getInstance().startCameraStream(processor, 0);
+    }
+
+
+    //todo 我会在auto开始调用，进行识别，根据识别到的编号返回对应MOTIFTYPE
+    public MOTIFTYPE decodeAprilTag(){
+        int id = 0; //识别到的id
+        if(id == 23){
+            return MOTIFTYPE.PPG;
+        }else if(id == 22){
+            return MOTIFTYPE.PGP;
+        }else if(id == 21){
+            return MOTIFTYPE.GPP;
+        }else{
+            return MOTIFTYPE.UNKNOWN;
+        }
+    }
+    //todo 会在每一帧调用，在这里识别AprilTag并返回位姿 **只识别两个球门上的AprilTag，排除编号为21，22，23的AprilTag**
+    //返回值为空数组表示未识别到AprilTag
+    //如识别到多个AprilTag，返回数组中包含多个AprilTagInfo
+    public AprilTagInfo[] getPose(){
+        return new AprilTagInfo[0];
+    }
+
+}
