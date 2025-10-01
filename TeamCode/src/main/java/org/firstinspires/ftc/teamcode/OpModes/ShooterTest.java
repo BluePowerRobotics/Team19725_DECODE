@@ -18,7 +18,7 @@ public class ShooterTest extends LinearOpMode {
     public static int TimePerFrame = 20;
     public Shooter shooter1;
     public Shooter shooter2;
-    public static double initSpeed = 800;
+    public static double initSpeed = 2500;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -38,10 +38,10 @@ public class ShooterTest extends LinearOpMode {
                 targetSpeed = 0;
             }
             if(gamepad1.xWasPressed()){
-                targetSpeed -= 50;
+                targetSpeed -= 100;
             }
             if(gamepad1.yWasPressed()){
-                targetSpeed += 50;
+                targetSpeed += 100;
             }
             shooter1.shoot(targetSpeed);
             shooter2.shoot(targetSpeed);

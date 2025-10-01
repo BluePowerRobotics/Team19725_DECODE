@@ -5,10 +5,10 @@ import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
 public class MoveAction {
-    Point2D targetPoint;
+    public Point2D targetPoint;
     Point2D startPoint;
     Point2D nowSpeed;
-    double targetRadian;
+    public double targetRadian;
     double startRadian;
     long startTimeMS;
     double maxV;
@@ -30,6 +30,31 @@ public class MoveAction {
         this.arriveThresholdV = builder.arriveThresholdV;
         this.arriveRadianThreshold = builder.arriveRadianThreshold;
         calculatePath();
+    }
+    @Override
+    public String toString() {
+        return "MoveAction{" +
+                "\ntargetPoint=" + targetPoint +
+                "\nstartPoint=" + startPoint +
+                "\nnowSpeed=" + nowSpeed +
+                "\ntargetRadian=" + targetRadian +
+                "\nstartRadian=" + startRadian +
+                "\nstartTimeMS=" + startTimeMS +
+                "\nmaxV=" + maxV +
+                "\nmaxA=" + maxA +
+                "\nmaxOmega=" + maxOmega +
+                "\narriveThresholdV=" + arriveThresholdV +
+                "\narriveRadianThreshold=" + arriveRadianThreshold +
+                "\nstartSpeed=" + startSpeed +
+                "\nspeedUpEndTimeMS=" + speedUpEndTimeMS +
+                "\nspeedDownStartTimeMS=" + speedDownStartTimeMS +
+                "\narriveTimeMS=" + arriveTimeMS +
+                "\nError=" + Error +
+                "\nspeedUpDistance=" + speedUpDistance +
+                "\nspeedDownDistance=" + speedDownDistance +
+                "\ncruiseDistance=" + cruiseDistance +
+                "\nhopeCurrentPoint=" + getHopeCurrentPoint().toString() +
+                "\n}";
     }
     private void calculatePath(){
         //todo 计算路径(梯形速度曲线)
@@ -100,6 +125,12 @@ public class MoveAction {
 
         return hopeCurrentPoint;
     }
+    public double getHopeCurrentHeadingRadian(){
+        if(System.currentTimeMillis()-arriveTimeMS>=0){
+            return targetRadian;
+        }
+        return (targetRadian-startRadian)*(System.currentTimeMillis()-startTimeMS)/(arriveTimeMS-startTimeMS)+startRadian;
+    }
     double speedUpDistance;
     double speedDownDistance;
     double cruiseDistance=0;
@@ -116,6 +147,9 @@ public class MoveAction {
         double maxOmega = ChassisController.Params.maxOmega;
         double arriveThresholdV = ChassisController.Params.zeroThresholdV;
         double arriveRadianThreshold = Math.toRadians(5);
+        public Builder() {
+
+        }
 
         public Builder setTargetPoint(Point2D targetPoint) {
             this.targetPoint = targetPoint;

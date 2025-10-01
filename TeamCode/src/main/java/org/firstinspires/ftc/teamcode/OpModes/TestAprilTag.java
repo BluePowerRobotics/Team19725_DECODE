@@ -27,23 +27,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.OpModes;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.Size;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /*
  * This OpMode illustrates the basics of AprilTag recognition and pose estimation,
- * including Java Builder structures for specifying Vision parameters.
+ * including Java Builder structures for specify   ing Vision parameters.
  *
  * For an introduction to AprilTags, see the FTC-DOCS link below:
  * https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_intro/apriltag-intro.html
@@ -66,8 +84,41 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Concept: AprilTag", group = "Concept")
-@Disabled
-public class ConceptAprilTag extends LinearOpMode {
+public class TestAprilTag extends LinearOpMode {
+    //一个简单的摄像头画面处理器（processor），可以附加到vision portal上
+    // 功能：传输摄像头视频流到FTC dashboard（161行）； 在画面上画网格辅助观察
+    public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
+        private final AtomicReference<Bitmap> lastFrame =
+                new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
+
+        @Override
+        public void init(int width, int height, CameraCalibration calibration) {
+            lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+        }@Override
+        public Object processFrame(Mat frame, long captureTimeNanos) {
+            drawXYlines(frame, 100, new Scalar(255, 0, 0), 1); // 在Mat上画网格
+            Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(frame, b);
+            lastFrame.set(b);
+            return null;
+        }@Override
+        public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight,
+                                float scaleBmpPxToCanvasPx, float scaleCanvasDensity,
+                                Object userContext) {
+
+        }@Override
+        public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
+            continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
+        }
+
+
+        //在Mat上画网格线
+        public static void drawXYlines(Mat frame, int size, Scalar color, int thickness) {
+            if (size <= 0 || color == null || thickness < 1) return; // 参数检查
+            for (int x = 0; x < frame.cols(); x += size) Imgproc.line(frame, new Point(x, 0), new Point(x, frame.rows()), color, thickness);
+            for (int y = 0; y < frame.rows(); y += size) Imgproc.line(frame, new Point(0, y), new Point(frame.cols(), y), color, thickness);
+        }
+    }
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -121,17 +172,18 @@ public class ConceptAprilTag extends LinearOpMode {
      * Initialize the AprilTag processor.
      */
     private void initAprilTag() {
+        CameraStreamProcessor processor = new CameraStreamProcessor();
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
 
             // The following default settings are available to un-comment and edit as needed.
-            //.setDrawAxes(false)
-            //.setDrawCubeProjection(false)
-            //.setDrawTagOutline(true)
+            .setDrawAxes(false)
+            .setDrawCubeProjection(true)
+            .setDrawTagOutline(true)
             //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
             //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-            //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+            .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 
             // == CAMERA CALIBRATION ==
             // If you do not manually specify calibration parameters, the SDK will attempt
@@ -161,13 +213,13 @@ public class ConceptAprilTag extends LinearOpMode {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(1280, 720));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableLiveView(true);
+        builder.enableLiveView(true);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
 
         // Choose whether or not LiveView stops if no processors are enabled.
         // If set "true", monitor shows solid orange screen if no processors enabled.
@@ -176,9 +228,13 @@ public class ConceptAprilTag extends LinearOpMode {
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
+        builder.addProcessor(processor);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
+
+
+        FtcDashboard.getInstance().startCameraStream(processor, 0);
 
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);

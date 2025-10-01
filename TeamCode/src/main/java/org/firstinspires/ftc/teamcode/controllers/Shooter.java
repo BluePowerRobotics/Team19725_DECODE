@@ -73,7 +73,7 @@ public class Shooter {
         double D = k_d * (current_error - previous_error) / (current_time - previous_time);
 
         Power = P + Isum + D;
-        Power = Range.clip(Power, -1, 1);
+        Power = Range.clip(Power, 0, 1);
         shooterMotor.setPower(Power);
         previous_error = current_error;
         previous_time = current_time;

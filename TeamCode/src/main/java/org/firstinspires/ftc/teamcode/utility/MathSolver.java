@@ -168,5 +168,11 @@ y_2
         //4行2列，实部和虚部
         return new double[4][2];
     }
+    public static double toInch(double MM){
+        return MM*0.0394;
+    }
+    public static double toMM(double Inch){
+        return Inch*25.4;
+    }
 
 }

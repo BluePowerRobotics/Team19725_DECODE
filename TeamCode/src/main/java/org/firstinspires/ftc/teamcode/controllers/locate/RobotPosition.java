@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.controllers.locate;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
@@ -11,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
-
+@Config
 public class RobotPosition {
     public static class Params {
         //todo 在MecanumDrive中调整参数
@@ -35,7 +38,7 @@ public class RobotPosition {
     /**
     * 初始化位置(全新)
     * @param hardwareMap 硬件映射
-     * @param initialPosition 初始位置
+     * @param initialPosition 初始位置(inch)
      * @param initialHeadingRadian 初始朝向，弧度制
     * @return RobotPosition实例
      */
@@ -43,10 +46,11 @@ public class RobotPosition {
         instance=new RobotPosition(hardwareMap);
         instance.initialPosition=initialPosition;
         instance.initialHeadingRadian=initialHeadingRadian;
-        instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.y,-instance.initialPosition.x,instance.initialHeadingRadian));
-        instance.pinpointLocalizer.setUnits(DistanceUnit.MM, UnnormalizedAngleUnit.RADIANS);
-        Data.instance.position=initialPosition;
+        //instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.y,-instance.initialPosition.x,instance.initialHeadingRadian));
+        //instance.pinpointLocalizer.setUnits(DistanceUnit.MM, UnnormalizedAngleUnit.RADIANS);
+        Data.instance.setPosition(initialPosition);
         Data.instance.headingRadian=initialHeadingRadian;
+        instance.mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-Data.instance.getPosition(DistanceUnit.INCH).y, +Data.instance.getPosition(DistanceUnit.INCH).x, Data.instance.headingRadian));
         return instance;
     }
     /**
@@ -56,10 +60,11 @@ public class RobotPosition {
      */
     public static RobotPosition refresh(HardwareMap hardwareMap){
         instance=new RobotPosition(hardwareMap);
-        instance.initialPosition= Data.instance.position;
+        instance.initialPosition= Data.instance.getPosition(DistanceUnit.INCH);
         instance.initialHeadingRadian= Data.instance.headingRadian;
-        instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.y,-instance.initialPosition.x,instance.initialHeadingRadian));
-        instance.pinpointLocalizer.setUnits(DistanceUnit.MM, UnnormalizedAngleUnit.RADIANS);
+        //instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.y,-instance.initialPosition.x,instance.initialHeadingRadian));
+        //instance.pinpointLocalizer.setUnits(DistanceUnit.MM, UnnormalizedAngleUnit.RADIANS);
+        instance.mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-Data.instance.getPosition(DistanceUnit.INCH).y, +Data.instance.getPosition(DistanceUnit.INCH).x, Data.instance.headingRadian));
         return instance;
     }
 
@@ -68,7 +73,7 @@ public class RobotPosition {
         }
 
     private HardwareMap hardwareMap;
-    private PinpointLocalizer pinpointLocalizer;
+    public MecanumDrive mecanumDrive;
     public Point2D initialPosition=new Point2D(0,0);
     public double initialHeadingRadian=0;
 
@@ -78,10 +83,13 @@ public class RobotPosition {
         if(System.currentTimeMillis()-lastUpdateTime<Params.minUpdateIntervalMs){
             return;
         }
-        Data.instance.headingSpeedRadianPerSec=pinpointLocalizer.update().angVel;
-        Data.instance.speed=pinpointLocalizer.getWorldVelocity();
-        Pose2d pose=pinpointLocalizer.getPose();
-        Data.instance.position=new Point2D(-pose.position.y,+pose.position.x);
+        PoseVelocity2d poseVelocity2d = mecanumDrive.updatePoseEstimate();
+        Pose2d pose = mecanumDrive.localizer.getPose();
+        Data.instance.headingSpeedRadianPerSec=poseVelocity2d.angVel;
+
+        Data.instance.setSpeed(new Vector2d(-poseVelocity2d.linearVel.y,+poseVelocity2d.linearVel.x));
+
+        Data.instance.setPosition(new Point2D(-pose.position.y,+pose.position.x));
         Data.instance.headingRadian=pose.heading.log();//==toDouble()... what can I say, man?
         lastUpdateTime=System.currentTimeMillis();
     }
