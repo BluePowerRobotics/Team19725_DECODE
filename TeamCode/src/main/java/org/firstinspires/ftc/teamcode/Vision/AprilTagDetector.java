@@ -17,13 +17,17 @@ import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibra
 import org.firstinspires.ftc.teamcode.Vision.model.AprilTagInfo;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config
 public class AprilTagDetector {
@@ -32,6 +36,7 @@ public class AprilTagDetector {
     public static int resolutionwidth = 800;
     public static int resolutionheight= 600;
     VisionPortal portal;
+    private AprilTagProcessor aprilTag;
 
 
     //一个简单的摄像头画面处理器（processor），可以附加到vision portal上
@@ -61,16 +66,21 @@ public class AprilTagDetector {
         }
     }
     public enum MOTIFTYPE{
-       PPG, PGP, GPP,UNKNOWN
+        PPG, PGP, GPP, UNKNOWN
     }
 
 
     //todo 在这里进行初始化
     public void init(HardwareMap hardWareMap){
         CameraStreamProcessor processor = new CameraStreamProcessor();
+
+        aprilTag = new AprilTagProcessor.Builder()
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                .build();
+
         portal = new VisionPortal.Builder()
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                //.addProcessor(colorLocator) todo 在这里换成AprilTag识别的
+                .addProcessor(aprilTag)
                 .addProcessor(processor)
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
                 .setCamera(hardWareMap.get(WebcamName.class, "Webcam 1"))
@@ -81,22 +91,46 @@ public class AprilTagDetector {
 
     //todo 我会在auto开始调用，进行识别，根据识别到的编号返回对应MOTIFTYPE
     public MOTIFTYPE decodeAprilTag(){
-        int id = 0; //识别到的id
-        if(id == 23){
-            return MOTIFTYPE.PPG;
-        }else if(id == 22){
-            return MOTIFTYPE.PGP;
-        }else if(id == 21){
-            return MOTIFTYPE.GPP;
-        }else{
-            return MOTIFTYPE.UNKNOWN;
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                int id = detection.id;
+                if(id == 23){
+                    return MOTIFTYPE.PPG;
+                } else if(id == 22){
+                    return MOTIFTYPE.PGP;
+                } else if(id == 21){
+                    return MOTIFTYPE.GPP;
+                }
+            }
         }
+        return MOTIFTYPE.UNKNOWN;
     }
+
     //todo 会在每一帧调用，在这里识别AprilTag并返回位姿 **只识别两个球门上的AprilTag，排除编号为21，22，23的AprilTag**
     //返回值为空数组表示未识别到AprilTag
     //如识别到多个AprilTag，返回数组中包含多个AprilTagInfo
     public AprilTagInfo[] getPose(){
-        return new AprilTagInfo[0];
-    }
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        ArrayList<AprilTagInfo> tagInfos = new ArrayList<>();
 
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null && detection.id != 21 && detection.id != 22 && detection.id != 23) {
+
+                Pose2d pose = new Pose2d(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, Math.toRadians(detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
+
+                AprilTagInfo info = new AprilTagInfo(
+                        pose,
+                        detection.id,
+                        detection.ftcPose.range,
+                        detection.ftcPose.pitch
+                );
+
+                tagInfos.add(info);
+            }
+        }
+
+        return tagInfos.toArray(new AprilTagInfo[0]);
+    }
 }
