@@ -3,13 +3,10 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.controllers.Shooter;
-import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
+import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
 
 
 @TeleOp
