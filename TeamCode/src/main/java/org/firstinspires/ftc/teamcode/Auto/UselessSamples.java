@@ -9,6 +9,44 @@ package org.firstinspires.ftc.teamcode.Auto;//package org.firstinspires.ftc.team
 //import com.acmerobotics.roadrunner.Vector2d;
 //import com.qualcomm.robotcore.hardware.*;
 //import com.acmerobotics.roadrunner.*;
+//public class SixServoArmSetClip implements Action{
+//        boolean initiated = false;
+//        long setClipTime = 0;
+//        double ClipLockSpendSec = 0.5;
+//        @Override
+//        public boolean run(@NonNull TelemetryPacket packet){
+//            if(!initiated){
+//                servoValueOutputter.setClip(clipPosition);
+//                setClipTime = System.currentTimeMillis();
+//                initiated = true;
+//            }
+//            return System.currentTimeMillis()-setClipTime<=1000*ClipLockSpendSec;
+//        }
+//    }
+//    public Action SixServoArmSetClip(ServoValueOutputter.ClipPosition clipPosition){
+//        this.clipPosition = clipPosition;
+//        return new SixServoArmSetClip();
+//    }
+
+//public class SixServoArmRunToPosition implements Action{
+//        double x,y,z,ArmThreeRadian,ClipRadian;
+//        public SixServoArmRunToPosition(double x,double y,double z,double ArmThreeRadian,double ClipRadian){
+//            this.x=x;
+//            this.y=y;
+//            this.z=z;
+//            this.ArmThreeRadian = ArmThreeRadian;
+//            this.ClipRadian = ClipRadian;
+//        }
+//        @Override
+//        public boolean run(@NonNull TelemetryPacket packet){
+//            sixServoArmController.setTargetPosition(x,y,z,ArmThreeRadian,ClipRadian);
+//            return sixServoArmController.setMode();
+//        }
+//    }
+//    public Action SixServoArmRunToPosition(double x,double y,double z,double ArmThreeRadian,double ClipRadian){
+//        return new SixServoArmRunToPosition(x,y,z,ArmThreeRadian,ClipRadian);
+//    }
+
 //public class UselessSamples {
 //
 //        public class Lift {
