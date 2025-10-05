@@ -98,8 +98,8 @@ public class Auto_BlueRight extends LinearOpMode {
         new SequentialAction(shoot1_action);
         //todo add UP
         new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low),
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high),
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         );
         if(motif == AprilTagDetector.MOTIFTYPE.PPG){
             new SequentialAction(intake_PPG_action, intakefinish_PPG_action, shoot_action_PPG);
@@ -110,8 +110,8 @@ public class Auto_BlueRight extends LinearOpMode {
         }
         //todo add UP
         new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low),
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high),
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         );
 
 
