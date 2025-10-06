@@ -27,6 +27,9 @@ public class ChassisController {
     boolean fullyAutoMode = false;
     boolean useNoHeadMode=false;
     boolean runningToPoint=false;
+    boolean autoLockHeading=false;
+    boolean HeadingLockRadianReset=false;
+    double HeadingLockRadian;
     double noHeadModeStartError=0;
     MoveAction moveAction;
     ChassisCalculator chassisCalculator= new ChassisCalculator();
@@ -39,6 +42,7 @@ public class ChassisController {
         robotPosition= RobotPosition.refresh(hardwareMap);
         this.hardwareMap=hardwareMap;
         chassisOutputter=new ChassisOutputter(hardwareMap);
+        HeadingLockRadian = robotPosition.getData().headingRadian;
     }
 
     /**
@@ -52,10 +56,14 @@ public class ChassisController {
         this.hardwareMap=hardwareMap;
         //fullyAutoMode=true;
         chassisOutputter=new ChassisOutputter(hardwareMap);
+        HeadingLockRadian = robotPosition.getData().headingRadian;
     }
     public void exchangeNoHeadMode(){
         useNoHeadMode=!useNoHeadMode;
         noHeadModeStartError=robotPosition.getData().headingRadian;
+    }
+    public void setAutoLockHeading(boolean autoLockHeading){
+        this.autoLockHeading=autoLockHeading;
     }
     public void setTargetPoint(MoveAction moveAction){
         runningToPoint = true;
@@ -78,6 +86,17 @@ public class ChassisController {
                 }
             }
             if(!runningToPoint) {
+                if(autoLockHeading){
+                    if(omega!=0){
+                        HeadingLockRadianReset=true;
+                    }else{
+                        if(HeadingLockRadianReset){
+                            HeadingLockRadianReset=false;
+                            HeadingLockRadian=robotPosition.getData().headingRadian;
+                        }
+                        omega=chassisCalculator.calculatePIDRadian(HeadingLockRadian,robotPosition.getData().headingRadian);
+                    }
+                }
                 if (useNoHeadMode)
                     wheelSpeeds = chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian-noHeadModeStartError);
                 else
