@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.chassis.model;
 
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
@@ -7,6 +9,7 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 public class MoveAction {
     public Point2D targetPoint;
     Point2D startPoint;
+    boolean targetRadianSet = false, startRadianSet = false;
     public double targetRadian;
     double startRadian;
     long startTimeMS;
@@ -17,6 +20,8 @@ public class MoveAction {
     private MoveAction(Builder builder) {
         this.targetPoint = builder.targetPoint;
         this.startPoint = builder.startPoint;
+        this.targetRadianSet=builder.targetRadianSet;
+        this.startRadianSet=builder.startRadianSet;
         this.targetRadian = builder.targetRadian;
         this.startRadian = builder.startRadian;
         this.startTimeMS = System.currentTimeMillis();
@@ -42,6 +47,7 @@ public class MoveAction {
                 "\n}";
     }
     private void calculatePath(){
+        if(targetPoint==null) return;
         //自闭了，准备换成简单的直线写法
         Error=Point2D.translate(targetPoint,Point2D.centralSymmetry(startPoint));
         spendMS = (long)(Error.Distance/vel*1000);
@@ -51,6 +57,8 @@ public class MoveAction {
     Point2D Error;
 
     public Point2D getHopeCurrentPoint(){
+        if(targetPoint==null) return new Point2D(0,0);
+        if(startPoint==null) return targetPoint;
         long nowTimeMS = System.currentTimeMillis();
         if(startMS==0){
             startMS=nowTimeMS;
@@ -66,6 +74,8 @@ public class MoveAction {
         return hopeCurrentPoint;
     }
     public double getHopeCurrentHeadingRadian(){
+        if(!targetRadianSet) return 0;
+        if(!startRadianSet) return targetRadian;
         long nowTimeMS = System.currentTimeMillis();
         if(startMS==0){
             startMS=nowTimeMS;
@@ -78,8 +88,9 @@ public class MoveAction {
     Point2D hopeCurrentPoint;
 
     public static class Builder {
-        Point2D targetPoint = new Point2D(0, 0);
-        Point2D startPoint = new Point2D(0, 0);
+        Point2D targetPoint;
+        Point2D startPoint;
+        boolean targetRadianSet = false, startRadianSet = false;
         double targetRadian = 0;
         double startRadian = 0;
         double vel = ChassisController.Params.maxV;
@@ -103,6 +114,7 @@ public class MoveAction {
         }
 
         public Builder setTargetRadian(double targetRadian) {
+            targetRadianSet =true;
             this.targetRadian = targetRadian;
             return this;
         }
@@ -121,6 +133,7 @@ public class MoveAction {
         }
 
         public Builder setStartRadian(double startRadian) {
+            startRadianSet=true;
             this.startRadian = startRadian;
             return this;
         }
