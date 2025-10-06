@@ -80,7 +80,6 @@ public class ChassisController {
                 if (vx!=0||vy!=0||omega!=0) {
                     runningToPoint = false;//打断自动驾驶
                 }else{
-                    //todo 调用自动驾驶
                     wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(moveAction.getHopeCurrentPoint(), robotPosition.getData().getPosition(DistanceUnit.MM)),
                             chassisCalculator.calculatePIDRadian(moveAction.getHopeCurrentHeadingRadian(),robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
                 }

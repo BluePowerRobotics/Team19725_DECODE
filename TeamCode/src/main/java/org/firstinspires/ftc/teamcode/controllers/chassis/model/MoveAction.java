@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.controllers.chassis.model;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
@@ -92,6 +93,14 @@ public class MoveAction {
             this.targetPoint = targetPoint;
             return this;
         }
+        public Builder setTargetPoint(Point2D targetPoint, DistanceUnit unit) {
+            DistanceUnit MM = DistanceUnit.MM;
+            this.targetPoint = new Point2D(
+                    MM.fromUnit(unit, targetPoint.x),
+                    MM.fromUnit(unit, targetPoint.y)
+            );
+            return this;
+        }
 
         public Builder setTargetRadian(double targetRadian) {
             this.targetRadian = targetRadian;
@@ -102,6 +111,15 @@ public class MoveAction {
             this.startPoint = startPoint;
             return this;
         }
+        public Builder setStartPoint(Point2D startPoint, DistanceUnit unit) {
+            DistanceUnit MM = DistanceUnit.MM;
+            this.startPoint = new Point2D(
+                    MM.fromUnit(unit, startPoint.x),
+                    MM.fromUnit(unit, startPoint.y)
+            );
+            return this;
+        }
+
         public Builder setStartRadian(double startRadian) {
             this.startRadian = startRadian;
             return this;
