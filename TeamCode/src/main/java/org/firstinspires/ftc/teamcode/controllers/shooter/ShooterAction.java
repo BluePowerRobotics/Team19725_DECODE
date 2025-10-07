@@ -29,9 +29,9 @@ public class ShooterAction {
 
         @Override
         public boolean run(TelemetryPacket packet) {
-            shooter_Left.shoot(targetSpeed);
-            shooter_Right.shoot(targetSpeed);
-            if(Math.abs(shooter_Left.getCurrent_speed() - targetSpeed) <= 50 && Math.abs(shooter_Right.getCurrent_speed() - targetSpeed) <= 50) {
+            boolean LeftisOK = shooter_Left.shoot(targetSpeed);
+            boolean RightisOk = shooter_Right.shoot(targetSpeed);
+            if(LeftisOK && RightisOk) {
                 return false;
                 // 达到目标速度，结束动作
             }
@@ -56,13 +56,13 @@ public class ShooterAction {
 
         @Override
         public boolean run(TelemetryPacket packet) {
-            shooter_Left.shoot(targetSpeed);
-            shooter_Right.shoot(targetSpeed);
+            boolean LeftisOK = shooter_Left.shoot(targetSpeed);
+            boolean RightisOk = shooter_Right.shoot(targetSpeed);
             if(!hasShot  &&  (shooter_Left.getCurrent_speed() < low_speed_threshold || shooter_Right.getCurrent_speed() < low_speed_threshold)) {
                 cnt++; // 检测到球发射，动作结束
                 hasShot = true;
             }
-            if(Math.abs(shooter_Left.getCurrent_speed() - targetSpeed) <= 50 && Math.abs(shooter_Right.getCurrent_speed() - targetSpeed) <= 50) {
+            if(LeftisOK && RightisOk) {
                 hasShot = false;// 再次达到目标速度
             }
             if(cnt == 3){
