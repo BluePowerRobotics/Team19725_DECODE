@@ -43,7 +43,6 @@ public class ActionRunner {
                 currentAction = null; // 执行完毕，准备下一个
             }
         }
-
         dashboard.sendTelemetryPacket(packet);
     }
 
@@ -52,6 +51,10 @@ public class ActionRunner {
      */
     public boolean isBusy() {
         return currentAction != null || !pendingActions.isEmpty();
+    }
+
+    public Action getCurrentAction() {
+        return currentAction;
     }
 
     /**
