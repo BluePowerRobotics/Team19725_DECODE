@@ -27,8 +27,8 @@ public class ChassisController {
     boolean fullyAutoMode = false;
     boolean useNoHeadMode=false;
     boolean runningToPoint=false;
-    boolean autoLockHeading=false;
-    boolean HeadingLockRadianReset=false;
+    boolean autoLockHeading=true;
+    boolean HeadingLockRadianReset=true;
     double HeadingLockRadian;
     double noHeadModeStartError=0;
     MoveAction moveAction;
@@ -80,8 +80,20 @@ public class ChassisController {
                 if (vx!=0||vy!=0||omega!=0) {
                     runningToPoint = false;//打断自动驾驶
                 }else{
-                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(moveAction.getHopeCurrentPoint(), robotPosition.getData().getPosition(DistanceUnit.MM)),
-                            chassisCalculator.calculatePIDRadian(moveAction.getHopeCurrentHeadingRadian(),robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
+                    Point2D targetPoint=moveAction.targetPoint;
+                    if(targetPoint==null){
+                        targetPoint=robotPosition.getData().getPosition(DistanceUnit.MM);
+                    }
+                    double targetRadian=moveAction.targetRadian;
+                    if(Double.isNaN(targetRadian)){
+                        if(HeadingLockRadianReset) {
+                            targetRadian = robotPosition.getData().headingRadian;
+                        }else{
+                            targetRadian=HeadingLockRadian;
+                        }
+                    }
+                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM)),
+                            chassisCalculator.calculatePIDRadian(targetRadian,robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
                 }
             }
             if(!runningToPoint) {

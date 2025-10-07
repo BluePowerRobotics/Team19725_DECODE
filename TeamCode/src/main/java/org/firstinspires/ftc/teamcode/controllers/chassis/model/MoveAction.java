@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.controllers.chassis.model;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
@@ -57,7 +60,7 @@ public class MoveAction {
     Point2D Error;
 
     public Point2D getHopeCurrentPoint(){
-        if(targetPoint==null) return new Point2D(0,0);
+        if(targetPoint==null) return null;
         if(startPoint==null) return targetPoint;
         long nowTimeMS = System.currentTimeMillis();
         if(startMS==0){
@@ -74,7 +77,7 @@ public class MoveAction {
         return hopeCurrentPoint;
     }
     public double getHopeCurrentHeadingRadian(){
-        if(!targetRadianSet) return 0;
+        if(!targetRadianSet) return Double.NaN;
         if(!startRadianSet) return targetRadian;
         long nowTimeMS = System.currentTimeMillis();
         if(startMS==0){
@@ -154,6 +157,50 @@ public class MoveAction {
 
         public MoveAction build() {
             return new MoveAction(this);
+        }
+
+
+
+        boolean ended = false;
+
+        public Builder splineTo(Vector2d endPosition, double Radian) {
+            return setTargetPoint(new Point2D(-endPosition.y, +endPosition.x),DistanceUnit.INCH)
+                    .setTargetRadian(Radian);
+        }
+        public Builder splineTo(Vector2d endPosition, Rotation2d endHeading) {
+            return setTargetPoint(new Point2D(-endPosition.y, +endPosition.x),DistanceUnit.INCH)
+                    .setTargetRadian(endHeading.log());
+        }
+        public Builder strafeTo(Vector2d position) {
+            return setTargetPoint(new Point2D(-position.y, +position.x),DistanceUnit.INCH);
+        }
+        public Builder turnTo(double Radian) {
+            return setTargetRadian(Radian);
+        }
+        public Builder turnTo(Rotation2d heading) {
+            return setTargetRadian(heading.log());
+        }
+        public Builder actionBuilder(Pose2d startPose) {
+            return this
+                    .setStartPoint(new Point2D(-startPose.position.y, +startPose.position.x),DistanceUnit.INCH)
+                    .setStartRadian(startPose.heading.log());
+        }
+        public Builder endTrajectory() {
+            ended=true;
+            return this;
+        }
+        public Builder fresh() {
+            if(ended){
+                ended=false;
+                return new Builder()
+                        .setStartPoint(this.targetPoint)
+                        .setStartRadian(this.targetRadian)
+                        .setArriveRadianThreshold(this.arriveRadianThreshold)
+                        .setArriveThresholdV(this.arriveThresholdV)
+                        .setVel(this.vel);
+            }else{
+                return new Builder();
+            }
         }
     }
 }
