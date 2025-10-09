@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
 import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.Vision.model.AprilTagInfo;
@@ -33,6 +35,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class AprilTagDetector {
     //todo 可以参考的文件：FindCandidate.java  && FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\ConceptAprilTagLocalization.java
     //画面大小
+    private Position cameraPosition = new Position(DistanceUnit.INCH,
+            2.7, 4.3, 13.1, 0);
+    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+            0, -90, 0, 0);
     public static int resolutionwidth = 800;
     public static int resolutionheight= 600;
     VisionPortal portal;
@@ -75,6 +81,7 @@ public class AprilTagDetector {
         CameraStreamProcessor processor = new CameraStreamProcessor();
 
         aprilTag = new AprilTagProcessor.Builder()
+                .setCameraPose(cameraPosition, cameraOrientation)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .build();
 
@@ -111,7 +118,7 @@ public class AprilTagDetector {
     //todo 会在每一帧调用，在这里识别AprilTag并返回位姿 **只识别两个球门上的AprilTag，排除编号为21，22，23的AprilTag**
     //返回值为空数组表示未识别到AprilTag
     //如识别到多个AprilTag，返回数组中包含多个AprilTagInfo
-    public AprilTagInfo[] getPose(){
+    public AprilTagInfo getPose(){
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         ArrayList<AprilTagInfo> tagInfos = new ArrayList<>();
 
@@ -134,7 +141,7 @@ public class AprilTagDetector {
         // 修改：如果未识别到任何AprilTag，返回一个包含全为-1的AprilTagInfo对象
         if (tagInfos.isEmpty()) {
             AprilTagInfo invalidInfo = new AprilTagInfo(
-                    new Pose2d(-1, -1, -1),
+                    new Pose2d(-1000000, -1000000, -1000000),
                     -1,
                     -1,
                     -1
@@ -142,6 +149,6 @@ public class AprilTagDetector {
             tagInfos.add(invalidInfo);
         }
 
-        return tagInfos.toArray(new AprilTagInfo[0]);
+        return tagInfos.get(0);
     }
 }

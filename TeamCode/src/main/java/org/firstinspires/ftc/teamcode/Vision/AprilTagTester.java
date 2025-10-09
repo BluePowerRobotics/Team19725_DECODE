@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.Vision;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 
 @TeleOp
 public class AprilTagTester extends LinearOpMode {
@@ -17,9 +20,15 @@ public class AprilTagTester extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()){
             telemetry.addData("MOTIF", aprilTagDetector.decodeAprilTag());
-            telemetry.addData("getPose", aprilTagDetector.getPose()[0].pose.toString());
-            telemetry.addData("getpitch", aprilTagDetector.getPose()[0].pitchToCameraInDEG);
-            telemetry.addData("getrange", aprilTagDetector.getPose()[0].distanceToCameraInINCH);
+            if (aprilTagDetector.getPose().id!=-1) {
+                telemetry.addData("getPose", aprilTagDetector.getPose().pose.toString());
+                telemetry.addData("getpitch", aprilTagDetector.getPose().pitchToCameraInDEG);
+                TelemetryPacket packet = new TelemetryPacket();
+                packet.fieldOverlay().setStroke("#3F51B5");
+                Drawing.drawRobot(packet.fieldOverlay(), aprilTagDetector.getPose().pose);
+                FtcDashboard.getInstance().sendTelemetryPacket(packet);
+                telemetry.addData("getrange", aprilTagDetector.getPose().distanceToCameraInINCH);
+            }
             telemetry.addData("FPS", 1000 / (System.currentTimeMillis() - t));
             t = System.currentTimeMillis();
             telemetry.update();
