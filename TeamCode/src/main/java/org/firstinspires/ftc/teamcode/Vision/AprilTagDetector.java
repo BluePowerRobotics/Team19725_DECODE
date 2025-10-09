@@ -131,6 +131,17 @@ public class AprilTagDetector {
             }
         }
 
+        // 修改：如果未识别到任何AprilTag，返回一个包含全为-1的AprilTagInfo对象
+        if (tagInfos.isEmpty()) {
+            AprilTagInfo invalidInfo = new AprilTagInfo(
+                    new Pose2d(-1, -1, -1),
+                    -1,
+                    -1,
+                    -1
+            );
+            tagInfos.add(invalidInfo);
+        }
+
         return tagInfos.toArray(new AprilTagInfo[0]);
     }
 }
