@@ -39,8 +39,8 @@ public class AprilTagDetector {
             2.7, 4.3, 13.1, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
             0, -90, 0, 0);
-    public static int resolutionwidth = 800;
-    public static int resolutionheight= 600;
+    public static int resolutionwidth = 640;
+    public static int resolutionheight= 480;
     VisionPortal portal;
     private AprilTagProcessor aprilTag;
 
