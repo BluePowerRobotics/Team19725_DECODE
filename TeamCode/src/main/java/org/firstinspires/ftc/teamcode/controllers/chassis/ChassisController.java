@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.chassis;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -65,9 +66,17 @@ public class ChassisController {
     public void setAutoLockHeading(boolean autoLockHeading){
         this.autoLockHeading=autoLockHeading;
     }
+    @Deprecated
     public void setTargetPoint(MoveAction moveAction){
         runningToPoint = true;
         this.moveAction=moveAction;
+    }
+    public void setTargetPoint(Point2D targetPoint, Double targetRadian){
+        //todo: finish it
+    }
+
+    public void resetPosition(Pose2d pose2d){
+        robotPosition=RobotPosition.refresh(hardwareMap,pose2d);
     }
 
     public double[] wheelSpeeds={0,0,0,0};

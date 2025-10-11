@@ -54,6 +54,15 @@ public class RobotPosition {
         return instance;
     }
     /**
+     * 初始化位置(全新)
+     * @param hardwareMap 硬件映射
+     * @param pose2d 初始位置(roadrunner方向)
+     * @return RobotPosition实例
+     */
+    public static RobotPosition refresh(HardwareMap hardwareMap, Pose2d pose2d) {
+        return refresh(hardwareMap, new Point2D(-pose2d.position.y, pose2d.position.x), pose2d.heading.log());
+    }
+    /**
      * 初始化位置(旧位置)
      * @param hardwareMap 硬件映射
      * @return RobotPosition实例

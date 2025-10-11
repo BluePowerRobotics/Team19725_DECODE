@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.locate;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -54,5 +55,8 @@ public class Data {
                 return speed;
         }
         return null;
+    }
+    public Pose2d getPose2d(){
+        return new Pose2d(getPosition(DistanceUnit.INCH).y,-getPosition(DistanceUnit.INCH).x,headingRadian);
     }
 }
