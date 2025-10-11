@@ -9,6 +9,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
+/**
+ * @deprecated
+ */
+@Deprecated
 public class MoveAction {
     public Point2D targetPoint;
     Point2D startPoint;
@@ -19,7 +23,7 @@ public class MoveAction {
     double vel;
     double arriveThresholdV;
     double arriveRadianThreshold;
-
+    @Deprecated
     private MoveAction(Builder builder) {
         this.targetPoint = builder.targetPoint;
         this.startPoint = builder.startPoint;
@@ -34,6 +38,7 @@ public class MoveAction {
         calculatePath();
     }
     @Override
+    @Deprecated
     public String toString() {
         return "MoveAction{" +
                 "\ntargetPoint=" + targetPoint +
@@ -58,7 +63,7 @@ public class MoveAction {
     long startMS=0;
     long spendMS;
     Point2D Error;
-
+    @Deprecated
     public Point2D getHopeCurrentPoint(){
         if(targetPoint==null) return null;
         if(startPoint==null) return targetPoint;
@@ -76,6 +81,7 @@ public class MoveAction {
         }
         return hopeCurrentPoint;
     }
+    @Deprecated
     public double getHopeCurrentHeadingRadian(){
         if(!targetRadianSet) return Double.NaN;
         if(!startRadianSet) return targetRadian;
@@ -99,14 +105,16 @@ public class MoveAction {
         double vel = ChassisController.Params.maxV;
         double arriveThresholdV = ChassisController.Params.zeroThresholdV;
         double arriveRadianThreshold = Math.toRadians(5);
+        @Deprecated
         public Builder() {
 
         }
-
+        @Deprecated
         public Builder setTargetPoint(Point2D targetPoint) {
             this.targetPoint = targetPoint;
             return this;
         }
+        @Deprecated
         public Builder setTargetPoint(Point2D targetPoint, DistanceUnit unit) {
             DistanceUnit MM = DistanceUnit.MM;
             this.targetPoint = new Point2D(
@@ -126,6 +134,7 @@ public class MoveAction {
             this.startPoint = startPoint;
             return this;
         }
+        @Deprecated
         public Builder setStartPoint(Point2D startPoint, DistanceUnit unit) {
             DistanceUnit MM = DistanceUnit.MM;
             this.startPoint = new Point2D(
@@ -134,27 +143,28 @@ public class MoveAction {
             );
             return this;
         }
-
+        @Deprecated
         public Builder setStartRadian(double startRadian) {
             startRadianSet=true;
             this.startRadian = startRadian;
             return this;
         }
+        @Deprecated
         public Builder setVel(double vel) {
             this.vel = vel;
             return this;
         }
-
+@Deprecated
         public Builder setArriveThresholdV(double arriveThresholdV) {
             this.arriveThresholdV = arriveThresholdV;
             return this;
         }
-
+@Deprecated
         public Builder setArriveRadianThreshold(double arriveRadianThreshold) {
             this.arriveRadianThreshold = arriveRadianThreshold;
             return this;
         }
-
+@Deprecated
         public MoveAction build() {
             return new MoveAction(this);
         }
