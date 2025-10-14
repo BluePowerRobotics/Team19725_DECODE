@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper;
 
-@TeleOp
+@TeleOp(name = "sweeperTest", group = "TEST")
 public class SweeperTest extends LinearOpMode {
     Sweeper sweeper;
     @Override

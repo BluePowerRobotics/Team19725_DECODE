@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.controllers.chassis;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.controllers.chassis.model.MoveAction;
 import org.firstinspires.ftc.teamcode.controllers.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
@@ -32,7 +32,7 @@ public class ChassisController {
     boolean HeadingLockRadianReset=true;
     double HeadingLockRadian;
     double noHeadModeStartError=0;
-    MoveAction moveAction;
+    ActionRunner actionRunner=new ActionRunner();
     ChassisCalculator chassisCalculator= new ChassisCalculator();
     ChassisOutputter chassisOutputter;
 
@@ -66,13 +66,13 @@ public class ChassisController {
     public void setAutoLockHeading(boolean autoLockHeading){
         this.autoLockHeading=autoLockHeading;
     }
-    @Deprecated
-    public void setTargetPoint(MoveAction moveAction){
+
+    public void setTargetPoint(Pose2d pose2d){
         runningToPoint = true;
-        this.moveAction=moveAction;
-    }
-    public void setTargetPoint(Point2D targetPoint, Double targetRadian){
-        //todo: finish it
+        TrajectoryActionBuilder actionBuilder = robotPosition.mecanumDrive.actionBuilder(robotPosition.getData().getPose2d())
+                .strafeToLinearHeading(pose2d.position,pose2d.heading);
+        actionRunner.clear();
+        actionRunner.add(actionBuilder.build());
     }
 
     public void resetPosition(Pose2d pose2d){
@@ -89,20 +89,10 @@ public class ChassisController {
                 if (vx!=0||vy!=0||omega!=0) {
                     runningToPoint = false;//打断自动驾驶
                 }else{
-                    Point2D targetPoint=moveAction.targetPoint;
-                    if(targetPoint==null){
-                        targetPoint=robotPosition.getData().getPosition(DistanceUnit.MM);
+                    actionRunner.update();
+                    if(!actionRunner.isBusy()){
+                        runningToPoint = false;
                     }
-                    double targetRadian=moveAction.targetRadian;
-                    if(Double.isNaN(targetRadian)){
-                        if(HeadingLockRadianReset) {
-                            targetRadian = robotPosition.getData().headingRadian;
-                        }else{
-                            targetRadian=HeadingLockRadian;
-                        }
-                    }
-                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM)),
-                            chassisCalculator.calculatePIDRadian(targetRadian,robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
                 }
             }
             if(!runningToPoint) {
@@ -121,12 +111,10 @@ public class ChassisController {
                     wheelSpeeds = chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian-noHeadModeStartError);
                 else
                     wheelSpeeds = chassisCalculator.solveChassis(vx, vy, omega);
-
+                chassisOutputter.setWheelVelocities(wheelSpeeds);
             }
         }
-        chassisOutputter.setWheelVelocities(wheelSpeeds);
     }
-
 }
 
 class ChassisCalculator {

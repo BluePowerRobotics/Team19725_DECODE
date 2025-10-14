@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -31,13 +33,7 @@ public class ChassisControlTester extends LinearOpMode {
             chassis.gamepadInput(strafe, drive, rotate);
             if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();
             if(gamepad1.yWasReleased()) {
-                MoveAction builder = new MoveAction.Builder()
-                        .setStartPoint(chassis.robotPosition.getData().getPosition(DistanceUnit.MM))
-                        .setStartRadian(chassis.robotPosition.getData().headingRadian)
-                        .setTargetPoint(new Point2D(0,0))
-                        .setTargetRadian(0)
-                        .build();
-                chassis.setTargetPoint(builder);
+                chassis.setTargetPoint(new Pose2d(new Vector2d(0,0),Rotation2d.fromDouble(0)));
             }
             telemetry.addData("y-power",drive);
             telemetry.addData("x-power",strafe);
@@ -45,8 +41,7 @@ public class ChassisControlTester extends LinearOpMode {
             telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
             telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
             telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
-            telemetry.addData("Position",chassis.robotPosition.getData().toString());
-            telemetry.addData("HopeCurrent",chassis.moveAction.toString());
+            telemetry.addData("Position",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
             telemetry.update();
 
             Pose2d pose = chassis.robotPosition.mecanumDrive.localizer.getPose();

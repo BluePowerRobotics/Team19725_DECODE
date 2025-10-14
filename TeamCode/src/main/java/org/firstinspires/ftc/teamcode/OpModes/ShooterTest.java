@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.controllers.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
 
 
-@TeleOp
+@TeleOp(name = "shooterTest", group = "TEST")
 @Config
 public class ShooterTest extends LinearOpMode {
     //2-2   900
