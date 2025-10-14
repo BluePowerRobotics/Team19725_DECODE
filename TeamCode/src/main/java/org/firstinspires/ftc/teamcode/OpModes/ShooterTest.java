@@ -6,19 +6,24 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.controllers.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
 
 
 @TeleOp
 @Config
 public class ShooterTest extends LinearOpMode {
+    //2-2   900
+    // 2.5-2.5 925
     public static int TimePerFrame = 20;
+    public Sweeper sweeper;
     public Shooter shooter1;
     public Shooter shooter2;
     public static double initSpeed = 2500;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        sweeper = new Sweeper(hardwareMap);
         shooter1 = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter2 = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
 //        telemetry.addData("RED:ANSX, ANSY, ANSTheta", solveShootPoint.solveREDShootPoint(new Pose2d(x, y, 0), R));
@@ -42,6 +47,9 @@ public class ShooterTest extends LinearOpMode {
             }
             shooter1.shoot(targetSpeed);
             shooter2.shoot(targetSpeed);
+            if(gamepad1.dpadLeftWasPressed()){
+                sweeper.GiveArtifact();
+            }
             telemetry.addData("targetSpeed", targetSpeed);
             telemetry.addData("1-postion", shooter1.getCurrent_encoder());
             telemetry.addData("1-power", shooter1.getPower());

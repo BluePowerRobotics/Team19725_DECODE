@@ -27,10 +27,10 @@ public class Shooter {
     double current_error;
     double previous_error;
     public static double degreePertick = 0;
-    public static double k_p = 0.005;
+    public static double k_p = 0.017;
     //public static double k_p = 50;
     public static double k_i = 0;
-    public static double k_d = 0;
+    public static double k_d = 0.05;
     //public static double k_d = 0;
     public static double i;
     public static double max_i = 1 ;
@@ -38,6 +38,7 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse){
         shooterMotor = hardwareMap.get(DcMotorEx.class, motorName);
         shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if(ifReverse)
             shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         else
@@ -52,6 +53,13 @@ public class Shooter {
      */
     //todo:fix low velocity issue
     public boolean shoot(double targetSpeed){
+        if(targetSpeed == 0){
+            shooterMotor.setPower(0);
+            Isum = 0;
+            previous_error = 0;
+            previous_time = System.currentTimeMillis();
+            return true;
+        }
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         current_time = System.currentTimeMillis();
         current_encoder = shooterMotor.getCurrentPosition();
@@ -72,7 +80,7 @@ public class Shooter {
         double D = k_d * (current_error - previous_error) / (current_time - previous_time);
 
         Power = P + Isum + D;
-        Power = Range.clip(Power, 0, 1);
+        Power = Range.clip(Power, 0.001, 1);
         shooterMotor.setPower(Power);
         previous_error = current_error;
         previous_time = current_time;
