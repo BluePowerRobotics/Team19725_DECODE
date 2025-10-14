@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 
-@TeleOp
+@TeleOp(name = "actionRunnerTest", group = "TEST")
 public class ActionRunnerTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

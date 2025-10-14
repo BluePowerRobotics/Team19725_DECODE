@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
 
 
-@TeleOp
+@TeleOp(name = "shooterTest", group = "TEST")
 @Config
 public class ShooterTest extends LinearOpMode {
     public static int TimePerFrame = 20;
