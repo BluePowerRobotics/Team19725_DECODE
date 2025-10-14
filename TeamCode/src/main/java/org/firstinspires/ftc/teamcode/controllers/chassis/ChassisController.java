@@ -26,12 +26,12 @@ public class ChassisController {
     public RobotPosition robotPosition;
     HardwareMap hardwareMap;
     boolean fullyAutoMode = false;
-    boolean useNoHeadMode=false;
-    boolean runningToPoint=false;
+    public boolean useNoHeadMode=false;
+    public boolean runningToPoint=false;
     boolean autoLockHeading=true;
     boolean HeadingLockRadianReset=true;
     double HeadingLockRadian;
-    double noHeadModeStartError=0;
+    public double noHeadModeStartError=0;
     ActionRunner actionRunner=new ActionRunner();
     ChassisCalculator chassisCalculator= new ChassisCalculator();
     ChassisOutputter chassisOutputter;
