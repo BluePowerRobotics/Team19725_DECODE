@@ -3,13 +3,8 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
@@ -38,10 +33,10 @@ public class SweeperTest extends LinearOpMode {
 
 
                 if(gamepad1.a){
-                    sweeper.Eat_fullpower();
+                    sweeper.Eat();
                 }
                 if(gamepad1.b){
-                    sweeper.Eat_halfpower();
+                    sweeper.GiveArtifact();
                 }
                 telemetry.addData("sweeperPower", sweeper.getPower());
 //                drive.updatePoseEstimate();
