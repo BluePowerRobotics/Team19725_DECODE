@@ -23,6 +23,7 @@ public class Sweeper {
         motor.setPower(0.3);
     }
     public void stop(){motor.setPower(0);}
+    public void output(){motor.setPower(-0.4);}
     public double getPower(){
         return motor.getPower();
     }
