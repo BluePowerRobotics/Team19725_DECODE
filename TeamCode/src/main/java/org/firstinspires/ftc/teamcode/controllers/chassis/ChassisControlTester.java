@@ -27,7 +27,7 @@ public class ChassisControlTester extends LinearOpMode {
         //chassis.init(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
-            double drive = -gamepad1.left_stick_y-gamepad2.left_stick_y; // 前后
+            double drive = -gamepad1.left_stick_y-gamepad1.right_stick_y; // 前后
             double strafe = gamepad1.left_stick_x; // 左右
             double rotate = gamepad1.right_stick_x; // 旋转
             chassis.gamepadInput(strafe, drive, rotate);
