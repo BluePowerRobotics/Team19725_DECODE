@@ -16,7 +16,7 @@ public class TestGmaepad extends LinearOpMode {
         telemetry.addData("test gamepad1", "Press start to begin");
         telemetry.update();
         waitForStart();
-
+    boolean test = false;
         while( opModeIsActive() ) {
             previousGamepad1.copy(currentGamepad1);
             previousGamepad2.copy(currentGamepad2);
@@ -31,6 +31,10 @@ public class TestGmaepad extends LinearOpMode {
             telemetry.addData("Left Bumper", gamepad1.left_bumper);
             telemetry.addData("Right Bumper", gamepad1.right_bumper);
             telemetry.addData("A Button", gamepad1.a);
+            if(gamepad1.aWasPressed()){
+                test = !test;
+            }
+            telemetry.addData("test", test);
             telemetry.addData("B Button", gamepad1.b);
             telemetry.addData("X Button", gamepad1.x);
             telemetry.addData("Y Button", gamepad1.y);
