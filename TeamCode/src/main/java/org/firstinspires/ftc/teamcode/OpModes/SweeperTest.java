@@ -38,7 +38,11 @@ public class SweeperTest extends LinearOpMode {
                 if(gamepad1.b){
                     sweeper.GiveArtifact();
                 }
+                if(gamepad1.x){
+                    sweeper.output();
+                }
                 telemetry.addData("sweeperPower", sweeper.getPower());
+                telemetry.addData("sweeperVel", sweeper.getVel());
 //                drive.updatePoseEstimate();
 //
 //                Pose2d pose = drive.localizer.getPose();
