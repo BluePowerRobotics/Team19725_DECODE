@@ -15,6 +15,9 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
 public class ShooterTest extends LinearOpMode {
     //2-2   900
     // 2.5-2.5 925
+    //3-3 975
+    // small -near 1100
+    //small -far 1230
     public static int TimePerFrame = 20;
     public Sweeper sweeper;
     public Shooter shooter1;
