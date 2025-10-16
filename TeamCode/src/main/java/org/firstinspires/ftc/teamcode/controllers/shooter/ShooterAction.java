@@ -17,10 +17,15 @@ public class ShooterAction {
     public static double targetSpeed_high = 3000;
     public static double low_speed_threshold = 100;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
-        shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", false);
-        shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", true);
+        shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
+        shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
         telemetry = telerc;
     }
+    public void setShootSpeed(int Power){
+        shooter_Left.shoot(Power);
+        shooter_Right.shoot(Power);
+    }
+
     public class SpeedUp implements Action {
         private double targetSpeed;
         public SpeedUp(double targetSpeed) {
@@ -74,5 +79,13 @@ public class ShooterAction {
     }
     public Action ShootThreeArtifacts(double targetSpeed) {
         return new ShootThreeArtifacts(targetSpeed);
+    }
+
+
+    public double getPower(){
+        return shooter_Left.Power;
+    }
+    public double getCurrent_speed(){
+        return shooter_Left.current_speed;
     }
 }
