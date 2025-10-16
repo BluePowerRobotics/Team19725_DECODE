@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.utility;
 import com.acmerobotics.roadrunner.Pose2d;
 
 public class SolveShootPoint {
-    private final double genhao2 = Math.sqrt(2);
-    public Pose2d solveREDShootPoint(Pose2d robotPose, double R) {
+    private static double genhao2 = Math.sqrt(2);
+    public static Pose2d solveREDShootPoint(Pose2d robotPose, double R) {
         double x0 = robotPose.position.x;
         double y0 = robotPose.position.y;
         double ansX = 0;
@@ -23,7 +23,7 @@ public class SolveShootPoint {
         }
         return new Pose2d(ansX, ansY, Math.atan((72 - ansY) / (72 - ansX)));
     }
-    public Pose2d solveBLUEShootPoint(Pose2d robotPose, double R) {
+    public static Pose2d solveBLUEShootPoint(Pose2d robotPose, double R) {
         double x0 = robotPose.position.x;
         double y0 = robotPose.position.y;
         double ansX = 0;
