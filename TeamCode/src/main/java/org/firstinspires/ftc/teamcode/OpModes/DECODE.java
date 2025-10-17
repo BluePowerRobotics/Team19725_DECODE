@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper;
+import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
@@ -24,6 +25,12 @@ public class DECODE extends LinearOpMode {
         RED,BLUE
     }
     TEAMCOLOR teamcolor;
+    public enum TRIGGERSTATUS{
+        OPEN,
+        CLOSE,
+        EMERGENCYSTOP
+    }
+    TRIGGERSTATUS triggerStatus = TRIGGERSTATUS.CLOSE;
     public enum SWEEPERSTATUS{
         EAT,
         GIVEARTIFACT,
@@ -37,12 +44,10 @@ public class DECODE extends LinearOpMode {
         STOP
     }
     SHOOTERSTATUS shooterStatus = SHOOTERSTATUS.STOP;
-
-
-    //todo add sweeper enum
     public ChassisController chassis;
     public Sweeper sweeper;
     public ShooterAction shooter;
+    public Trigger trigger;
     //
     public  int targetSpeed = 900;
     public static int speed2_2 = 900;
@@ -50,6 +55,13 @@ public class DECODE extends LinearOpMode {
     public static int speed3_3 = 975;
     public static int speed25_55 = 1100;
     public static int speed35_55 = 1230;
+    public static double r1 = 48 * Math.sqrt(2);
+    public static double r2 = 60 * Math.sqrt(2);
+    public static double r3 = 72 * Math.sqrt(2);
+    //特殊情况，表示小三角，靠近球门一边射击
+    public static double r4 = 100;
+    //特殊情况，表示小三角，远离球门一边射击
+    public static double r5 = 200;
     public Pose2d startPose = new Pose2d(0,0,0);
     void Init(){
 
@@ -58,6 +70,7 @@ public class DECODE extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         sweeper = new Sweeper(hardwareMap);
+        trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, new Point2D(0,0), 0);
     }
@@ -75,6 +88,20 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("1-speed", shooter.getCurrent_speed());
         telemetry.update();
     }
+    void trigger(){
+        switch (triggerStatus){
+            case OPEN:
+                trigger.open();
+                break;
+            case CLOSE:
+                trigger.close();
+                break;
+            case EMERGENCYSTOP:
+                trigger.emergencyStop();
+                break;
+        }
+    }
+
     void shoot(){
 
         if(gamepad1.yWasPressed() || gamepad2.aWasPressed()){
@@ -95,23 +122,23 @@ public class DECODE extends LinearOpMode {
             case SHOOTING:
                 boolean ifhit =   false;//todo = chassisController.wheelSpeeds.length;
                 if(ifhit){
-
-                    //TODO banji -1
                     shooterStatus = SHOOTERSTATUS.EMERGENCYSTOP;
                 }
                 else{
                     sweeperStatus = SWEEPERSTATUS.GIVEARTIFACT;
-                    //TODO banji songqiu
+                    triggerStatus = TRIGGERSTATUS.OPEN;
                     shooter.setShootSpeed(targetSpeed);
                 }
                 break;
 
             case EMERGENCYSTOP:
+                triggerStatus = TRIGGERSTATUS.EMERGENCYSTOP;
                 sweeperStatus = SWEEPERSTATUS.STOP;
-                shooter.setShootSpeed(-200);
+                shooter.setShootSpeed(-400);
                 break;
 
             case STOP:
+                triggerStatus = TRIGGERSTATUS.CLOSE;
                 shooter.setShootSpeed(0);
                 break;
         }
@@ -202,9 +229,10 @@ public class DECODE extends LinearOpMode {
         Init();
         waitForStart();
         while (opModeIsActive()) {
+            sweeper();
+            trigger();
             shoot();
             chassis();
-            sweeper();
             Telemetry();
         }
     }
