@@ -160,12 +160,58 @@ public class DECODE extends LinearOpMode {
         }
 
 
-        if(gamepad1.dpadLeftWasPressed()){
-            //todo add more dis and color
+        if(gamepad1.dpadLeftWasPressed() || gamepad2.dpadLeftWasPressed()){
+            if(teamcolor == TEAMCOLOR.RED){
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r1));
+                targetSpeed = speed2_2;
+            }
             if(teamcolor == TEAMCOLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, 48 * Math.sqrt(2)));
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r1));
+                targetSpeed = speed2_2;
             }
         }
+        if(gamepad1.dpadUpWasPressed() || gamepad2.dpadUpWasPressed()){
+            if(teamcolor == TEAMCOLOR.RED){
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r2));
+                targetSpeed = speed25_25;
+            }
+            if(teamcolor == TEAMCOLOR.BLUE){
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r2));
+                targetSpeed = speed25_25;
+            }
+        }
+        if(gamepad1.dpadRightWasPressed() || gamepad2.dpadRightWasPressed()){
+            if(teamcolor == TEAMCOLOR.RED){
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r3));
+                targetSpeed = speed3_3;
+            }
+            if(teamcolor == TEAMCOLOR.BLUE){
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r3));
+                targetSpeed = speed3_3;
+            }
+        }
+        if(gamepad1.dpadDownWasPressed() || gamepad2.dpadDownWasPressed()){
+            if(teamcolor == TEAMCOLOR.RED){
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r4));
+                targetSpeed = speed25_55;
+            }
+            if(teamcolor == TEAMCOLOR.BLUE){
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r4));
+                targetSpeed = speed25_55;
+            }
+        }
+        if(gamepad2.xWasPressed()){
+            if(teamcolor == TEAMCOLOR.RED){
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r5));
+                targetSpeed = speed35_55;
+            }
+            if(teamcolor == TEAMCOLOR.BLUE){
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r5));
+                targetSpeed = speed35_55;
+            }
+        }
+
+
         chassis.gamepadInput(strafe, drive, rotate);
         if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();
         if(gamepad1.yWasReleased()) {
@@ -188,7 +234,6 @@ public class DECODE extends LinearOpMode {
             if(sweeperStatus == SWEEPERSTATUS.EAT){
                 sweeperStatus = SWEEPERSTATUS.STOP;
             }
-            //todo check the logic
             else{
                 sweeperStatus = SWEEPERSTATUS.EAT;
             }

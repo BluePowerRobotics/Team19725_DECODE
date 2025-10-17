@@ -5,6 +5,16 @@ import com.acmerobotics.roadrunner.Pose2d;
 public class SolveShootPoint {
     private static double genhao2 = Math.sqrt(2);
     public static Pose2d solveREDShootPoint(Pose2d robotPose, double R) {
+
+        //特殊判断小三角情况
+
+        if(R == 100){
+            return new Pose2d(-12, 60, -(Math.atan(5.0/11) + Math.PI/2));
+        }
+        if(R == 200){
+            return new Pose2d(12, 60, -(Math.atan(7.0/11) + Math.PI/2));
+        }
+
         double x0 = robotPose.position.x;
         double y0 = robotPose.position.y;
         double ansX = 0;
@@ -24,6 +34,14 @@ public class SolveShootPoint {
         return new Pose2d(ansX, ansY, Math.atan((72 - ansY) / (72 - ansX)));
     }
     public static Pose2d solveBLUEShootPoint(Pose2d robotPose, double R) {
+
+        if(R == 100){
+            return new Pose2d(12, 60, -Math.atan(5.0/11));
+        }
+        if(R == 200){
+            return new Pose2d(-12, 60, -Math.atan(7.0/11));
+        }
+
         double x0 = robotPose.position.x;
         double y0 = robotPose.position.y;
         double ansX = 0;

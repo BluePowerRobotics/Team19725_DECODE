@@ -3,11 +3,15 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
 
 @TeleOp(name = "shooterTest", group = "TEST")
@@ -18,6 +22,11 @@ public class ShooterTest extends LinearOpMode {
     //3-3 975
     // small -near 1100
     //small -far 1230
+
+
+    public static double R = 48 * Math.sqrt(2);
+    public static double x = 24;
+    public static double y = 0;
     public static int TimePerFrame = 20;
     public Sweeper sweeper;
     public Shooter shooter1;
@@ -29,10 +38,22 @@ public class ShooterTest extends LinearOpMode {
         sweeper = new Sweeper(hardwareMap);
         shooter1 = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter2 = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
-//        telemetry.addData("RED:ANSX, ANSY, ANSTheta", solveShootPoint.solveREDShootPoint(new Pose2d(x, y, 0), R));
-//        telemetry.addData("BLUE:ANSX, ANSY, ANSTheta", solveShootPoint.solveBLUEShootPoint(new Pose2d(x, y, 0), R));
-//
-//        telemetry.update();
+        telemetry.addData("RED:ANSX, ANSY, ANSTheta", SolveShootPoint.solveREDShootPoint(new Pose2d(x, y, 0), R));
+        telemetry.addData("BLUE:ANSX, ANSY, ANSTheta", SolveShootPoint.solveBLUEShootPoint(new Pose2d(x, y, 0), R));
+        telemetry.update();
+
+
+        TelemetryPacket packet_blue = new TelemetryPacket();
+        packet_blue.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot(packet_blue.fieldOverlay(), SolveShootPoint.solveBLUEShootPoint(new Pose2d(x, y, 0), R));
+        FtcDashboard.getInstance().sendTelemetryPacket(packet_blue);
+
+        TelemetryPacket packet_red = new TelemetryPacket();
+        packet_red.fieldOverlay().setStroke("#FF0000");
+        Drawing.drawRobot(packet_red.fieldOverlay(), SolveShootPoint.solveREDShootPoint(new Pose2d(x, y, 0), R));
+        FtcDashboard.getInstance().sendTelemetryPacket(packet_red);
+
+
         waitForStart();
         double targetSpeed = 0;
         while (opModeIsActive()) {
