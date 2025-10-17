@@ -44,6 +44,7 @@ public class ChassisController {
         this.hardwareMap=hardwareMap;
         chassisOutputter=new ChassisOutputter(hardwareMap);
         HeadingLockRadian = robotPosition.getData().headingRadian;
+        noHeadModeStartError=robotPosition.getData().headingRadian;
     }
 
     /**
@@ -58,13 +59,20 @@ public class ChassisController {
         //fullyAutoMode=true;
         chassisOutputter=new ChassisOutputter(hardwareMap);
         HeadingLockRadian = robotPosition.getData().headingRadian;
+        noHeadModeStartError=robotPosition.getData().headingRadian;
     }
     public void exchangeNoHeadMode(){
         useNoHeadMode=!useNoHeadMode;
-        noHeadModeStartError=robotPosition.getData().headingRadian;
     }
     public void setAutoLockHeading(boolean autoLockHeading){
         this.autoLockHeading=autoLockHeading;
+    }
+
+    public void resetNoHeadModeStartError(double Radian){
+        noHeadModeStartError = Radian;
+    }
+    public void resetNoHeadModeStartError(){
+        resetNoHeadModeStartError(0);
     }
 
     public void setTargetPoint(Pose2d pose2d){
@@ -94,6 +102,7 @@ public class ChassisController {
                         runningToPoint = false;
                     }
                 }
+                HeadingLockRadian=robotPosition.getData().headingRadian;
             }
             if(!runningToPoint) {
                 if(autoLockHeading){
