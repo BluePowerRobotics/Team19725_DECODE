@@ -19,6 +19,9 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
+
+
+//泵赛季主程序
 @TeleOp(name="DECODE", group="OpModes")
 public class DECODE extends LinearOpMode {
     public enum TEAMCOLOR{

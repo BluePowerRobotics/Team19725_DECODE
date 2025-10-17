@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+// 控制双发射轮的共同运作和自动化动作
 @Config
 public class ShooterAction {
     private Telemetry telemetry;

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
 
+//测试弹射以及发射位置解算
 @TeleOp(name = "shooterTest", group = "TEST")
 @Config
 public class ShooterTest extends LinearOpMode {

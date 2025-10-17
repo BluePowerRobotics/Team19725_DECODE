@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+//测试手柄按键是否正常工作
 @TeleOp(name = "GamepadTest",group = "TEST")
 public class TestGmaepad extends LinearOpMode {
     Gamepad currentGamepad1 = new Gamepad();

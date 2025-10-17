@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+//单个弹射飞轮的PID控制器
 @Config
 public class Shooter {
     public DcMotorEx shooterMotor;

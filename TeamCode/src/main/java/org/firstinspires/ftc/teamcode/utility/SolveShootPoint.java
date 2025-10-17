@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.utility;
 
 import com.acmerobotics.roadrunner.Pose2d;
 
+//工具类，用于计算发射点位置
 public class SolveShootPoint {
     private static double genhao2 = Math.sqrt(2);
     public static Pose2d solveREDShootPoint(Pose2d robotPose, double R) {

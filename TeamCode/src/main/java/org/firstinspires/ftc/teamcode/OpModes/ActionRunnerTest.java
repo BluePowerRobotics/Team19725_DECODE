@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 
+//测试Action在OpMode中的运行情况
 @TeleOp(name = "actionRunnerTest", group = "TEST")
 public class ActionRunnerTest extends LinearOpMode {
     @Override
