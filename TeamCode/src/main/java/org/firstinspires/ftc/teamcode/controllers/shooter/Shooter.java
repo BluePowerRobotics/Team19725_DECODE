@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utility.PIDController;
 
 //单个弹射飞轮的PID控制器
 @Config
@@ -17,7 +18,6 @@ public class Shooter {
     public DcMotorEx shooterMotor;
     TelemetryPacket packet = new TelemetryPacket();
     double[] speedBuffer = new double[10];
-
     Telemetry telemetry;
     double Power = 0;
     double current_speed = 0;
@@ -29,13 +29,11 @@ public class Shooter {
     double previous_error;
     public static double degreePertick = 0;
     public static double k_p = 0.017;
-    //public static double k_p = 50;
     public static double k_i = 0;
     public static double k_d = 0.05;
-    //public static double k_d = 0;
-    public static double i;
-    public static double max_i = 1 ;
-    public double Isum = 0;
+    public static double max_i = 1;
+    private PIDController pidController;
+
     public Shooter(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse){
         shooterMotor = hardwareMap.get(DcMotorEx.class, motorName);
         shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -45,6 +43,8 @@ public class Shooter {
         else
             shooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         this.telemetry = telemetryrc;
+        pidController = new PIDController(k_p, k_i, k_d, max_i);
+        previous_time = System.currentTimeMillis();
     }
 
     /**
@@ -56,8 +56,7 @@ public class Shooter {
     public boolean shoot(double targetSpeed){
         if(targetSpeed == 0){
             shooterMotor.setPower(0);
-            Isum = 0;
-            previous_error = 0;
+            pidController.reset();
             previous_time = System.currentTimeMillis();
             return true;
         }
@@ -65,38 +64,13 @@ public class Shooter {
         current_time = System.currentTimeMillis();
         current_encoder = shooterMotor.getCurrentPosition();
         current_speed = shooterMotor.getVelocity(AngleUnit.DEGREES);
-
-        current_error = targetSpeed - current_speed;
-
-        double P = k_p * current_error;
-
-        Isum += k_i * (current_error * (current_time - previous_time));
-
-        if(Isum > max_i){
-            Isum = max_i;
-        } else if(Isum < -max_i){
-            Isum = -max_i;
-        }
-
-        double D = k_d * (current_error - previous_error) / (current_time - previous_time);
-
-        Power = P + Isum + D;
+        double dt = (current_time - previous_time);
+        if (dt <= 0) dt = 1; // 防止除零
+        Power = pidController.calculate(targetSpeed, current_speed, dt);
         Power = Range.clip(Power, 0.001, 1);
         shooterMotor.setPower(Power);
-        previous_error = current_error;
         previous_time = current_time;
-
-
-//        telemetry.addData("power * 100", Power * 100);
-//        telemetry.addData("degree", current_speed);
-//        telemetry.addData("postion", shooterMotor.getCurrentPosition());
-//        telemetry.addData("Position Vel", current_speed / 1000000000);
-//        //telemetry.update();
-//
-//        packet.put("Shooter Power * 100", Power * 100);
-//        packet.put("Shooter Speed", shooterMotor.getVelocity(AngleUnit.DEGREES));
-//        FtcDashboard.getInstance().sendTelemetryPacket(packet);
-        if(Math.abs(current_error) < 50){
+        if(Math.abs(targetSpeed - current_speed) < 50){
             return true;
         } else {
             return false;
