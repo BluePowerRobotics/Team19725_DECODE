@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
 
 //泵赛季主程序
-@TeleOp(name="DECODE", group="OpModes")
+@TeleOp(name="DECODE", group="AAA_DECODE")
 public class DECODE extends LinearOpMode {
     public enum TEAMCOLOR{
         RED,BLUE
