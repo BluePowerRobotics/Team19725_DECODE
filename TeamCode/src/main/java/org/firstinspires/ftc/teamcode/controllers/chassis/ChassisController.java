@@ -180,8 +180,8 @@ class ChassisCalculator {
         double vyPro = -vx * Math.sin(headingRadian) + vy * Math.cos(headingRadian);
         return solveChassis(vxPro, vyPro, omega);
     }
-    public double[] solveGround(double[] vxy,double vomega,double headingRadian){
-        return solveGround(vxy[0],vxy[1],vomega,headingRadian);
+    public double[] solveGround(double[] vxy,double vOmega,double headingRadian){
+        return solveGround(vxy[0],vxy[1],vOmega,headingRadian);
     }
 
     long lastTimeXY = 0;
