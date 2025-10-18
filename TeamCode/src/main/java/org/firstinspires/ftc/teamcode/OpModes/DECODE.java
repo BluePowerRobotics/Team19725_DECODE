@@ -5,8 +5,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -24,29 +22,29 @@ import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 //泵赛季主程序
 @TeleOp(name="DECODE", group="AAA_DECODE")
 public class DECODE extends LinearOpMode {
-    public enum TEAMCOLOR{
+    public enum TEAM_COLOR {
         RED,BLUE
     }
-    TEAMCOLOR teamcolor;
-    public enum TRIGGERSTATUS{
+    TEAM_COLOR teamColor;
+    public enum TRIGGER_STATUS {
         OPEN,
         CLOSE,
-        EMERGENCYSTOP
+        EMERGENCY_STOP
     }
-    TRIGGERSTATUS triggerStatus = TRIGGERSTATUS.CLOSE;
-    public enum SWEEPERSTATUS{
+    TRIGGER_STATUS triggerStatus = TRIGGER_STATUS.CLOSE;
+    public enum SWEEPER_STATUS {
         EAT,
-        GIVEARTIFACT,
+        GIVE_ARTIFACT,
         OUTPUT,
         STOP
     }
-    SWEEPERSTATUS sweeperStatus = SWEEPERSTATUS.STOP;
-    public enum SHOOTERSTATUS{
+    SWEEPER_STATUS sweeperStatus = SWEEPER_STATUS.STOP;
+    public enum SHOOTER_STATUS {
         SHOOTING,
-        EMERGENCYSTOP,
+        EMERGENCY_STOP,
         STOP
     }
-    SHOOTERSTATUS shooterStatus = SHOOTERSTATUS.STOP;
+    SHOOTER_STATUS shooterStatus = SHOOTER_STATUS.STOP;
     public ChassisController chassis;
     public Sweeper sweeper;
     public ShooterAction shooter;
@@ -69,7 +67,7 @@ public class DECODE extends LinearOpMode {
     void Init(){
 
         //todo set team color
-        teamcolor = TEAMCOLOR.BLUE;
+        teamColor = TEAM_COLOR.BLUE;
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         sweeper = new Sweeper(hardwareMap);
@@ -99,7 +97,7 @@ public class DECODE extends LinearOpMode {
             case CLOSE:
                 trigger.close();
                 break;
-            case EMERGENCYSTOP:
+            case EMERGENCY_STOP:
                 trigger.emergencyStop();
                 break;
         }
@@ -108,40 +106,40 @@ public class DECODE extends LinearOpMode {
     void shoot(){
 
         if(gamepad1.yWasPressed() || gamepad2.aWasPressed()){
-            if(shooterStatus == SHOOTERSTATUS.SHOOTING){
-                shooterStatus = SHOOTERSTATUS.EMERGENCYSTOP;
+            if(shooterStatus == SHOOTER_STATUS.SHOOTING){
+                shooterStatus = SHOOTER_STATUS.EMERGENCY_STOP;
             }
             else{
-                shooterStatus = SHOOTERSTATUS.SHOOTING;
+                shooterStatus = SHOOTER_STATUS.SHOOTING;
             }
         }
 
         if(gamepad1.aWasPressed() || gamepad2.aWasPressed()){
-            shooterStatus = SHOOTERSTATUS.STOP;
+            shooterStatus = SHOOTER_STATUS.STOP;
         }
 
 
         switch (shooterStatus){
             case SHOOTING:
-                boolean ifhit =   false;//todo = chassisController.wheelSpeeds.length;
-                if(ifhit){
-                    shooterStatus = SHOOTERSTATUS.EMERGENCYSTOP;
+                boolean ifHit =   false;//todo = chassisController.wheelSpeeds.length;
+                if(ifHit){
+                    shooterStatus = SHOOTER_STATUS.EMERGENCY_STOP;
                 }
                 else{
-                    sweeperStatus = SWEEPERSTATUS.GIVEARTIFACT;
-                    triggerStatus = TRIGGERSTATUS.OPEN;
+                    sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
+                    triggerStatus = TRIGGER_STATUS.OPEN;
                     shooter.setShootSpeed(targetSpeed);
                 }
                 break;
 
-            case EMERGENCYSTOP:
-                triggerStatus = TRIGGERSTATUS.EMERGENCYSTOP;
-                sweeperStatus = SWEEPERSTATUS.STOP;
+            case EMERGENCY_STOP:
+                triggerStatus = TRIGGER_STATUS.EMERGENCY_STOP;
+                sweeperStatus = SWEEPER_STATUS.STOP;
                 shooter.setShootSpeed(-400);
                 break;
 
             case STOP:
-                triggerStatus = TRIGGERSTATUS.CLOSE;
+                triggerStatus = TRIGGER_STATUS.CLOSE;
                 shooter.setShootSpeed(0);
                 break;
         }
@@ -164,51 +162,51 @@ public class DECODE extends LinearOpMode {
 
 
         if(gamepad1.dpadLeftWasPressed() || gamepad2.dpadLeftWasPressed()){
-            if(teamcolor == TEAMCOLOR.RED){
+            if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r1));
                 targetSpeed = speed2_2;
             }
-            if(teamcolor == TEAMCOLOR.BLUE){
+            if(teamColor == TEAM_COLOR.BLUE){
                 chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r1));
                 targetSpeed = speed2_2;
             }
         }
         if(gamepad1.dpadUpWasPressed() || gamepad2.dpadUpWasPressed()){
-            if(teamcolor == TEAMCOLOR.RED){
+            if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r2));
                 targetSpeed = speed25_25;
             }
-            if(teamcolor == TEAMCOLOR.BLUE){
+            if(teamColor == TEAM_COLOR.BLUE){
                 chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r2));
                 targetSpeed = speed25_25;
             }
         }
         if(gamepad1.dpadRightWasPressed() || gamepad2.dpadRightWasPressed()){
-            if(teamcolor == TEAMCOLOR.RED){
+            if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r3));
                 targetSpeed = speed3_3;
             }
-            if(teamcolor == TEAMCOLOR.BLUE){
+            if(teamColor == TEAM_COLOR.BLUE){
                 chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r3));
                 targetSpeed = speed3_3;
             }
         }
         if(gamepad1.dpadDownWasPressed() || gamepad2.dpadDownWasPressed()){
-            if(teamcolor == TEAMCOLOR.RED){
+            if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r4));
                 targetSpeed = speed25_55;
             }
-            if(teamcolor == TEAMCOLOR.BLUE){
+            if(teamColor == TEAM_COLOR.BLUE){
                 chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r4));
                 targetSpeed = speed25_55;
             }
         }
         if(gamepad2.xWasPressed()){
-            if(teamcolor == TEAMCOLOR.RED){
+            if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r5));
                 targetSpeed = speed35_55;
             }
-            if(teamcolor == TEAMCOLOR.BLUE){
+            if(teamColor == TEAM_COLOR.BLUE){
                 chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r5));
                 targetSpeed = speed35_55;
             }
@@ -217,9 +215,9 @@ public class DECODE extends LinearOpMode {
 
         chassis.gamepadInput(strafe, drive, rotate);
         if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();
-        if(gamepad1.yWasReleased()) {
-            //chassis.setTargetPoint(new Pose2d(new Vector2d(0,0), Rotation2d.fromDouble(0)));
-        }
+        //if(gamepad1.yWasReleased()) {
+        //    chassis.setTargetPoint(new Pose2d(new Vector2d(0,0), Rotation2d.fromDouble(0)));
+        //}
         telemetry.addData("y-power",drive);
         telemetry.addData("x-power",strafe);
         telemetry.addData("r-power",rotate);
@@ -234,32 +232,32 @@ public class DECODE extends LinearOpMode {
 
     void sweeper(){
         if(gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()){
-            if(sweeperStatus == SWEEPERSTATUS.EAT){
-                sweeperStatus = SWEEPERSTATUS.STOP;
+            if(sweeperStatus == SWEEPER_STATUS.EAT){
+                sweeperStatus = SWEEPER_STATUS.STOP;
             }
             else{
-                sweeperStatus = SWEEPERSTATUS.EAT;
+                sweeperStatus = SWEEPER_STATUS.EAT;
             }
 
         }
         else if(gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()){
-            if(sweeperStatus == SWEEPERSTATUS.OUTPUT){
-                sweeperStatus = SWEEPERSTATUS.STOP;
+            if(sweeperStatus == SWEEPER_STATUS.OUTPUT){
+                sweeperStatus = SWEEPER_STATUS.STOP;
             }
             else{
-                sweeperStatus = SWEEPERSTATUS.OUTPUT;
+                sweeperStatus = SWEEPER_STATUS.OUTPUT;
             }
         }
 
         if(gamepad2.yWasPressed()){
-            sweeperStatus = SWEEPERSTATUS.GIVEARTIFACT;
+            sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
         }
 
         switch (sweeperStatus){
             case EAT:
                 sweeper.Eat();
                 break;
-            case GIVEARTIFACT:
+            case GIVE_ARTIFACT:
                 sweeper.GiveArtifact();
                 break;
             case OUTPUT:
