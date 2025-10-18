@@ -31,7 +31,7 @@ public class ChassisController {
     boolean autoLockHeading=true;
     boolean HeadingLockRadianReset=true;
     double HeadingLockRadian;
-    public double noHeadModeStartError=0;
+    public double noHeadModeStartError;
     ActionRunner actionRunner=new ActionRunner();
     ChassisCalculator chassisCalculator= new ChassisCalculator();
     ChassisOutputter chassisOutputter;
