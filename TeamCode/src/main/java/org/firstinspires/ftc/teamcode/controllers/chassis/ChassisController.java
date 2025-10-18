@@ -135,9 +135,9 @@ class ChassisCalculator {
         public static double pkP = 0.002;//point k
         public static double pkI = 0;
         public static double pkD = 0.00025;
-        public static double rkP = -0.7;//radian k
+        public static double rkP = 0.7;//radian k
         public static double rkI = 0;
-        public static double rkD = -0.1;
+        public static double rkD = 0.1;
     }
 
     PIDController pidPoint;
@@ -158,10 +158,10 @@ class ChassisCalculator {
      * @return 各个车轮的线速度 (m/s)
      */
     public double[] solveChassis(double vx, double vy, double omega) {
-        double v_fl = vy + vx + (2 * Params.rb * omega);
-        double v_bl = vy - vx + (2 * Params.rb * omega);
-        double v_br = vy + vx - (2 * Params.rb * omega);
-        double v_fr = vy - vx - (2 * Params.rb * omega);
+        double v_fl = vy + vx - (2 * Params.rb * omega);
+        double v_bl = vy - vx - (2 * Params.rb * omega);
+        double v_br = vy + vx + (2 * Params.rb * omega);
+        double v_fr = vy - vx + (2 * Params.rb * omega);
 
         return new double[]{v_fl, v_fr, v_bl, v_br};
     }

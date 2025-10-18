@@ -17,22 +17,25 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 @Config
 @TeleOp(name = "ChassisControlTester", group = "TEST")
 public class ChassisControlTester extends LinearOpMode {
+    long lastNanoTime=0;
     @Override
     public void runOpMode() throws InterruptedException {
-        //MecanumDrive mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
         ChassisController chassis = new ChassisController(hardwareMap,new Point2D(0,0),0);
+        chassis.robotPosition.setMinUpdateIntervalMs(1);//todo 测试更小的时间间隔是否能带来更好的效果
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //chassis.init(hardwareMap);
         waitForStart();
+        lastNanoTime=System.nanoTime();
         while (opModeIsActive()) {
             double drive = -gamepad1.left_stick_y-gamepad1.right_stick_y; // 前后
             double strafe = gamepad1.left_stick_x; // 左右
-            double rotate = gamepad1.right_stick_x; // 旋转
+            double rotate =-gamepad1.right_stick_x; // 旋转——正为逆时针旋转
             chassis.gamepadInput(strafe, drive, rotate);
             if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();
             if(gamepad1.yWasReleased()) {
                 chassis.setTargetPoint(new Pose2d(new Vector2d(0,0),Rotation2d.fromDouble(0)));
             }
+            telemetry.addData("FPS",1000000000.0/(System.nanoTime()-lastNanoTime));
             telemetry.addData("y-power",drive);
             telemetry.addData("x-power",strafe);
             telemetry.addData("r-power",rotate);
@@ -41,6 +44,7 @@ public class ChassisControlTester extends LinearOpMode {
             telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
             telemetry.addData("Position",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
             telemetry.update();
+            lastNanoTime = System.nanoTime();
 
             Pose2d pose = chassis.robotPosition.mecanumDrive.localizer.getPose();
 

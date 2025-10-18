@@ -152,7 +152,7 @@ public class DECODE extends LinearOpMode {
 
         double drive = -gamepad1.left_stick_y-gamepad1.right_stick_y; // 前后
         double strafe = gamepad1.left_stick_x; // 左右
-        double rotate = gamepad1.right_stick_x; // 旋转
+        double rotate =-gamepad1.right_stick_x; // 旋转
 
         if(gamepad1.left_stick_button && gamepad1.right_stick_button){
             drive = 0;
