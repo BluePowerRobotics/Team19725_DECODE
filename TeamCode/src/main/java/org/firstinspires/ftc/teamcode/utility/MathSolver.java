@@ -6,9 +6,9 @@ public class MathSolver {
 
     // 求解四次方程 ax^4 + bx^3 + cx^2 + dx + e = 0 的实根
     public static double[] solve4(double a, double b, double c, double d, double e) {
-//        if (Math.abs(a) < EPSILON) {
-//            throw new IllegalArgumentException("四次项系数不能为0");
-//        }
+        if (Math.abs(a) < EPSILON) {
+            return solve3(b, c, d, e);
+        }
 
 
         /*
@@ -164,9 +164,66 @@ y_2
         }
         return new double[]{}; // 其他情况都是虚根
     }
-    public double[][] solve4i(double a, double b, double c, double d, double e) {
-        //4行2列，实部和虚部
-        return new double[4][2];
+    public static double[] solve3(double a, double b, double c, double d) {
+        // 使用Cardano公式求解三次方程 ax^3 + bx^2 + cx + d = 0 的实根
+        if (Math.abs(a) < EPSILON) {
+            return solve2(b, c, d);
+        }
+        // 将方程化为标准形式 x^3 + px + q = 0
+        double p = (3 * a * c - b * b) / (3 * a * a);
+        double q = (2 * b * b * b - 9 * a * b * c + 27 * a * a * d) / (27 * a * a * a);
+
+        double discriminant = (q * q) / 4 + (p * p * p) / 27;
+        if (discriminant > 0) {
+            // 一个实根
+            double u = Math.cbrt(-q / 2 + Math.sqrt(discriminant));
+            double v = Math.cbrt(-q / 2 - Math.sqrt(discriminant));
+            double root = u + v - b / (3 * a);
+            return new double[]{root};
+        } else if (Math.abs(discriminant) < EPSILON) {
+            // 三重根或一个单根和一个双根
+            if(Math.abs(q)<EPSILON){
+                double root = -b / (3 * a);
+                return new double[]{root};//三重根
+            }else{
+                double root1 = -2 * Math.cbrt(q / 2) - b / (3 * a);
+                double root2 = Math.cbrt(q / 2) - b / (3 * a);
+                return new double[]{root1, root2};//一个单根和一个双根
+            }
+        } else {
+            // 三个实根
+            double r = Math.sqrt(-p / 3);
+            double theta = Math.acos(Math.max(-1, Math.min(1,-q / (2 * r * r * r))));
+            double root1 = 2 * r * Math.cos(theta / 3) - b / (3 * a);
+            double root2 = 2 * r * Math.cos((theta + 2 * Math.PI) / 3) - b / (3 * a);
+            double root3 = 2 * r * Math.cos((theta + 4 * Math.PI) / 3) - b / (3 * a);
+            return new double[]{root1, root2, root3};
+        }
+    }
+    public static double[] solve2(double a, double b, double c) {
+        // 使用求根公式求解二次方程 ax^2 + bx + c = 0 的实根
+        if (Math.abs(a) < EPSILON) {
+            return solve1(b, c);
+        }
+        double discriminant = b * b - 4 * a * c;
+        if (discriminant > 0) {
+            double root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            double root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+            return new double[]{root1, root2};
+        } else if (Math.abs(discriminant) < EPSILON) {
+            double root = -b / (2 * a);
+            return new double[]{root};
+        } else {
+            return new double[]{}; // 无实根
+        }
+    }
+    public static double[] solve1(double a, double b) {
+        // 求解一元一次方程 ax + b = 0 的实根
+        if (Math.abs(a) < EPSILON) {
+            throw new IllegalArgumentException("系数不能为0");
+        }
+        double root = -b / a;
+        return new double[]{root};
     }
     public static double toInch(double MM){
         return MM*0.0394;
