@@ -94,7 +94,7 @@ public class ChassisController {
         omega=omega*Params.maxOmega;
         if(!fullyAutoMode){
             if(runningToPoint){
-                if (vx!=0||vy!=0||omega!=0) {
+                if (Math.abs(Math.hypot(vx,vy))<=Params.zeroThresholdV||Math.abs(omega)<=Params.zeroThresholdOmega) {
                     runningToPoint = false;//打断自动驾驶
                 }else{
                     actionRunner.update();
