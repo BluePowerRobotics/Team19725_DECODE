@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.controllers.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;

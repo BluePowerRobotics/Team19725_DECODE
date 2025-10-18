@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.controllers.locate;
+package org.firstinspires.ftc.teamcode.controllers.chassis.locate;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;

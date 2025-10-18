@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.controllers.locate;
+package org.firstinspires.ftc.teamcode.controllers.chassis.locate;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
