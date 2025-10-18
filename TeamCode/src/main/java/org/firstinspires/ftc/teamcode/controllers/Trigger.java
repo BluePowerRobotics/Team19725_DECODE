@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Trigger {
     Servo triggerServo;
-    public static double TRIGGER_OPEN_VEL = 1;
+    public static double TRIGGER_FULL_SPEED_VEL = 1;
+    public static double TRIGGER_LOWER_SPEED_VEL = 0.9;
     public static double TRIGGER_CLOSE_VEL = 0.5;
     public static double TRIGGER_EMERGENCYSTOP_VEL= 0;
     public Trigger(HardwareMap hardwareMap){
@@ -17,8 +18,13 @@ public class Trigger {
         this.triggerServo.setDirection(Servo.Direction.FORWARD);
         this.triggerServo.setPosition(TRIGGER_CLOSE_VEL);
     }
-    public void open(){
-        this.triggerServo.setPosition(TRIGGER_OPEN_VEL);
+    //for 大三角
+    public void full_speed(){
+        this.triggerServo.setPosition(TRIGGER_FULL_SPEED_VEL);
+    }
+    //for 小三角
+    public void lower_speed(){
+        this.triggerServo.setPosition(TRIGGER_FULL_SPEED_VEL);
     }
     public void close() {
         this.triggerServo.setPosition(TRIGGER_CLOSE_VEL);

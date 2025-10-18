@@ -27,7 +27,10 @@ public class DECODE extends LinearOpMode {
     }
     TEAM_COLOR teamColor;
     public enum TRIGGER_STATUS {
-        OPEN,
+        //for 大三角
+        FULL_SPEED,
+        //for 小三角
+        LOWER_SPEED,
         CLOSE,
         EMERGENCY_STOP
     }
@@ -91,8 +94,11 @@ public class DECODE extends LinearOpMode {
     }
     void trigger(){
         switch (triggerStatus){
-            case OPEN:
-                trigger.open();
+            case FULL_SPEED:
+                trigger.full_speed();
+                break;
+            case LOWER_SPEED:
+                trigger.lower_speed();
                 break;
             case CLOSE:
                 trigger.close();
@@ -127,7 +133,12 @@ public class DECODE extends LinearOpMode {
                 }
                 else{
                     sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
-                    triggerStatus = TRIGGER_STATUS.OPEN;
+                    if(targetSpeed > 1000){
+                        triggerStatus = TRIGGER_STATUS.LOWER_SPEED;
+                    }
+                    else{
+                        triggerStatus = TRIGGER_STATUS.FULL_SPEED;
+                    }
                     shooter.setShootSpeed(targetSpeed);
                 }
                 break;
