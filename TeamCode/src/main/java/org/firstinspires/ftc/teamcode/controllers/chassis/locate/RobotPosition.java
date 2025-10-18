@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.controllers.locate;
+package org.firstinspires.ftc.teamcode.controllers.chassis.locate;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.RoadRunner.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 @Config
 public class RobotPosition {
