@@ -1,9 +1,18 @@
 package org.firstinspires.ftc.teamcode.utility;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 
 //工具类，用于计算发射点位置
+@Config
 public class SolveShootPoint {
+    public static double r1 = 48 * Math.sqrt(2);
+    public static double r2 = 60 * Math.sqrt(2);
+    public static double r3 = 72 * Math.sqrt(2);
+    //特殊情况，表示小三角，靠近球门一边射击
+    public static double r4 = 100;
+    //特殊情况，表示小三角，远离球门一边射击
+    public static double r5 = 200;
     private static double genhao2 = Math.sqrt(2);
     public static Pose2d solveREDShootPoint(Pose2d robotPose, double R) {
 
