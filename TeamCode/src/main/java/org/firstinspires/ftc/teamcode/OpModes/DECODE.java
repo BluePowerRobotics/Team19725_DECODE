@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 
 //泵赛季主程序
@@ -56,6 +58,16 @@ public class DECODE extends LinearOpMode {
     public  int targetSpeed = 900;
     public Pose2d startPose = new Pose2d(0,0,0);
     void Init(){
+        try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
+            String[] data = reader.readLine().split(",");
+            startPose = new Pose2d(
+                    Double.parseDouble(data[0]),
+                    Double.parseDouble(data[1]),
+                    Double.parseDouble(data[2])
+            );
+        } catch (Exception e) {
+            startPose = new Pose2d(0, 0, 0); // 默认值
+        }
 
         //todo set team color
         teamColor = TEAM_COLOR.BLUE;
@@ -64,7 +76,7 @@ public class DECODE extends LinearOpMode {
         sweeper = new Sweeper(hardwareMap);
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
-        chassis = new ChassisController(hardwareMap, new Point2D(0,0), 0);
+        chassis = new ChassisController(hardwareMap, new Point2D(startPose.position.x, startPose.position.y), startPose.heading.toDouble());
     }
     void Telemetry(){
 
