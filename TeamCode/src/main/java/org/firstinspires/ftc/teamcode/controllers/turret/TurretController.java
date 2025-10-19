@@ -41,6 +41,9 @@ class TurretCalculator{
 
         // 调用四次方程求解器
         double[] roots = MathSolver.solve4(a4, a3, a2, a1, a0);
+        if(roots==null||roots.length==0){
+            return results; // 无实数根
+        }
         for (double t : roots) {
             if (t <= 0) continue; // 时间必须为正
 
