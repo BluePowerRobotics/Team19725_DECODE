@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Sweeper {
     public DcMotorEx motor = null;
 
-    public static int EatVel = 2000;
-    public static int GiveTheArtifactVel = 1000;
-    public static int OutputVel = -1000;
+    public static int EatVel = 1000;
+    public static int GiveTheArtifactVel = 400;
+    public static int OutputVel = -400;
     public Sweeper(HardwareMap hardwareMap){
         motor = hardwareMap.get(DcMotorEx.class, "sweeperMotor");
         motor.setDirection(DcMotor.Direction.REVERSE);
@@ -27,8 +27,8 @@ public class Sweeper {
     public void GiveArtifact(){
         motor.setPower(GiveTheArtifactVel);
     }
-    public void stop(){motor.setPower(0);}
-    public void output(){motor.setPower(-0.5);}
+    public void stop(){motor.setVelocity(0);}
+    public void output(){motor.setVelocity(OutputVel);}
     public double getPower(){
         return motor.getPower();
     }

@@ -10,6 +10,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 // 控制双发射轮的共同运作和自动化动作
 @Config
 public class ShooterAction {
+    public static int speed2_2 = 900;
+    public static int speed25_25 = 925;
+    public static int speed3_3 = 975;
+    public static int speed25_55 = 1100;
+    public static int speed35_55 = 1230;
     private Telemetry telemetry;
     private Shooter shooter_Left;
     private Shooter shooter_Right;

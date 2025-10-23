@@ -24,7 +24,7 @@ public class Trigger {
     }
     //for 小三角
     public void lower_speed(){
-        this.triggerServo.setPosition(TRIGGER_FULL_SPEED_VEL);
+        this.triggerServo.setPosition(TRIGGER_LOWER_SPEED_VEL);
     }
     public void close() {
         this.triggerServo.setPosition(TRIGGER_CLOSE_VEL);

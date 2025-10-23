@@ -15,6 +15,9 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 @Autonomous
 @Config
 public class Auto_BlueLeft  extends LinearOpMode {
@@ -108,7 +111,10 @@ public class Auto_BlueLeft  extends LinearOpMode {
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_low),
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         );
-
-
+        try (FileWriter writer = new FileWriter("/sdcard/FIRST/pose.txt")) {
+            writer.write(drive.localizer.getPose().position.x + "," + drive.localizer.getPose().position.y + "," + drive.localizer.getPose().heading.toDouble());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

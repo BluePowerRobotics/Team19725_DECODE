@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 
 //泵赛季主程序
@@ -54,20 +56,18 @@ public class DECODE extends LinearOpMode {
     public Trigger trigger;
     //
     public  int targetSpeed = 900;
-    public static int speed2_2 = 900;
-    public static int speed25_25 = 925;
-    public static int speed3_3 = 975;
-    public static int speed25_55 = 1100;
-    public static int speed35_55 = 1230;
-    public static double r1 = 48 * Math.sqrt(2);
-    public static double r2 = 60 * Math.sqrt(2);
-    public static double r3 = 72 * Math.sqrt(2);
-    //特殊情况，表示小三角，靠近球门一边射击
-    public static double r4 = 100;
-    //特殊情况，表示小三角，远离球门一边射击
-    public static double r5 = 200;
     public Pose2d startPose = new Pose2d(0,0,0);
     void Init(){
+        try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
+            String[] data = reader.readLine().split(",");
+            startPose = new Pose2d(
+                    Double.parseDouble(data[0]),
+                    Double.parseDouble(data[1]),
+                    Double.parseDouble(data[2])
+            );
+        } catch (Exception e) {
+            startPose = new Pose2d(0, 0, 0); // 默认值
+        }
 
         //todo set team color
         teamColor = TEAM_COLOR.BLUE;
@@ -76,7 +76,7 @@ public class DECODE extends LinearOpMode {
         sweeper = new Sweeper(hardwareMap);
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
-        chassis = new ChassisController(hardwareMap, new Point2D(0,0), 0);
+        chassis = new ChassisController(hardwareMap, new Point2D(startPose.position.x, startPose.position.y), startPose.heading.toDouble());
     }
     void Telemetry(){
 
@@ -174,52 +174,52 @@ public class DECODE extends LinearOpMode {
 
         if(gamepad1.dpadLeftWasPressed() || gamepad2.dpadLeftWasPressed()){
             if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r1));
-                targetSpeed = speed2_2;
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r1));
+                targetSpeed = ShooterAction.speed2_2;
             }
             if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r1));
-                targetSpeed = speed2_2;
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r1));
+                targetSpeed = ShooterAction.speed2_2;
             }
         }
         if(gamepad1.dpadUpWasPressed() || gamepad2.dpadUpWasPressed()){
             if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r2));
-                targetSpeed = speed25_25;
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r2));
+                targetSpeed = ShooterAction.speed25_25;
             }
             if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r2));
-                targetSpeed = speed25_25;
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r2));
+                targetSpeed = ShooterAction.speed25_25;
             }
         }
         if(gamepad1.dpadRightWasPressed() || gamepad2.dpadRightWasPressed()){
             if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r3));
-                targetSpeed = speed3_3;
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r3));
+                targetSpeed = ShooterAction.speed3_3;
             }
             if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r3));
-                targetSpeed = speed3_3;
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r3));
+                targetSpeed = ShooterAction.speed3_3;
             }
         }
         if(gamepad1.dpadDownWasPressed() || gamepad2.dpadDownWasPressed()){
             if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r4));
-                targetSpeed = speed25_55;
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r4));
+                targetSpeed = ShooterAction.speed25_55;
             }
             if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r4));
-                targetSpeed = speed25_55;
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r4));
+                targetSpeed = ShooterAction.speed25_55;
             }
         }
         if(gamepad2.xWasPressed()){
             if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, r5));
-                targetSpeed = speed35_55;
+                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r5));
+                targetSpeed = ShooterAction.speed35_55;
             }
             if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, r5));
-                targetSpeed = speed35_55;
+                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r5));
+                targetSpeed = ShooterAction.speed35_55;
             }
         }
 

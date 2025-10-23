@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.controllers.turret;
 
 import org.firstinspires.ftc.teamcode.controllers.turret.model.TurretInfo;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
+import org.firstinspires.ftc.teamcode.utility.Point3D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,25 @@ public class TurretController {
 class TurretCalculator{
     public static class Param{
         public static double g=9.8; // 重力加速度 (m/s²)
+        public static Point3D target = new Point3D(0,0,0); // 目标位置 (m)
+        public static double turretHeight=0; // 炮台高度 (m)
+    }
+    /**
+     * 解算炮台发射参数(固定仰角)
+     * @param theta 炮台仰角 (rad)
+     * @param x 炮台x位置
+     * @param y 炮台y位置
+     * @param vx 炮台x方向速度
+     * @param vy 炮台y方向速度
+     * @return List<TurretInfo> 所有可能解
+     */
+    public List<TurretInfo> solveSpeed(double theta, double x, double y, double vx, double vy){
+        double x0 = Param.target.x - x;
+        double y0 = Param.target.y - y;
+        double h = Param.target.z - Param.turretHeight;
+        double vtx = -vx;
+        double vty = -vy;
+        return solve(theta, x0, y0, h, vtx, vty);
     }
     /**
      * 解算炮台发射参数(固定仰角)
@@ -22,7 +42,7 @@ class TurretCalculator{
      * @param vty 目标y方向速度
      * @return List<TurretInfo> 所有可能解
      */
-    public List<TurretInfo> solve(double theta, double x0, double y0, double h,
+    private List<TurretInfo> solve(double theta, double x0, double y0, double h,
                                   double vtx, double vty){
         double g = Param.g;
         List<TurretInfo> results = new ArrayList<>();
@@ -41,6 +61,9 @@ class TurretCalculator{
 
         // 调用四次方程求解器
         double[] roots = MathSolver.solve4(a4, a3, a2, a1, a0);
+        if(roots==null||roots.length==0){
+            return results; // 无实数根
+        }
         for (double t : roots) {
             if (t <= 0) continue; // 时间必须为正
 
