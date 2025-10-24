@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.utility.KalmanFilterDemo.mainpackage;
+import com.acmerobotics.dashboard.config.Config;
+
 import java.util.*;
 import org.firstinspires.ftc.teamcode.utility.KalmanFilterDemo.Jama.*;
 
+
+@Config
 public class OneDimKalmanFilter {
     long lastUpdateTime=System.nanoTime();
     double lastEsPosition=0.0;
@@ -22,21 +26,23 @@ public class OneDimKalmanFilter {
             {1.0,0.0}
         });
 
+    public static double q1 = 0.00001;
+    public static double q2 = 0;
+
     //以下两个矩阵用于调整滤波器性能 决定观测更可信还是预测更可信
     /// 过程噪声协方差矩阵 
     Matrix Q=new Matrix(new double[][]{
-            {0.00001,0.0},
-            {0.0,0.00001}
+            {q1,q2},
+            {q2,q1}
         });
     /// 测量噪声协方差
-    double R=1;
+    public static double R=1;
 
     public OneDimKalmanFilter(double initialPosition, double initialVelocity){
         lastEsPosition=initialPosition;
         lastEsVelocity=initialVelocity;
         lastWheelPosition=initialPosition;
     }
-    private long debugTimeStamp;
     /// <summary>
     /// Update the Kalman Filter with
     /// </summary>

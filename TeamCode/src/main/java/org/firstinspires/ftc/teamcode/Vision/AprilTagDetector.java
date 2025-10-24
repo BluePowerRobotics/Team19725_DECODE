@@ -138,13 +138,13 @@ public class AprilTagDetector {
             }
         }
 
-        // 修改：如果未识别到任何AprilTag，返回一个包含全为-1的AprilTagInfo对象
+        // 修改：如果未识别到任何AprilTag，返回一个包含全为NaN的AprilTagInfo对象
         if (tagInfos.isEmpty()) {
             AprilTagInfo invalidInfo = new AprilTagInfo(
-                    new Pose2d(-1000000, -1000000, -1000000),
+                    new Pose2d(Double.NaN, Double.NaN, Double.NaN),
                     -1,
-                    -1,
-                    -1
+                    Double.NaN,
+                    Double.NaN
             );
             tagInfos.add(invalidInfo);
         }
