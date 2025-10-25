@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.TwoDeadWheelLocalizer;
+import org.firstinspires.ftc.teamcode.utility.ActionRunner;
+
 @Config
 public final class ManualFeedbackTuner extends LinearOpMode {
     public static double DISTANCE = 64;
@@ -33,15 +35,24 @@ public final class ManualFeedbackTuner extends LinearOpMode {
                 }
             }
             waitForStart();
-
+            ActionRunner actionRunner = new ActionRunner();
             while (opModeIsActive()) {
-
-                    Actions.runBlocking(
+                if(!actionRunner.isBusy())
+                    actionRunner.add(
                             drive.actionBuilder(new Pose2d(0, 0, 0))
                                     .lineToX(DISTANCE)
                                     .lineToX(0)
                                     .build());
-
+                if(gamepad1.atRest())
+                    actionRunner.update();
+                else
+                    drive.setDrivePowers(new PoseVelocity2d(
+                            new Vector2d(
+                                    -gamepad1.left_stick_y,
+                                    -gamepad1.left_stick_x
+                            ),
+                            -gamepad1.right_stick_x
+                    ));
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             TankDrive drive = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));
