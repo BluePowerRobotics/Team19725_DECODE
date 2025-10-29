@@ -15,7 +15,7 @@ public class Sweeper {
     public static int OutputVel = -400;
     public Sweeper(HardwareMap hardwareMap){
         motor = hardwareMap.get(DcMotorEx.class, "sweeperMotor");
-        motor.setDirection(DcMotor.Direction.REVERSE);
+        //  motor.setDirection(DcMotor.Direction.REVERSE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void Eat(double power){
