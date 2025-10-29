@@ -77,12 +77,9 @@ public class LocalizationTest_Kalman extends LinearOpMode {
                 TelemetryPacket packet = new TelemetryPacket();
                 packet.fieldOverlay().setStroke("#3F51B5");
                 Drawing.drawRobot(packet.fieldOverlay(), resultPose);
+                packet.fieldOverlay().setStroke("#BBBBBB");
+                Drawing.drawRobot(packet.fieldOverlay(), pose);
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-                TelemetryPacket packet_wheel = new TelemetryPacket();
-                packet_wheel.fieldOverlay().setStroke("#FFFFFF");
-                Drawing.drawRobot(packet_wheel.fieldOverlay(), pose);
-                FtcDashboard.getInstance().sendTelemetryPacket(packet_wheel);
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             TankDrive drive = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));

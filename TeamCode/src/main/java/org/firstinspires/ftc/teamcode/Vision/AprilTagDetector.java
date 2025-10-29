@@ -36,7 +36,7 @@ public class AprilTagDetector {
     //todo 可以参考的文件：FindCandidate.java  && FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\ConceptAprilTagLocalization.java
     //画面大小
     private Position cameraPosition = new Position(DistanceUnit.INCH,
-            2.7, 4.3, 13.1, 0);
+            -3.8, -0.3, 16.3, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
             90, -74, 0, 0);
     public static int resolutionwidth = 640;
