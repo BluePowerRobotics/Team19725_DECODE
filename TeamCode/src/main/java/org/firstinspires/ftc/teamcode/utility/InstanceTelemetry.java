@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utility.fakehardware;
+package org.firstinspires.ftc.teamcode.utility;
 
 import java.util.Locale;
 
@@ -20,7 +20,7 @@ public class InstanceTelemetry implements Telemetry {
 
     public static InstanceTelemetry getInstance() {
         if (instance == null) {
-            throw new RuntimeException("fakeTelemetry instance not initialized yet.");
+            throw new RuntimeException("InstanceTelemetry instance not initialized yet.");
         }
         return instance;
     }

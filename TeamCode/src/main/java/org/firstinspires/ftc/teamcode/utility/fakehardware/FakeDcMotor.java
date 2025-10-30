@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.utility.fakehardware;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.utility.InstanceTelemetry;
+
 public class FakeDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
     MotorConfigurationType motorConfigurationType;
     /**

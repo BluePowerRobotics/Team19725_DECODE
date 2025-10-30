@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.utility.InstanceTelemetry;
+
 public class FakeHardwareTest extends LinearOpMode {
     /**
      * Override this method and place your code here.
