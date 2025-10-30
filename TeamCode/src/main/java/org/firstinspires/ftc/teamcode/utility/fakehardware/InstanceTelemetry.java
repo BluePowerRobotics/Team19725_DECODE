@@ -5,20 +5,20 @@ import java.util.Locale;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class instanceTelemetry implements Telemetry {
-    private static instanceTelemetry instance;
+public class InstanceTelemetry implements Telemetry {
+    private static InstanceTelemetry instance;
     private Telemetry telemetry;
-    private instanceTelemetry(Telemetry telemetry){
+    private InstanceTelemetry(Telemetry telemetry){
         this.telemetry = telemetry;
     }
-    public static instanceTelemetry setInstance(Telemetry telemetry){
+    public static InstanceTelemetry setInstance(Telemetry telemetry){
         if(instance==null){
-            instance = new instanceTelemetry(telemetry);
+            instance = new InstanceTelemetry(telemetry);
         }
         return instance;
     }
 
-    public static instanceTelemetry getInstance() {
+    public static InstanceTelemetry getInstance() {
         if (instance == null) {
             throw new RuntimeException("fakeTelemetry instance not initialized yet.");
         }

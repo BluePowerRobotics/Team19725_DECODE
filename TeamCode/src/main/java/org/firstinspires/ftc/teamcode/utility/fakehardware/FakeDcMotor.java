@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utility.fakehardware;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-public class DcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
+public class FakeDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
     MotorConfigurationType motorConfigurationType;
     /**
      * Returns the assigned type for this motor. If no particular motor type has been
@@ -191,7 +191,7 @@ public class DcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
                 break;
             case RUN_TO_POSITION:
                 currentPosition = (int)(1.0*(targetPosition-currentPosition)/2 + currentPosition);
-                instanceTelemetry.getInstance().addLine(
+                InstanceTelemetry.getInstance().addLine(
                         "FakeDcMotor Power: "+power+
                                 "\nRunMode: "+runMode.toString()+
                                 "\nCurrentPosition: "+currentPosition+
@@ -249,15 +249,15 @@ public class DcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
      *
      * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]
      * @see #getPower()
-     * @see DcMotor#setMode(RunMode)
-     * @see DcMotor#setPowerFloat()
+     * @see FakeDcMotor#setMode(RunMode)
+     * @see FakeDcMotor#setPowerFloat()
      */
     @Override
     public void setPower(double power) {
         currentPosition = (int)(currentPosition+power*(System.currentTimeMillis()-setPowerTime));
         this.power=power;
         setPowerTime = System.currentTimeMillis();
-        instanceTelemetry.getInstance().addLine(
+        InstanceTelemetry.getInstance().addLine(
                 "FakeDcMotor Power: "+power+
                         "\nRunMode: "+runMode.toString()+
                         "\nCurrentPosition: "+currentPosition+

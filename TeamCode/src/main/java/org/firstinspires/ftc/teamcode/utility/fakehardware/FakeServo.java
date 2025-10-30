@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.utility.fakehardware;
 
 import com.qualcomm.robotcore.hardware.ServoController;
 
-public class Servo implements com.qualcomm.robotcore.hardware.Servo {
+public class FakeServo implements com.qualcomm.robotcore.hardware.Servo {
     /**
      * Returns the underlying servo controller on which this servo is situated.
      *
@@ -60,7 +60,7 @@ public class Servo implements com.qualcomm.robotcore.hardware.Servo {
     @Override
     public void setPosition(double position) {
         this.position = Math.max(0, Math.min(1.0, position));
-        instanceTelemetry.getInstance().addLine(
+        InstanceTelemetry.getInstance().addLine(
                 "FakeServo Position:"+this.position+
                 "\nDirection:"+this.direction+
                 "\nMin:"+min+
