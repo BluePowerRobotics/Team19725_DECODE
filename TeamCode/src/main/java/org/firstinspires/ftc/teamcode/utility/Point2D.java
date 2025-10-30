@@ -8,21 +8,31 @@ public class Point2D {
     /**
      * 点的x坐标
      */
-    public double x;
+    private double x;
+    public double getX(){
+        return x;
+    }
+    public void setX(double newX){
+        x=newX;
+    }
     /**
      * 点的y坐标
      */
-    public double y;
-    /**
-     * 点的极角（弧度）
-     * 计算方式：Math.atan2(y, x)
-     */
-    public double Radian;
-    /**
-     * 点到原点的距离
-     * 计算方式：Math.sqrt(x * x + y * y)
-     */
-    public double Distance;
+    private double y;
+    public double getY(){
+        return y;
+    }
+    public void setY(double newY){
+        y=newY;
+    }
+
+
+    public double getRadian(){
+        return Math.atan2(y, x);
+    }
+    public double getDistance(){
+        return Math.hypot(x,y);
+    }
 
     /**
      * 构造函数，创建一个Point2D对象
@@ -32,8 +42,6 @@ public class Point2D {
     public Point2D(double x, double y) {
         this.x = x;
         this.y = y;
-        this.Radian = Math.atan2(y, x); // 计算点的极角
-        this.Distance = Math.sqrt(x * x + y * y); // 计算点到原点的距离
     }
 
     /**
@@ -50,7 +58,7 @@ public class Point2D {
     /**
      * 零点坐标
      */
-    public static Point2D ZERO = new Point2D(0, 0);
+    public static final Point2D ZERO = new Point2D(0, 0);
     /**
      * 用于判断是否为零的容差
      */
@@ -61,7 +69,7 @@ public class Point2D {
      * @param p2 第二个点
      * @return 如果两个点的坐标差小于零容差，则认为它们是相同的
      */
-    public static boolean isSame(Point2D p1, Point2D p2) {
+    public static boolean equal(Point2D p1, Point2D p2) {
         return Math.abs(p1.x - p2.x) < zeroTolerance && Math.abs(p1.y - p2.y) < zeroTolerance;
     }
     /**
@@ -70,7 +78,7 @@ public class Point2D {
      * @param p2 第二个点
      * @return 两点之间的欧几里得距离
      */
-    public static double distance(Point2D p1, Point2D p2) {
+    public static double getDistance(Point2D p1, Point2D p2) {
         return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
     }
 
@@ -81,7 +89,7 @@ public class Point2D {
      * @return 平移后的新点
      */
     public static Point2D translate(Point2D p, Point2D offset) {
-        return new Point2D(p.x + offset.x, p.y + offset.y);
+        return translate(p,offset.x,offset.y);
     }
     /**
      * 将点p平移dx和dy
@@ -90,7 +98,7 @@ public class Point2D {
      * @param dy y轴方向的平移量
      * @return 平移后的新点
      */
-    public static Point2D translateXY(Point2D p, double dx, double dy) {
+    public static Point2D translate(Point2D p, double dx, double dy) {
         return new Point2D(p.x + dx, p.y + dy);
     }
     /**
@@ -115,14 +123,14 @@ public class Point2D {
     /**
      * 将点p绕指定中心点旋转指定弧度
      * @param p 原始点
-     * @param Radian 旋转的弧度
+     * @param radian 旋转的弧度
      * @param center 旋转中心点
      * @return 旋转后的新点
      */
-    public static Point2D rotate(Point2D p, double Radian, Point2D center) {
-        Point2D translated = translateXY(p, -center.x, -center.y);
-        Point2D rotated = rotate(translated, Radian);
-        return translateXY(rotated, center.x, center.y);
+    public static Point2D rotate(Point2D p, double radian, Point2D center) {
+        Point2D translated = translate(p, -center.x, -center.y);
+        Point2D rotated = rotate(translated, radian);
+        return translate(rotated, center.x, center.y);
     }
     /**
      * 计算两点的中点
@@ -130,8 +138,11 @@ public class Point2D {
      * @param p2 第二个点
      * @return 两点的中点
      */
-    public static Point2D midpoint(Point2D p1, Point2D p2) {
-        return new Point2D((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+    public static Point2D getMidpoint(Point2D p1, Point2D p2) {
+        return getMidpoint(p1.x,p1.y,p2.x,p2.y);
+    }
+    public static Point2D getMidpoint(double x1,double y1,double x2,double y2) {
+        return new Point2D((x1 + x2) / 2, (y1 + y2) / 2);
     }
     /**
      * 缩放点p到指定的比例因子
@@ -150,18 +161,18 @@ public class Point2D {
      * @return 缩放后的新点
      */
     public static Point2D scale(Point2D p, double factor, Point2D center) {
-        Point2D translated = translateXY(p, -center.x, -center.y);
+        Point2D translated = translate(p, -center.x, -center.y);
         Point2D scaled = scale(translated, factor);
-        return translateXY(scaled, center.x, center.y);
+        return translate(scaled, center.x, center.y);
     }
     /**
      * 从极坐标系转换为笛卡尔坐标系
-     * @param Radian 极角
-     * @param Distance 距离原点的距离
+     * @param radian 极角
+     * @param distance 距离原点的距离
      * @return 笛卡尔坐标系中的点
      */
-    public static Point2D fromPolar(double Radian, double Distance) {
-        return new Point2D(Distance * Math.cos(Radian), Distance * Math.sin(Radian));
+    public static Point2D fromPolar(double radian, double distance) {
+        return new Point2D(distance * Math.cos(radian), distance * Math.sin(radian));
     }
     /**
      * 计算点p关于中心点center的中心对称点
@@ -169,7 +180,7 @@ public class Point2D {
      * @param center 中心点
      * @return 中心对称点
      */
-    public static Point2D centralSymmetry(Point2D p, Point2D center) {
+    public static Point2D getCentralSymmetry(Point2D p, Point2D center) {
         return new Point2D(2 * center.x - p.x, 2 * center.y - p.y);
     }
     /**
@@ -177,7 +188,7 @@ public class Point2D {
      * @param p 原始点
      * @return 中心对称点
      */
-    public static Point2D centralSymmetry(Point2D p) {
+    public static Point2D getCentralSymmetry(Point2D p) {
         return new Point2D(-p.x, -p.y);
     }
     /**
@@ -211,19 +222,19 @@ public class Point2D {
      * @param b 直线截距（对于垂直线，b表示x坐标）
      * @return 对称点
      */
-    public static Point2D axisSymmetry(Point2D p, double k, double b) {
+    public static Point2D getAxisSymmetry(Point2D p, double k, double b) {
         // 处理垂直线（斜率无限大）
         if (Double.isInfinite(k)) {
-            return axisSymmetryVertical(p, b);
+            return getAxisSymmetryVertical(p, b);
         }
 
         // 处理水平线（斜率为零）
         if (Math.abs(k) < zeroTolerance) {
-            return axisSymmetryHorizontal(p, b);
+            return getAxisSymmetryHorizontal(p, b);
         }
 
         // 处理普通斜线 y = kx + b
-        return axisSymmetrySlant(p, k, b);
+        return getAxisSymmetrySlant(p, k, b);
     }
 
     /**
@@ -232,7 +243,7 @@ public class Point2D {
      * @param x 垂直线的x坐标
      * @return 对称点
      */
-    private static Point2D axisSymmetryVertical(Point2D p, double x) {
+    private static Point2D getAxisSymmetryVertical(Point2D p, double x) {
         return new Point2D(2 * x - p.x, p.y);
     }
 
@@ -242,7 +253,7 @@ public class Point2D {
      * @param y 水平线的y坐标
      * @return 对称点
      */
-    private static Point2D axisSymmetryHorizontal(Point2D p, double y) {
+    private static Point2D getAxisSymmetryHorizontal(Point2D p, double y) {
         return new Point2D(p.x, 2 * y - p.y);
     }
 
@@ -253,7 +264,7 @@ public class Point2D {
      * @param b 截距
      * @return 对称点
      */
-    private static Point2D axisSymmetrySlant(Point2D p, double k, double b) {
+    private static Point2D getAxisSymmetrySlant(Point2D p, double k, double b) {
         double k2 = k * k;
         double denominator = 1 + k2;
 
@@ -298,9 +309,9 @@ public class Point2D {
         // 将二维点坐标作为在平面基向量上的分量
         Point3D offset = Point3D.translateXYZ(
                 Point3D.ZERO,
-                p.x * uAxis.x + p.y * vAxis.x,
-                p.x * uAxis.y + p.y * vAxis.y,
-                p.x * uAxis.z + p.y * vAxis.z
+                p.x * uAxis.getX() + p.y * vAxis.getX(),
+                p.x * uAxis.getY() + p.y * vAxis.getY(),
+                p.x * uAxis.getZ() + p.y * vAxis.getZ()
         );
 
         // 从平面原点加上偏移量
@@ -324,9 +335,9 @@ public class Point2D {
         double dotProduct = Point3D.dot(reference, normal);
         return Point3D.normalize(
                 new Point3D(
-                        reference.x - dotProduct * normal.x,
-                        reference.y - dotProduct * normal.y,
-                        reference.z - dotProduct * normal.z
+                        reference.getX() - dotProduct * normal.getX(),
+                        reference.getY() - dotProduct * normal.getY(),
+                        reference.getZ() - dotProduct * normal.getZ()
                 )
         );
     }

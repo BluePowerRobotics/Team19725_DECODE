@@ -263,18 +263,18 @@ class SixServoArmCalculator {
     static double Arm3 = 125;
     private double[] result = {0,0,0,0};
     public double[] calculateToServo(@NonNull Point3D PointD, double RadianArm3ToHorizontal){
-        Point2D PointDxy = new Point2D(PointD.x,PointD.y);
-        double RadianArm = PointDxy.Radian;//计算水平面上与x轴的夹角
-        double r = PointDxy.Distance;
+        Point2D PointDxy = new Point2D(PointD.getX(),PointD.getY());
+        double RadianArm = PointDxy.getRadian();//计算水平面上与x轴的夹角
+        double r = PointDxy.getDistance();
         //计算第二臂末端坐标
-        Point2D PointDrz = new Point2D(r,PointD.z);
+        Point2D PointDrz = new Point2D(r,PointD.getZ());
         Point2D PointC = Point2D.translateRD(PointDrz,Math.PI+RadianArm3ToHorizontal,Arm3);
         //解三角形（C，C在R轴投影，原点）
-        double RadianC = Math.atan2(PointC.y, PointC.x);
+        double RadianC = PointC.getRadian();
         double PointCRadian = 0;
         PointCRadian += (0.5*Math.PI - RadianC)+RadianArm3ToHorizontal+0.5*Math.PI;
         //解三角形（A，B，C）
-        double lengthAC = Math.sqrt(PointC.x * PointC.x + PointC.y * PointC.y);
+        double lengthAC = PointC.getDistance();
         //lengthAB = Arm1,lengthBC= Arm2
         double RadianA = Math.acos((Arm1 * Arm1 + lengthAC * lengthAC - Arm2 * Arm2) / (2 * Arm1 * lengthAC));
         double RadianB = Math.acos((Arm1 * Arm1 + Arm2 * Arm2 - lengthAC * lengthAC) / (2 * Arm1 * Arm2));
