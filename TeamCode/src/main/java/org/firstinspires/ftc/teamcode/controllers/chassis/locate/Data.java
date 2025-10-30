@@ -12,8 +12,8 @@ public class Data {
     private Data(){}
     @Override
     public String toString(){
-        return "Position:\nx:"+getPosition(DistanceUnit.MM).x+
-                "\ny:"+getPosition(DistanceUnit.MM).y+
+        return "Position:\nx:"+getPosition(DistanceUnit.MM).getX()+
+                "\ny:"+getPosition(DistanceUnit.MM).getY()+
                 "\nHeadingRadian:\n"+headingRadian+
                 "\nHeadingSpeedRadianPerSec:\n"+headingSpeedRadianPerSec+
                 "\nSpeed:\nX:"+getSpeed(DistanceUnit.MM).x+
@@ -27,11 +27,11 @@ public class Data {
     public Point2D getPosition(DistanceUnit distanceUnit){
         switch (distanceUnit) {
             case METER:
-                return new Point2D(MathSolver.toMM(position.x)/1000,MathSolver.toMM(position.y)/1000);
+                return new Point2D(MathSolver.toMM(position.getX())/1000,MathSolver.toMM(position.getY())/1000);
             case CM:
-                return new Point2D(MathSolver.toMM(position.x)/10,MathSolver.toMM(position.y)/10);
+                return new Point2D(MathSolver.toMM(position.getX())/10,MathSolver.toMM(position.getY())/10);
             case MM:
-                return new Point2D(MathSolver.toMM(position.x),MathSolver.toMM(position.y));
+                return new Point2D(MathSolver.toMM(position.getX()),MathSolver.toMM(position.getY()));
             case INCH:
                 return position;
         }
@@ -57,6 +57,6 @@ public class Data {
         return null;
     }
     public Pose2d getPose2d(){
-        return new Pose2d(getPosition(DistanceUnit.INCH).y,-getPosition(DistanceUnit.INCH).x,headingRadian);
+        return new Pose2d(getPosition(DistanceUnit.INCH).getY(),-getPosition(DistanceUnit.INCH).getX(),headingRadian);
     }
 }
