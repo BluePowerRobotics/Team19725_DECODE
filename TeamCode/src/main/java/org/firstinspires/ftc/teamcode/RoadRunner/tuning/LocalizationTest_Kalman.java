@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
-import org.firstinspires.ftc.teamcode.utility.KalmanFilterDemo.mainpackage.OneDimKalmanFilter;
-import org.firstinspires.ftc.teamcode.utility.KalmanFilterDemo.mainpackage.PosVelTuple;
+import org.firstinspires.ftc.teamcode.utility.kalmanfilter.OneDimensionKalmanFilter;
+import org.firstinspires.ftc.teamcode.utility.kalmanfilter.PosVelTuple;
 
 @TeleOp
 public class LocalizationTest_Kalman extends LinearOpMode {
@@ -23,8 +23,8 @@ public class LocalizationTest_Kalman extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         AprilTagDetector aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
-        OneDimKalmanFilter filter_x=new OneDimKalmanFilter(0.0, 0.0);
-        OneDimKalmanFilter filter_y=new OneDimKalmanFilter(0.0, 0.0);
+        OneDimensionKalmanFilter filter_x=new OneDimensionKalmanFilter(0.0, 0.0);
+        OneDimensionKalmanFilter filter_y=new OneDimensionKalmanFilter(0.0, 0.0);
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 

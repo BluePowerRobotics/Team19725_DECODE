@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utility.KalmanFilterDemo.Jama;
+package org.firstinspires.ftc.teamcode.utility.kalmanfilter.jama;
 
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 
@@ -8,7 +8,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 
-import java.text.FieldPosition;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.StreamTokenizer;
