@@ -27,9 +27,10 @@ public class ShooterAction {
         shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
         telemetry = telerc;
     }
-    public void setShootSpeed(int Power){
-        shooter_Left.shoot(Power);
-        shooter_Right.shoot(Power);
+    public boolean setShootSpeed(int Power){
+        boolean left = shooter_Left.shoot(Power);
+        boolean right = shooter_Right.shoot(Power);
+        return (left || right);
     }
 
     public class SpeedUp implements Action {
