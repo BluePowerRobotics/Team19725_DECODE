@@ -193,8 +193,8 @@ class ChassisCalculator {
             lastTimeXY = System.nanoTime();
             pidPoint.reset();
         }
-        double errorX = target.x - current.x;
-        double errorY = target.y - current.y;
+        double errorX = target.getX() - current.getX();
+        double errorY = target.getY() - current.getY();
         double distance = Math.hypot(errorX, errorY);
         double angleToTarget = Math.atan2(errorY, errorX);
         pidPoint.setPID(Params.pkP, Params.pkI, Params.pkD);

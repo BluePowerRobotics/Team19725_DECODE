@@ -25,9 +25,9 @@ class TurretCalculator{
      * @return List<TurretInfo> 所有可能解
      */
     public List<TurretInfo> solveSpeed(double theta, double x, double y, double vx, double vy){
-        double x0 = Param.target.x - x;
-        double y0 = Param.target.y - y;
-        double h = Param.target.z - Param.turretHeight;
+        double x0 = Param.target.getX() - x;
+        double y0 = Param.target.getY() - y;
+        double h = Param.target.getZ() - Param.turretHeight;
         double vtx = -vx;
         double vty = -vy;
         return solve(theta, x0, y0, h, vtx, vty);

@@ -1,17 +1,18 @@
-package org.firstinspires.ftc.teamcode.utility.KalmanFilterDemo.mainpackage;
+package org.firstinspires.ftc.teamcode.utility.kalmanfilter;
 import com.acmerobotics.dashboard.config.Config;
 
-import java.util.*;
-import org.firstinspires.ftc.teamcode.utility.KalmanFilterDemo.Jama.*;
+import org.firstinspires.ftc.teamcode.utility.kalmanfilter.jama.*;
 
-
+/// <summary>
+/// 会根据随动轮移动的位置以更新估计位置 避免随动轮移动的积累误差
+/// </summary>
 @Config
-public class OneDimKalmanFilter {
+public class OneDimensionKalmanFilter {
     long lastUpdateTime=System.nanoTime();
     double lastEsPosition=0.0;
     double lastEsVelocity=0.0;
     double lastWheelPosition=0.0;
-    /// 状态转移矩阵
+
     Matrix F=new Matrix(new double[][]{
             {1.0,1.0},
             {0.0,1.0}
@@ -27,34 +28,32 @@ public class OneDimKalmanFilter {
         });
 
     public static double q1 = 0.00001;
-    public static double q2 = 0;
 
     //以下两个矩阵用于调整滤波器性能 决定观测更可信还是预测更可信
     /// 过程噪声协方差矩阵 
     Matrix Q=new Matrix(new double[][]{
-            {q1,q2},
-            {q2,q1}
+            {q1,0.0},
+            {0.0,q1}
         });
     /// 测量噪声协方差
     public static double R=1;
 
-    public OneDimKalmanFilter(double initialPosition, double initialVelocity){
+    public OneDimensionKalmanFilter(double initialPosition, double initialVelocity){
         lastEsPosition=initialPosition;
         lastEsVelocity=initialVelocity;
         lastWheelPosition=initialPosition;
     }
     /// <summary>
-    /// Update the Kalman Filter with
+    /// 更新卡尔曼滤波结果
     /// </summary>
     /// <param name="wheelPosition">随动轮当前位置</param>
     /// <param name="measurementPosition">视觉位置，如果没有输入 则请输入Double.NaN</param>
-    /// <returns>The estimated position and velocity after update</returns>
+    /// <returns>新的估计位置</returns>
     public PosVelTuple Update(double wheelPosition,double measurementPosition){
         long currentTime=System.nanoTime();
         double deltaTime=currentTime-lastUpdateTime;
         lastUpdateTime=currentTime;
         double dtSeconds=deltaTime/1000000.0;
-        //dtSeconds=lastTime;
         double deltaPosition=wheelPosition-lastWheelPosition;
         lastWheelPosition=wheelPosition;
         Matrix X_=new Matrix(new double[][]{

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utility.KalmanFilterDemo.Jama;
+package org.firstinspires.ftc.teamcode.utility.kalmanfilter.jama;
 
 
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
