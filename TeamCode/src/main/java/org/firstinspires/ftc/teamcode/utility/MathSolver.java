@@ -245,5 +245,16 @@ y_2
         }
         return r;
     }
-
+    public static double normalizeAngle(double angle) {
+        if(Double.isNaN(angle)){
+            return Double.NaN;
+        }
+        while (angle > Math.PI) {
+            angle -= 2 * Math.PI;
+        }
+        while (angle <= -Math.PI) {
+            angle += 2 * Math.PI;
+        }
+        return angle;
+    }
 }

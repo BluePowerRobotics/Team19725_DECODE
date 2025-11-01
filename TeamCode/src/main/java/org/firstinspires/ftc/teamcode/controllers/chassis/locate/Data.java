@@ -19,10 +19,10 @@ public class Data {
                 "\nSpeed:\nX:"+getSpeed(DistanceUnit.MM).x+
                 "\nY:"+getSpeed(DistanceUnit.MM).y;
     }
-    static Data instance=new Data();
+    public static Data instance=new Data();
     private Point2D position=new Point2D(0,0);
-    public void setPosition(Point2D position){
-        this.position=position;
+    public void setPosition(Point2D positionInch){
+        this.position=new Point2D(positionInch);
     }
     public Point2D getPosition(DistanceUnit distanceUnit){
         switch (distanceUnit) {
