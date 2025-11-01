@@ -59,4 +59,8 @@ public class Data {
     public Pose2d getPose2d(){
         return new Pose2d(getPosition(DistanceUnit.INCH).getY(),-getPosition(DistanceUnit.INCH).getX(),headingRadian);
     }
+    public void setPose2d(Pose2d pose2d){
+        setPosition(new Point2D(-pose2d.position.y,+pose2d.position.x));
+        headingRadian=pose2d.heading.toDouble();
+    }
 }
