@@ -90,7 +90,7 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         }
         if(gamepad1.dpadLeftWasPressed()){
             //find
-            targetPoint = SearchPoint;
+            targetPoint = new Point3D(SearchPoint);
             targetClipHeadingRadian = -Math.PI / 2 + Math.toRadians(15);
             targetRadianAroundArm3 = 0;
         }

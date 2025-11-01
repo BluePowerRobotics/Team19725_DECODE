@@ -43,6 +43,9 @@ public class Point2D {
         this.x = x;
         this.y = y;
     }
+    public Point2D(Point2D p){
+        this(p.x,p.y);
+    }
 
     /**
      * 转化为字符串表示形式

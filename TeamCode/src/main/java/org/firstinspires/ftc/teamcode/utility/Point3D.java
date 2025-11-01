@@ -107,6 +107,13 @@ public class Point3D {
         this.y = y;
         this.z = z;
     }
+    /**
+     * 复制数据，创建一个Point3D对象
+     * @param other 另一个Point3D对象
+     */
+    public Point3D(Point3D other) {
+        this(other.x, other.y, other.z);
+    }
 
     /**
      * 转化为字符串表示形式
