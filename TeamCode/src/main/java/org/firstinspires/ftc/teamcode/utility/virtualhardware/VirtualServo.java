@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.utility.virtualhardware;
 
 import com.qualcomm.robotcore.hardware.ServoController;
 
-import org.firstinspires.ftc.teamcode.utility.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 
 public class VirtualServo implements com.qualcomm.robotcore.hardware.Servo {
     /**
@@ -62,8 +62,8 @@ public class VirtualServo implements com.qualcomm.robotcore.hardware.Servo {
     @Override
     public void setPosition(double position) {
         this.position = Math.max(0, Math.min(1.0, position));
-        InstanceTelemetry.getInstance().addLine(
-                "FakeServo Position:"+this.position+
+        InstanceTelemetry.getTelemetry().addLine(
+                "VirtualServo Position:"+this.position+
                 "\nDirection:"+this.direction+
                 "\nMin:"+min+
                 "\nMax:"+max);
@@ -134,7 +134,7 @@ public class VirtualServo implements com.qualcomm.robotcore.hardware.Servo {
      */
     @Override
     public String getDeviceName() {
-        return "FakeServo";
+        return "VirtualServo";
     }
 
     /**
@@ -144,7 +144,7 @@ public class VirtualServo implements com.qualcomm.robotcore.hardware.Servo {
      */
     @Override
     public String getConnectionInfo() {
-        return "FakeConnectionInfo";
+        return "VirtualConnectionInfo";
     }
 
     /**

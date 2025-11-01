@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.utility.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 @TeleOp(name = "virtualHardwareTest", group = "TEST")
-public class VirtualHardwareTest extends LinearOpMode {
+public class VirtualHardwareTester extends LinearOpMode {
     /**
      * Override this method and place your code here.
      * <p>
@@ -24,7 +24,7 @@ public class VirtualHardwareTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry = InstanceTelemetry.setInstance(telemetry);
+        telemetry = InstanceTelemetry.init(telemetry);
         DcMotor dcMotor = new VirtualDcMotor();
         Servo servo = new VirtualServo();
         waitForStart();

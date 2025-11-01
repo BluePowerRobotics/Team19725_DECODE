@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utility.virtualhardware;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.utility.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 
 public class VirtualDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
     MotorConfigurationType motorConfigurationType;
@@ -193,8 +193,8 @@ public class VirtualDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
                 break;
             case RUN_TO_POSITION:
                 currentPosition = (int)(1.0*(targetPosition-currentPosition)/2 + currentPosition);
-                InstanceTelemetry.getInstance().addLine(
-                        "FakeDcMotor Power: "+power+
+                InstanceTelemetry.getTelemetry().addLine(
+                        "VirtualDcMotor Power: "+power+
                                 "\nRunMode: "+runMode.toString()+
                                 "\nCurrentPosition: "+currentPosition+
                                 "\nTargetPosition: "+targetPosition+
@@ -259,8 +259,8 @@ public class VirtualDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
         currentPosition = (int)(currentPosition+power*(System.currentTimeMillis()-setPowerTime));
         this.power=power;
         setPowerTime = System.currentTimeMillis();
-        InstanceTelemetry.getInstance().addLine(
-                "FakeDcMotor Power: "+power+
+        InstanceTelemetry.getTelemetry().addLine(
+                "VirtualDcMotor Power: "+power+
                         "\nRunMode: "+runMode.toString()+
                         "\nCurrentPosition: "+currentPosition+
                         "\nTargetPosition: "+targetPosition+
@@ -299,7 +299,7 @@ public class VirtualDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
      */
     @Override
     public String getDeviceName() {
-        return "FakeDcMotor";
+        return "VirtualDcMotor";
     }
 
     /**
@@ -309,7 +309,7 @@ public class VirtualDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
      */
     @Override
     public String getConnectionInfo() {
-        return "Fake Connection Info";
+        return "Virtual Connection Info";
     }
 
     /**

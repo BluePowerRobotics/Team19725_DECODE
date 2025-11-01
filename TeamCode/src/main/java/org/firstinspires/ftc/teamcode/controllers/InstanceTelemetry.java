@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utility;
+package org.firstinspires.ftc.teamcode.controllers;
 
 import java.util.Locale;
 
@@ -11,14 +11,14 @@ public class InstanceTelemetry implements Telemetry {
     private InstanceTelemetry(Telemetry telemetry){
         this.telemetry = telemetry;
     }
-    public static InstanceTelemetry setInstance(Telemetry telemetry){
+    public static InstanceTelemetry init(Telemetry telemetry){
         if(instance==null){
             instance = new InstanceTelemetry(telemetry);
         }
         return instance;
     }
 
-    public static InstanceTelemetry getInstance() {
+    public static InstanceTelemetry getTelemetry() {
         if (instance == null) {
             throw new RuntimeException("InstanceTelemetry instance not initialized yet.");
         }
