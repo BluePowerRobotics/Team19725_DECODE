@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.utility.fakehardware;
+package org.firstinspires.ftc.teamcode.utility.virtualhardware;
 
 import com.qualcomm.robotcore.hardware.ServoController;
 
 import org.firstinspires.ftc.teamcode.utility.InstanceTelemetry;
 
-public class FakeServo implements com.qualcomm.robotcore.hardware.Servo {
+public class VirtualServo implements com.qualcomm.robotcore.hardware.Servo {
     /**
      * Returns the underlying servo controller on which this servo is situated.
      *

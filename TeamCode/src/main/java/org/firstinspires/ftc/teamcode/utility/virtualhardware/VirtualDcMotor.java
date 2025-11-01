@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.utility.fakehardware;
+package org.firstinspires.ftc.teamcode.utility.virtualhardware;
 
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.teamcode.utility.InstanceTelemetry;
 
-public class FakeDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
+public class VirtualDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
     MotorConfigurationType motorConfigurationType;
     /**
      * Returns the assigned type for this motor. If no particular motor type has been
@@ -251,8 +251,8 @@ public class FakeDcMotor implements com.qualcomm.robotcore.hardware.DcMotor {
      *
      * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]
      * @see #getPower()
-     * @see FakeDcMotor#setMode(RunMode)
-     * @see FakeDcMotor#setPowerFloat()
+     * @see VirtualDcMotor#setMode(RunMode)
+     * @see VirtualDcMotor#setPowerFloat()
      */
     @Override
     public void setPower(double power) {

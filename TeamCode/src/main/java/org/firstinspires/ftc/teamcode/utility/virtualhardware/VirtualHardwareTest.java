@@ -1,14 +1,15 @@
-package org.firstinspires.ftc.teamcode.utility.fakehardware;
+package org.firstinspires.ftc.teamcode.utility.virtualhardware;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utility.InstanceTelemetry;
-
-public class FakeHardwareTest extends LinearOpMode {
+@TeleOp(name = "virtualHardwareTest", group = "TEST")
+public class VirtualHardwareTest extends LinearOpMode {
     /**
      * Override this method and place your code here.
      * <p>
@@ -24,8 +25,8 @@ public class FakeHardwareTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.setInstance(telemetry);
-        DcMotor dcMotor = new FakeDcMotor();
-        Servo servo = new FakeServo();
+        DcMotor dcMotor = new VirtualDcMotor();
+        Servo servo = new VirtualServo();
         waitForStart();
         while (opModeIsActive()) {
             dcMotor.setPower(-gamepad1.left_stick_y);
