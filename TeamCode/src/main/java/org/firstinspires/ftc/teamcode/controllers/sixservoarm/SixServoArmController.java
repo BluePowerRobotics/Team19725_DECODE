@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.Point3D;
 
@@ -16,7 +17,6 @@ import org.firstinspires.ftc.teamcode.utility.Point3D;
  */
 public class SixServoArmController{
     private HardwareMap hardwareMap;//硬件地图
-    private Telemetry telemetry;//遥测
     private SixServoArmOutputter Outputter;//舵机输出器
     private SixServoArmCalculator Calculator = new SixServoArmCalculator();//三角函数计算器
     private SixServoArmState State = SixServoArmState.getInstance();//机械臂状态存储器
@@ -29,18 +29,10 @@ public class SixServoArmController{
     public SixServoArmState getState() {
         return State;
     } //获取机械臂状态存储器
-    private SixServoArmController(HardwareMap hardwareMap, Telemetry telemetry){
+    public SixServoArmController(HardwareMap hardwareMap){
         this.hardwareMap=hardwareMap;
-        this.telemetry=telemetry;
-        this.Outputter = new SixServoArmOutputter(hardwareMap, telemetry);
+        this.Outputter = new SixServoArmOutputter(hardwareMap);
     }//构造函数
-    private static SixServoArmController instance; //实例，用以单例模式
-    public static SixServoArmController getInstance(){
-        return instance;
-    }//获取单例，无论何时何地都是同一个
-    public static void setInstance(HardwareMap hardwareMap, Telemetry telemetry){
-        instance = new SixServoArmController(hardwareMap,telemetry);
-    }//更新单例，使得每次启动OpMode都能够更新
 
     /**
      * 初始化机械臂
@@ -90,9 +82,9 @@ public class SixServoArmController{
 class SixServoArmOutputter{
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
-    SixServoArmOutputter(HardwareMap hardwareMap, Telemetry telemetry){
+    SixServoArmOutputter(HardwareMap hardwareMap){
         this.hardwareMap=hardwareMap;
-        this.telemetry=telemetry;
+        this.telemetry= InstanceTelemetry.getTelemetry();
         for(int i = 0; i < servo.length; i++){
             servo[i] = hardwareMap.get(Servo.class, "servoc" + i);
             if(i == 1 || i == 4){
@@ -306,6 +298,7 @@ class SixServoArmCalculator {
 
     private SixServoArmState() {
         lastUpdateTime= System.currentTimeMillis();
+        telemetry = InstanceTelemetry.getTelemetry();
     }//构造函数
     public static SixServoArmState getInstance() {
         if (instance == null) {

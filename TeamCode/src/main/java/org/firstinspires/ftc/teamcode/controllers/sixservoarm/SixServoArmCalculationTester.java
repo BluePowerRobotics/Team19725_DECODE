@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
 import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
-import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.utility.Point3D;
 
 import java.util.Arrays;
@@ -16,25 +16,16 @@ import java.util.Arrays;
 @Config
 @TeleOp(name = "sixServoArmTest", group = "TEST")
 public class SixServoArmCalculationTester extends LinearOpMode {
-    //FindCandidate findCandidate = new FindCandidate();
     static Point3D SearchPoint = new Point3D(0, 150, 100);
     public static double deltaX = 15;//
     public static double deltaY = 125;
     SixServoArmController sixServoArmController;
-    SixServoArmOutputter sixServoArmOutputter;
-    SixServoArmState sixServoArmState;
     FindCandidate Cv = new FindCandidate();
-    Shooter shooter = null;
-    public static double initSpeed = 380;
-    double targetSpeed = 0;
     public void initiate(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        shooter = new Shooter(hardwareMap, telemetry, "shooterMotor1", false);
+        telemetry = InstanceTelemetry.init(telemetry);
         Cv.init(hardwareMap, telemetry, 0);
-        SixServoArmController.setInstance(hardwareMap,telemetry);
-        sixServoArmController=SixServoArmController.getInstance();
-        sixServoArmOutputter = sixServoArmController.getOutputter();
-        sixServoArmState = sixServoArmController.getState();
+        sixServoArmController=new SixServoArmController(hardwareMap);
         sixServoArmController.setTargetPosition(new Point3D(0, 100, 30), (-Math.PI / 2), 0);
     }
     @Override
@@ -51,7 +42,6 @@ public class SixServoArmCalculationTester extends LinearOpMode {
             if(gamepad1.xWasReleased()){
                 TestMode=!TestMode;
             }
-            shoot();
         }
     }
     boolean TestMode=true;
@@ -64,8 +54,8 @@ public class SixServoArmCalculationTester extends LinearOpMode {
         telemetry.addData("TargetClipHeadingRadian",targetClipHeadingRadian);
         telemetry.addData("TargetRadianAroundArm3",targetRadianAroundArm3);
         telemetry.addLine();
-        telemetry.addData("Now Degree", Arrays.toString(sixServoArmState.getServoNowDegree()));
-        telemetry.addData("target Degree", Arrays.toString(sixServoArmState.getServoTargetDegree()));
+        telemetry.addData("Now Degree", Arrays.toString(sixServoArmController.getState().getServoNowDegree()));
+        telemetry.addData("target Degree", Arrays.toString(sixServoArmController.getState().getServoTargetDegree()));
         telemetry.addData("Now Point",sixServoArmController.getCurrentPosition().toString());
         telemetry.addLine();
         telemetry.addLine("Press X to switch mode");
@@ -88,21 +78,6 @@ public class SixServoArmCalculationTester extends LinearOpMode {
             telemetry.addLine("A: Drop Clip");
         }
         telemetry.update();
-    }
-    public void shoot(){
-        if(gamepad2.a){
-            targetSpeed = 0;
-        }
-        if(gamepad2.b){
-            targetSpeed = initSpeed;
-        }
-        if(gamepad2.xWasPressed()){
-            targetSpeed -= 50;
-        }
-        if(gamepad2.yWasPressed()){
-            targetSpeed += 50;
-        }
-        shooter.shoot(targetSpeed);
     }
     public void setArm(){
         if(now_time_ms-last_set_time_ms>50){
