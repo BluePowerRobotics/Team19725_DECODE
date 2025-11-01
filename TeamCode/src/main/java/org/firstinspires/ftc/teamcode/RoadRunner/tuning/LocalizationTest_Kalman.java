@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.utility.kalmanfilter.PosVelTuple;
 public class LocalizationTest_Kalman extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         AprilTagDetector aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
         OneDimensionKalmanFilter filter_x=new OneDimensionKalmanFilter(0.0, 0.0);
@@ -49,7 +49,7 @@ public class LocalizationTest_Kalman extends LinearOpMode {
                 telemetry.addData("y", pose.position.y);
                 telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
 
-                Pose2d apriltag_pose = aprilTagDetector.getPose().pose;
+                Pose2d apriltag_pose = new Pose2d(0,0,0  );// = aprilTagDetector.getPose().pose;
 
                 long n = System.nanoTime();
                 double dlt = n-last;
@@ -74,12 +74,12 @@ public class LocalizationTest_Kalman extends LinearOpMode {
 
                 telemetry.update();
                 Pose2d resultPose = new Pose2d(result_x.position, result_y.position, pose.heading.toDouble());
-                TelemetryPacket packet = new TelemetryPacket();
-                packet.fieldOverlay().setStroke("#3F51B5");
-                Drawing.drawRobot(packet.fieldOverlay(), resultPose);
-                packet.fieldOverlay().setStroke("#BBBBBB");
-                Drawing.drawRobot(packet.fieldOverlay(), pose);
-                FtcDashboard.getInstance().sendTelemetryPacket(packet);
+//                TelemetryPacket packet = new TelemetryPacket();
+//                packet.fieldOverlay().setStroke("#3F51B5");
+//                Drawing.drawRobot(packet.fieldOverlay(), resultPose);
+//                packet.fieldOverlay().setStroke("#BBBBBB");
+//                Drawing.drawRobot(packet.fieldOverlay(), pose);
+//                FtcDashboard.getInstance().sendTelemetryPacket(packet);
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             TankDrive drive = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));

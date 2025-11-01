@@ -36,9 +36,9 @@ public class AprilTagDetector {
     //todo 可以参考的文件：FindCandidate.java  && FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\ConceptAprilTagLocalization.java
     //画面大小
     private Position cameraPosition = new Position(DistanceUnit.INCH,
-            -3.8, -0.3, 16.3, 0);
+            -3.8, -0.3, 16.8, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-            90, -74, 0, 0);
+            90, -71, 0, 0);
     public static int resolutionwidth = 640;
     public static int resolutionheight= 480;
     VisionPortal portal;
@@ -88,7 +88,7 @@ public class AprilTagDetector {
         portal = new VisionPortal.Builder()
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(aprilTag)
-                .addProcessor(processor)
+                //TODO DONNOT OVERFLOW.addProcessor(processor)
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
                 .setCamera(hardWareMap.get(WebcamName.class, "Webcam 1"))
                 .build();

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -22,6 +23,7 @@ import java.io.FileReader;
 
 
 //泵赛季主程序
+@Config
 @TeleOp(name="DECODE", group="AAA_DECODE")
 public class DECODE extends LinearOpMode {
     public enum TEAM_COLOR {
@@ -55,7 +57,7 @@ public class DECODE extends LinearOpMode {
     public ShooterAction shooter;
     public Trigger trigger;
     //
-    public  int targetSpeed = 900;
+    public  int targetSpeed = 1500;
     public Pose2d startPose = new Pose2d(0,0,0);
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
