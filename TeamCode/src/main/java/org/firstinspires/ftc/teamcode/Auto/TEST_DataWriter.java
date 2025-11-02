@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -35,6 +35,7 @@ public class TEST_DataWriter extends LinearOpMode {
             setLocate();
 
         }
+        Data.instance.setPose2d(new Pose2d(Point.getY(),-Point.getX(),HeadingRadian));
     }
     public void addTele(){
         last_time_ms=now_time_ms;
@@ -42,11 +43,11 @@ public class TEST_DataWriter extends LinearOpMode {
         telemetry.addData("FPS",1000.0/(now_time_ms-last_time_ms));
         telemetry.addLine();
         telemetry.addData("Point", Point.toString());
-
+        telemetry.addData("HeadingRadian", HeadingRadian);
         telemetry.update();
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), Data.instance.getPose2d());
+        Drawing.drawRobot(packet.fieldOverlay(), new Pose2d(Point.getY(),-Point.getX(), HeadingRadian));
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
     public void setLocate(){
@@ -57,8 +58,6 @@ public class TEST_DataWriter extends LinearOpMode {
             HeadingRadian= MathSolver.normalizeAngle(HeadingRadian);
             last_set_time_ms=now_time_ms;
         }
-        Data.instance.setPosition(Point);
-        Data.instance.headingRadian=HeadingRadian;
     }
 
     public long now_time_ms,last_time_ms,last_set_time_ms;
