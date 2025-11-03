@@ -21,8 +21,8 @@ public class TEST_DataWriter extends LinearOpMode {
     public void initiate(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
-        Data.instance.setPosition(new Point2D(0,0));
-        Data.instance.headingRadian=0;
+        Data.getInstance().setPosition(new Point2D(0,0));
+        Data.getInstance().headingRadian=0;
 
     }
     @Override
@@ -35,7 +35,7 @@ public class TEST_DataWriter extends LinearOpMode {
             setLocate();
 
         }
-        Data.instance.setPose2d(new Pose2d(Point.getY(),-Point.getX(),HeadingRadian));
+        Data.getInstance().setPose2d(new Pose2d(Point.getY(),-Point.getX(),HeadingRadian));
     }
     public void addTele(){
         last_time_ms=now_time_ms;
