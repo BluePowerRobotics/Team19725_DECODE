@@ -52,7 +52,7 @@ public class TEST_DataWriter extends LinearOpMode {
     }
     public void setLocate(){
         if(now_time_ms-last_set_time_ms>50){
-            Point=Point2D.translate(Point,new Point2D(10*gamepad1.left_stick_x,-10*gamepad1.left_stick_y));
+            Point=Point2D.translate(Point,new Point2D(2*gamepad1.left_stick_x,-2*gamepad1.left_stick_y));
 
             HeadingRadian+=gamepad1.right_stick_x*0.1;
             HeadingRadian= MathSolver.normalizeAngle(HeadingRadian);
