@@ -74,7 +74,7 @@ public class DECODE extends LinearOpMode {
         sweeper = new Sweeper(hardwareMap);
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
-        chassis = new ChassisController(hardwareMap, new Point2D(startPose.position.x, startPose.position.y), startPose.heading.toDouble());
+        chassis = new ChassisController(hardwareMap, startPose);
     }
     void Telemetry(){
 
