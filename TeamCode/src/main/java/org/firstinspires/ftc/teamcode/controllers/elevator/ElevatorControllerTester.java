@@ -63,7 +63,7 @@ public class ElevatorControllerTester extends LinearOpMode {
             }
             telemetry.addData("gamePad1:RY",gamepad1.right_stick_y);
             telemetry.addData("true_pos",elevatorController.elevatorMotor.getCurrentPosition());
-            telemetry.addData("CurrentPosition",CP);
+            telemetry.addData("PIDLockPosition",CP);
             telemetry.addData("TestMode",testMode.toString());
             telemetry.addData("directControl",directControl);
             telemetry.addData("BalancePower",BalancePower);
