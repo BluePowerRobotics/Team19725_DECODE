@@ -77,7 +77,7 @@ public class DECODE extends LinearOpMode {
         chassis = new ChassisController(hardwareMap, startPose);
     }
     void Telemetry(){
-
+        telemetry.addData("SweeperCurrent", sweeper.getCurrent());
         telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
         telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
         telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
@@ -122,22 +122,21 @@ public class DECODE extends LinearOpMode {
                 boolean ifHit =   false;//todo = chassisController.wheelSpeeds.length;
                 if(ifHit){
                     shooterStatus = SHOOTER_STATUS.EMERGENCY_STOP;
+                    sweeperStatus = SWEEPER_STATUS.STOP;
                 }
                 else{
                     sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
-                    triggerStatus = TRIGGER_STATUS.OPEN;
                     shooter.setShootSpeed(targetSpeed);
                 }
                 break;
 
             case EMERGENCY_STOP:
-                triggerStatus = TRIGGER_STATUS.CLOSE;
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 shooter.setShootSpeed(-400);
                 break;
 
             case STOP:
-                triggerStatus = TRIGGER_STATUS.CLOSE;
+                //triggerStatus = TRIGGER_STATUS.CLOSE;
                 shooter.setShootSpeed(0);
                 break;
         }
@@ -254,14 +253,17 @@ public class DECODE extends LinearOpMode {
         switch (sweeperStatus){
             case EAT:
                 sweeper.Eat();
+                triggerStatus = TRIGGER_STATUS.OPEN;
                 break;
             case GIVE_ARTIFACT:
                 sweeper.GiveArtifact();
+                triggerStatus = TRIGGER_STATUS.OPEN;
                 break;
             case OUTPUT:
                 sweeper.output();
                 break;
             case STOP:
+                triggerStatus = TRIGGER_STATUS.CLOSE;
                 sweeper.stop();
                 break;
         }
@@ -273,9 +275,9 @@ public class DECODE extends LinearOpMode {
         Init();
         waitForStart();
         while (opModeIsActive()) {
+            shoot();
             sweeper();
             trigger();
-            shoot();
             chassis();
             Telemetry();
         }
