@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 @Config
 public class Sweeper {
     public DcMotorEx motor = null;
@@ -33,6 +35,8 @@ public class Sweeper {
         return motor.getPower();
     }
     public double getVel(){return motor.getVelocity();}
+    public double getCurrent(){return motor.getCurrent(CurrentUnit.AMPS);}
+
 
 
 
