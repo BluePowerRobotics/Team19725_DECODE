@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-
 @Config
 public class Sweeper {
     public DcMotorEx motor = null;
-
+    public static double timethreshold = 500 ;
+    public static double currentthreshold = 1.2;
+    private long overStartTime = -1;
     public static int EatVel = 1000;
     public static int GiveTheArtifactVel = 400;
     public static int OutputVel = -400;
@@ -38,7 +38,18 @@ public class Sweeper {
     public double getCurrent(){return motor.getCurrent(CurrentUnit.AMPS);}
 
 
-
-
+    public boolean isStuck(){
+        double current = motor.getCurrent(CurrentUnit.AMPS);
+        long now = System.currentTimeMillis();
+        if (current > currentthreshold) {
+            if (overStartTime < 0) {
+                overStartTime = now;
+            }
+            return (now - overStartTime) > timethreshold;
+        } else {
+            overStartTime = -1;
+            return false;
+        }
+    }
 }
 

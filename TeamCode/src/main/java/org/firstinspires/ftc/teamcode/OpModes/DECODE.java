@@ -251,11 +251,13 @@ public class DECODE extends LinearOpMode {
         if(gamepad2.yWasPressed()){
             sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
         }
-
         switch (sweeperStatus){
             case EAT:
                 sweeper.Eat();
                 triggerStatus = TRIGGER_STATUS.OPEN;
+                if(sweeper.isStuck()){
+                    sweeperStatus = SWEEPER_STATUS.STOP;
+                }
                 break;
             case GIVE_ARTIFACT:
                 sweeper.GiveArtifact();
