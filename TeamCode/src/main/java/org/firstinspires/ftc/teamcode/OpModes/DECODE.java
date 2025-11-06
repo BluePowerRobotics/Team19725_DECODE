@@ -53,7 +53,7 @@ public class DECODE extends LinearOpMode {
     public ShooterAction shooter;
     public Trigger trigger;
     //
-    public  int targetSpeed = 1500;
+    public  int targetSpeed = 900;
     public Pose2d startPose = new Pose2d(0,0,0);
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
@@ -125,8 +125,10 @@ public class DECODE extends LinearOpMode {
                     sweeperStatus = SWEEPER_STATUS.STOP;
                 }
                 else{
-                    sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
-                    shooter.setShootSpeed(targetSpeed);
+                    boolean hasReachedTargetSpeed = shooter.setShootSpeed(targetSpeed);
+                    if(hasReachedTargetSpeed){
+                        sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
+                    }
                 }
                 break;
 
