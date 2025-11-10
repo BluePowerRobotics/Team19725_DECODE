@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 // 控制双发射轮的共同运作和自动化动作
 @Config
 public class ShooterAction {
+    public static int speed_block = -400;
     public static int speed2_2 = 900;
     public static int speed25_25 = 925;
     public static int speed3_3 = 975;
@@ -19,9 +20,9 @@ public class ShooterAction {
     private Shooter shooter_Left;
     private Shooter shooter_Right;
 
-    public static double targetSpeed_low = 1600;
-    public static double targetSpeed_high = 3000;
-    public static double low_speed_threshold = 100;
+    public static int targetSpeed_low = 1600;
+    public static int targetSpeed_high = 3000;
+    public static int low_speed_threshold = 100;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
         shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
@@ -32,10 +33,15 @@ public class ShooterAction {
         boolean right = shooter_Right.shoot(Power);
         return (left || right);
     }
+    public void block(){
+        shooter_Left.block();
+        shooter_Right.block();
+    }
+
 
     public class SpeedUp implements Action {
-        private double targetSpeed;
-        public SpeedUp(double targetSpeed) {
+        private int targetSpeed;
+        public SpeedUp(int targetSpeed) {
             this.targetSpeed = targetSpeed;
         }
 
@@ -50,18 +56,18 @@ public class ShooterAction {
             return true;
         }
     }
-    public Action SpeedUp(double targetSpeed) {
+    public Action SpeedUp(int targetSpeed) {
         return new SpeedUp(targetSpeed);
     }
 
     public class ShootThreeArtifacts implements Action {
-        double targetSpeed;
+        int targetSpeed;
         private int cnt = 0;
         boolean hasShot = false;
 
         Telemetry tele;
         //todo: delete tele;
-        public ShootThreeArtifacts(double targetSpeed) {
+        public ShootThreeArtifacts(int targetSpeed) {
             this.targetSpeed = targetSpeed;
         }
 
@@ -84,7 +90,7 @@ public class ShooterAction {
             return true;
         }
     }
-    public Action ShootThreeArtifacts(double targetSpeed) {
+    public Action ShootThreeArtifacts(int targetSpeed) {
         return new ShootThreeArtifacts(targetSpeed);
     }
 

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.controllers.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 //单个弹射飞轮的PID控制器
 @Config
 public class Shooter {
+    public static double BlockPower = -0.3;
     public DcMotorEx shooterMotor;
     TelemetryPacket packet = new TelemetryPacket();
     double[] speedBuffer = new double[10];
@@ -37,6 +39,7 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse){
         shooterMotor = hardwareMap.get(DcMotorEx.class, motorName);
         shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if(ifReverse)
             shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -53,7 +56,8 @@ public class Shooter {
      *应该比预期转速高80-100
      */
     //todo:fix low velocity issue
-    public boolean shoot(double targetSpeed){
+    public boolean shoot(int targetSpeed){
+        //如果是double，不可以 == 0，需要写abs < 0.0001
         if(targetSpeed == 0){
             shooterMotor.setPower(0);
             pidController.reset();
@@ -67,7 +71,10 @@ public class Shooter {
         double dt = (current_time - previous_time);
         if (dt <= 0) dt = 1; // 防止除零
         Power = pidController.calculate(targetSpeed, current_speed, dt);
-        Power = Range.clip(Power, 0.001, 1);
+        //避免射球时出现负功率，导致震荡或电机损伤
+        if(targetSpeed > 0){
+            Power = Range.clip(Power, 0.001, 1);
+        }
         shooterMotor.setPower(Power);
         previous_time = current_time;
         if(Math.abs(targetSpeed - current_speed) < 50){
@@ -76,6 +83,11 @@ public class Shooter {
             return false;
         }
     }
+    public void block(){
+        //telemetry.addData("blockPower", BlockPower);
+        shooterMotor.setPower(BlockPower);
+    }
+
     public double getCurrent_encoder(){
         return current_encoder;
     }
