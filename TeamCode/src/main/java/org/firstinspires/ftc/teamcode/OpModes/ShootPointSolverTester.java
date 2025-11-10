@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -13,11 +13,12 @@ import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.Data;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
 @Config
-@TeleOp(name = "TEST_DataWriter", group = "TEST")
-public class TEST_DataWriter extends LinearOpMode {
-
+@TeleOp(name = "ShootPointSolverTester", group = "TEST")
+public class ShootPointSolverTester extends LinearOpMode {
+    Pose2d solvedPoint = new Pose2d(0,0,0);
     public void initiate(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
@@ -27,13 +28,14 @@ public class TEST_DataWriter extends LinearOpMode {
     }
     @Override
     public void runOpMode() throws InterruptedException {
+
         initiate();
         waitForStart();
         last_time_ms=now_time_ms=System.currentTimeMillis();
         while (opModeIsActive()){
             addTele();
             setLocate();
-
+            solve();
         }
         Data.getInstance().setPose2d(new Pose2d(Point.getY(),-Point.getX(),HeadingRadian));
     }
@@ -45,10 +47,7 @@ public class TEST_DataWriter extends LinearOpMode {
         telemetry.addData("Point", Point.toString());
         telemetry.addData("HeadingRadian", HeadingRadian);
         telemetry.update();
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), new Pose2d(Point.getY(),-Point.getX(), HeadingRadian));
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
     }
     public void setLocate(){
         if(now_time_ms-last_set_time_ms>50){
@@ -58,6 +57,29 @@ public class TEST_DataWriter extends LinearOpMode {
             HeadingRadian= MathSolver.normalizeAngle(HeadingRadian);
             last_set_time_ms=now_time_ms;
         }
+    }
+    public void solve(){
+        //x-->-y;   y --> x
+
+        if(gamepad1.xWasPressed()){
+            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getY(),-Point.getX(), HeadingRadian), SolveShootPoint.r1);
+        }
+
+        if(gamepad1.yWasPressed()){
+            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getY(),-Point.getX(), HeadingRadian), SolveShootPoint.r2);
+        }
+        if(gamepad1.aWasPressed()){
+            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getY(),-Point.getX(), HeadingRadian), SolveShootPoint.r3);
+        }
+        if(gamepad1.bWasPressed()){
+            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getY(),-Point.getX(), HeadingRadian), SolveShootPoint.r4);
+        }
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot(packet.fieldOverlay(), new Pose2d(Point.getY(),-Point.getX(), HeadingRadian));
+        packet.fieldOverlay().setStroke("#AAAAAA");
+        Drawing.drawRobot(packet.fieldOverlay(), solvedPoint);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     public long now_time_ms,last_time_ms,last_set_time_ms;
