@@ -45,7 +45,7 @@ public class ActionRunnerTest extends LinearOpMode {
                 telemetry.addData("x", pose.position.x);
                 telemetry.addData("y", pose.position.y);
                 telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
-                telemetry.addData("current action", actionRunner.getCurrentAction().toString());
+                //telemetry.addData("current action", actionRunner.getCurrentAction().toString());
                 telemetry.update();
 
 
