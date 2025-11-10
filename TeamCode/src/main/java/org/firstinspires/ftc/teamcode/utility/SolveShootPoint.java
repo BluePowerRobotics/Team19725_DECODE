@@ -15,6 +15,9 @@ public class SolveShootPoint {
     public static double r5 = 200;
     private static double genhao2 = Math.sqrt(2);
     public static Pose2d solveREDShootPoint(Pose2d robotPose, double R) {
+        Pose2d tmp = robotPose;
+        Pose2d correct = new Pose2d(tmp.position.y,-tmp.position.x,0);
+
 
         //特殊判断小三角情况
 
@@ -25,8 +28,8 @@ public class SolveShootPoint {
             return new Pose2d(12, 60, -(Math.atan(7.0/11) + Math.PI/2));
         }
 
-        double x0 = robotPose.position.x;
-        double y0 = robotPose.position.y;
+        double x0 = correct.position.x;
+        double y0 = correct.position.y;
         double ansX = 0;
         double ansY = 0;
 
@@ -41,9 +44,11 @@ public class SolveShootPoint {
             ansX = 72 - genhao2 / 2 * R;
             ansY = 72 - genhao2 / 2 * R;
         }
-        return new Pose2d(ansX, ansY, Math.atan((72 - ansY) / (72 - ansX)));
+        return new Pose2d(ansY, -ansX, Math.atan((72 - ansY) / (72 - ansX)) + Math.PI / 2);
     }
     public static Pose2d solveBLUEShootPoint(Pose2d robotPose, double R) {
+        Pose2d tmp = robotPose;
+        Pose2d correct = new Pose2d(tmp.position.y,-tmp.position.x,0);
 
         if(R == 100){
             return new Pose2d(12, 60, -Math.atan(5.0/11));
@@ -52,8 +57,8 @@ public class SolveShootPoint {
             return new Pose2d(-12, 60, -Math.atan(7.0/11));
         }
 
-        double x0 = robotPose.position.x;
-        double y0 = robotPose.position.y;
+        double x0 = correct.position.x;
+        double y0 = correct.position.y;
         double ansX = 0;
         double ansY = 0;
 
@@ -68,6 +73,6 @@ public class SolveShootPoint {
             ansX = -72 + genhao2 / 2 * R;
             ansY = 72 - genhao2 / 2 * R;
         }
-        return new Pose2d(ansX, ansY, (Math.atan(( 72 - ansY) / (-ansX - 72)) + Math.PI));
+        return new Pose2d(ansY, -ansX, (Math.atan(( 72 - ansY) / (-ansX - 72)) + 1.5* Math.PI));
     }
 }
