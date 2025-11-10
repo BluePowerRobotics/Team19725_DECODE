@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.controllers.turret;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+
 import org.firstinspires.ftc.teamcode.controllers.turret.model.TurretInfo;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point3D;
@@ -14,6 +17,16 @@ class TurretCalculator{
         public static double g=9.8; // 重力加速度 (m/s²)
         public static Point3D target = new Point3D(0,0,0); // 目标位置 (m)
         public static double turretHeight=0; // 炮台高度 (m)
+    }
+    /**
+     * 解算炮台发射参数(固定仰角)
+     * @param theta 炮台仰角 (rad)
+     * @param pose2d 炮台坐标
+     * @param poseVelocity2d 炮台速度
+     * @return List<TurretInfo> 所有可能解
+     */
+    public List<TurretInfo> solveSpeed(double theta, Pose2d pose2d, PoseVelocity2d poseVelocity2d){
+        return solveSpeed(theta,-pose2d.position.y,+pose2d.position.x,-poseVelocity2d.linearVel.y,+poseVelocity2d.linearVel.x);
     }
     /**
      * 解算炮台发射参数(固定仰角)
@@ -76,5 +89,8 @@ class TurretCalculator{
         }
 
         return results;
+    }
+    public List<TurretInfo> solveTheta(double speed, double x,double y, double vx, double vy){
+        return null;
     }
 }
