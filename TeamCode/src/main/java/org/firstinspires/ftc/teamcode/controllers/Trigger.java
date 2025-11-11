@@ -9,12 +9,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Trigger {
     Servo triggerServo;
-    public static double TRIGGER_OPEN_POS = 1;
-    public static double TRIGGER_CLOSE_POS = 0.5;
-    public Trigger(HardwareMap hardwareMap){
-        this.triggerServo = hardwareMap.get(Servo.class, "triggerServo");
+    public double TRIGGER_OPEN_POS;
+    public double TRIGGER_CLOSE_POS;
+    public Trigger(HardwareMap hardwareMap, String name, double OPEN_POS, double CLOSE_POS){
+        this.triggerServo = hardwareMap.get(Servo.class, name);
         this.triggerServo.setDirection(Servo.Direction.FORWARD);
         this.triggerServo.setPosition(TRIGGER_CLOSE_POS);
+        this.TRIGGER_OPEN_POS = OPEN_POS;
+        this.TRIGGER_CLOSE_POS = CLOSE_POS;
     }
     public void open(){
         this.triggerServo.setPosition(TRIGGER_OPEN_POS);

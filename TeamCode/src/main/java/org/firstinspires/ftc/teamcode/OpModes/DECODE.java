@@ -24,8 +24,12 @@ import java.io.FileReader;
 //泵赛季主程序
 @Config
 @TeleOp(name="DECODE", group="AAA_DECODE")
-public class DECODE extends LinearOpMode {
 
+public class DECODE extends LinearOpMode {
+    public static double LEFT_TIGGER_OPEN_POS = 0;
+    public static double LEFT_TRIGGER_CLOSE_POS = 1;
+    public static double RIGHT_TIGGER_OPEN_POS = 0.4;
+    public static double RIGHT_TRIGGER_CLOSE_POS = 0.65;
     public enum ROBOT_STATUS{
         EATING,
         WAITING,
@@ -45,6 +49,8 @@ public class DECODE extends LinearOpMode {
         CLOSE
     }
     TRIGGER_STATUS triggerStatus = TRIGGER_STATUS.CLOSE;
+
+
     public enum SWEEPER_STATUS {
         EAT,
         GIVE_ARTIFACT,
@@ -61,7 +67,8 @@ public class DECODE extends LinearOpMode {
     public ChassisController chassis;
     public Sweeper sweeper;
     public ShooterAction shooter;
-    public Trigger trigger;
+    public Trigger trigger_right;
+    public Trigger trigger_left;
     //
     public  int targetSpeed = 900;
     public Pose2d startPose = new Pose2d(0,0,0);
@@ -82,7 +89,8 @@ public class DECODE extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         sweeper = new Sweeper(hardwareMap);
-        trigger = new Trigger(hardwareMap);
+        trigger_right = new Trigger(hardwareMap, "trigger_right", RIGHT_TIGGER_OPEN_POS, RIGHT_TRIGGER_CLOSE_POS);
+        trigger_left = new Trigger(hardwareMap, "trigger_left",LEFT_TIGGER_OPEN_POS, LEFT_TIGGER_OPEN_POS);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
     }
@@ -123,7 +131,7 @@ public class DECODE extends LinearOpMode {
             case EATING:
                 sweeperStatus = SWEEPER_STATUS.EAT;
                 shooterStatus = SHOOTER_STATUS.BLOCKING;
-                triggerStatus = TRIGGER_STATUS.OPEN;
+                triggerStatus = TRIGGER_STATUS.CLOSE;
                 break;
             case WAITING:
                 sweeperStatus = SWEEPER_STATUS.STOP;
@@ -166,10 +174,12 @@ public class DECODE extends LinearOpMode {
     void trigger(){
         switch (triggerStatus){
             case OPEN:
-                trigger.open();
+                trigger_left.open();
+                trigger_right.open();
                 break;
             case CLOSE:
-                trigger.close();
+                trigger_left.close();
+                trigger_right.open();
                 break;
         }
     }
