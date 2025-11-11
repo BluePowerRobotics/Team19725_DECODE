@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-//控制弹射扳机 —— 一个180舵机
+//控制弹射扳机 —— 一个180舵机 *左右各一个
 @Config
 
 public class Trigger {
