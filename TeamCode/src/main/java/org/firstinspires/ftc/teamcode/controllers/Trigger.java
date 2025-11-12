@@ -8,20 +8,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 
 public class Trigger {
-    Servo triggerServo;
-    public double TRIGGER_OPEN_POS;
-    public double TRIGGER_CLOSE_POS;
-    public Trigger(HardwareMap hardwareMap, String name, double OPEN_POS, double CLOSE_POS){
-        this.triggerServo = hardwareMap.get(Servo.class, name);
-        this.triggerServo.setDirection(Servo.Direction.FORWARD);
-        this.triggerServo.setPosition(TRIGGER_CLOSE_POS);
-        this.TRIGGER_OPEN_POS = OPEN_POS;
-        this.TRIGGER_CLOSE_POS = CLOSE_POS;
+    Servo triggerServo_LEFT;
+    Servo triggerServo_RIGHT;
+    public double TRIGGER_OPEN_POS = 0;
+    public double TRIGGER_CLOSE_POS = 0.5;
+    public Trigger(HardwareMap hardwareMap){
+        this.triggerServo_LEFT = hardwareMap.get(Servo.class, "trigger_left");
+        this.triggerServo_RIGHT = hardwareMap.get(Servo.class, "trigger_right");
+        this.triggerServo_LEFT.setDirection(Servo.Direction.REVERSE);
+        this.triggerServo_RIGHT.setDirection(Servo.Direction.FORWARD);
+        this.triggerServo_LEFT.setPosition(TRIGGER_CLOSE_POS);
+        this.triggerServo_RIGHT.setPosition(TRIGGER_CLOSE_POS);
     }
     public void open(){
-        this.triggerServo.setPosition(TRIGGER_OPEN_POS);
+        this.triggerServo_LEFT.setPosition(TRIGGER_OPEN_POS);
+        this.triggerServo_RIGHT.setPosition(TRIGGER_OPEN_POS);
     }
     public void close() {
-        this.triggerServo.setPosition(TRIGGER_CLOSE_POS);
+        this.triggerServo_LEFT.setPosition(TRIGGER_CLOSE_POS);
+        this.triggerServo_RIGHT.setPosition(TRIGGER_CLOSE_POS);
     }
 }
