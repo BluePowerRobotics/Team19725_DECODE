@@ -55,7 +55,6 @@ public class DECODE extends LinearOpMode {
     }
     SWEEPER_STATUS sweeperStatus = SWEEPER_STATUS.STOP;
     public enum SHOOTER_STATUS {
-        BLOCKING,
         SHOOTING,
         STOP
     }
@@ -124,7 +123,7 @@ public class DECODE extends LinearOpMode {
         switch (robotStatus) {
             case EATING:
                 sweeperStatus = SWEEPER_STATUS.EAT;
-                shooterStatus = SHOOTER_STATUS.BLOCKING;
+                shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
                 break;
             case WAITING:
@@ -137,7 +136,7 @@ public class DECODE extends LinearOpMode {
                 //sweeper和trigger状态由shooter条件决定，在shoot()中
                 break;
             case EMERGENCY_STOP:
-                shooterStatus = SHOOTER_STATUS.BLOCKING;
+                shooterStatus = SHOOTER_STATUS.STOP;
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
                 //todo 检查是否会压到球/撑坏结构
@@ -193,10 +192,6 @@ public class DECODE extends LinearOpMode {
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }
                 }
-                break;
-
-            case BLOCKING:
-                shooter.block();
                 break;
 
             case STOP:
