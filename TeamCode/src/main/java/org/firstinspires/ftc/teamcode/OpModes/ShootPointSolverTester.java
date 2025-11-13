@@ -37,7 +37,7 @@ public class ShootPointSolverTester extends LinearOpMode {
             setLocate();
             solve();
         }
-        Data.getInstance().setPose2d(new Pose2d(Point.getY(),-Point.getX(),HeadingRadian));
+        Data.getInstance().setPose2d(new Pose2d(Point.getX(),Point.getY(),HeadingRadian));
     }
     public void addTele(){
         last_time_ms=now_time_ms;
@@ -51,7 +51,7 @@ public class ShootPointSolverTester extends LinearOpMode {
     }
     public void setLocate(){
         if(now_time_ms-last_set_time_ms>50){
-            Point=Point2D.translate(Point,new Point2D(2*gamepad1.left_stick_x,-2*gamepad1.left_stick_y));
+            Point=Point2D.translate(Point,new Point2D(-2*gamepad1.left_stick_y,-2*gamepad1.left_stick_x));
 
             HeadingRadian+=gamepad1.right_stick_x*0.1;
             HeadingRadian= MathSolver.normalizeAngle(HeadingRadian);
@@ -62,21 +62,21 @@ public class ShootPointSolverTester extends LinearOpMode {
         //x-->-y;   y --> x
 
         if(gamepad1.xWasPressed()){
-            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getY(),-Point.getX(), HeadingRadian), SolveShootPoint.r1);
+            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(0,0,0), SolveShootPoint.r4);
         }
 
         if(gamepad1.yWasPressed()){
-            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getY(),-Point.getX(), HeadingRadian), SolveShootPoint.r2);
+            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(0,0,0), SolveShootPoint.r5);
         }
         if(gamepad1.aWasPressed()){
-            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getY(),-Point.getX(), HeadingRadian), SolveShootPoint.r3);
+            solvedPoint = SolveShootPoint.solveREDShootPoint(new Pose2d(0,0,0), SolveShootPoint.r4);
         }
         if(gamepad1.bWasPressed()){
-            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getY(),-Point.getX(), HeadingRadian), SolveShootPoint.r4);
+            solvedPoint = SolveShootPoint.solveREDShootPoint(new Pose2d(0,0,0), SolveShootPoint.r5);
         }
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), new Pose2d(Point.getY(),-Point.getX(), HeadingRadian));
+        Drawing.drawRobot(packet.fieldOverlay(), new Pose2d(Point.getX(),Point.getY(), HeadingRadian));
         packet.fieldOverlay().setStroke("#AAAAAA");
         Drawing.drawRobot(packet.fieldOverlay(), solvedPoint);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
