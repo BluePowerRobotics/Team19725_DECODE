@@ -25,7 +25,7 @@ public class ShooterAction {
     public static int low_speed_threshold = 100;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
         shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
-        shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
+        shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", true);
         telemetry = telerc;
     }
     public boolean setShootSpeed(int Power){
