@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.utility;
 
 import com.acmerobotics.roadrunner.Pose2d;
 
+import java.util.Arrays;
+
 public class MathSolver {
     private static final double EPSILON = 1e-10; // 误差容限
     public static double sgn(double n){return Math.abs(n)/n;}
@@ -234,18 +236,12 @@ y_2
         return Inch*25.4;
     }
 
-    public static double hypot(double a, double b) {
-        double r;
-        if (Math.abs(a) > Math.abs(b)) {
-            r = b/a;
-            r = Math.abs(a)*Math.sqrt(1+r*r);
-        } else if (b != 0) {
-            r = a/b;
-            r = Math.abs(b)*Math.sqrt(1+r*r);
-        } else {
-            r = 0.0;
+    public static double hypot(Number... numbers){
+        double opr=0;
+        for (Number number : numbers) {
+            opr = Math.hypot(opr,number.doubleValue());
         }
-        return r;
+        return opr;
     }
     public static double normalizeAngle(double angle) {
         if(Double.isNaN(angle)){
@@ -267,4 +263,5 @@ y_2
         Point2D rotation = new Point2D(pose2d.position.x,pose2d.position.y);
         return Point2D.rotate(rotation,Math.toRadians(90));
     }
+
 }
