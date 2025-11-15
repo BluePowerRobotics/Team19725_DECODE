@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.utility;
 
+import com.acmerobotics.roadrunner.Pose2d;
+
 public class MathSolver {
     private static final double EPSILON = 1e-10; // 误差容限
     public static double sgn(double n){return Math.abs(n)/n;}
@@ -256,5 +258,13 @@ y_2
             angle += 2 * Math.PI;
         }
         return angle;
+    }
+    public static Pose2d toPose2d(Point2D point2D, double heading){
+        Point2D rotation = Point2D.rotate(point2D,Math.toRadians(-90));
+        return new Pose2d(rotation.getX(), rotation.getY(), heading);
+    }
+    public static Point2D toPoint2D(Pose2d pose2d){
+        Point2D rotation = new Point2D(pose2d.position.x,pose2d.position.y);
+        return Point2D.rotate(rotation,Math.toRadians(90));
     }
 }
