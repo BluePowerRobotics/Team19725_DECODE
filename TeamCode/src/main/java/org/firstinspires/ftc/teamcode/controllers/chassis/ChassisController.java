@@ -61,6 +61,14 @@ public class ChassisController {
         HeadingLockRadian = robotPosition.getData().headingRadian;
         noHeadModeStartError=robotPosition.getData().headingRadian;
     }
+    /**
+     * Auto初始化时调用
+     * @param hardwareMap 硬件映射
+     * @param initialPose 初始位置（roadrunner方向）
+     */
+    public ChassisController(HardwareMap hardwareMap, Pose2d initialPose){
+        this(hardwareMap,new Point2D(-initialPose.position.y,+initialPose.position.x),initialPose.heading.log());
+    }
     public void exchangeNoHeadMode(){
         useNoHeadMode=!useNoHeadMode;
     }
@@ -193,8 +201,8 @@ class ChassisCalculator {
             lastTimeXY = System.nanoTime();
             pidPoint.reset();
         }
-        double errorX = target.x - current.x;
-        double errorY = target.y - current.y;
+        double errorX = target.getX() - current.getX();
+        double errorY = target.getY() - current.getY();
         double distance = Math.hypot(errorX, errorY);
         double angleToTarget = Math.atan2(errorY, errorX);
         pidPoint.setPID(Params.pkP, Params.pkI, Params.pkD);
@@ -236,6 +244,7 @@ class ChassisOutputter {
     DcMotorEx leftFront, rightFront, leftBack, rightBack;
 
     ChassisOutputter(HardwareMap hardwareMap) {
+        //TODO 以下配置需要与MecanumDrive.java中保持一致
         this.hardwareMap = hardwareMap;
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
@@ -246,7 +255,7 @@ class ChassisOutputter {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
     }

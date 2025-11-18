@@ -6,27 +6,48 @@ public class Point3D {
     /**
      * 点的x坐标
      */
-    public double x;
+    private double x;
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
     /**
      * 点的y坐标
      */
-    public double y;
+    private double y;
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
     /**
      * 点的z坐标
      */
-    public double z;
-    /**
-     * 点到原点的距离
-     */
-    public double distance;
-    /**
-     * 点的方位角（弧度，在xy平面内与x轴的夹角）
-     */
-    public double azimuth;
-    /**
-     * 点的极角（弧度，与z轴的夹角）
-     */
-    public double polar;
+    private double z;
+    public double getZ() {
+        return z;
+    }
+    public void setZ(double z) {
+        this.z = z;
+    }
+    public double getDistance() {
+        return Math.sqrt(x * x + y * y + z * z);
+    }
+    public double getAzimuth() {
+        return Math.atan2(y, x);
+    }
+    public double getPolar() {
+        return (getDistance() > zeroTolerance) ? Math.acos(z / getDistance()) : 0;
+    }
 
     /**
      * 点坐标加法
@@ -36,7 +57,6 @@ public class Point3D {
         this.x += other.x;
         this.y += other.y;
         this.z += other.z;
-        updateSphericalCoordinates();
     }
 
     /**
@@ -48,7 +68,6 @@ public class Point3D {
         this.x = Math.max(min.x, Math.min(max.x, this.x));
         this.y = Math.max(min.y, Math.min(max.y, this.y));
         this.z = Math.max(min.z, Math.min(max.z, this.z));
-        updateSphericalCoordinates();
     }
 
     /**
@@ -65,7 +84,6 @@ public class Point3D {
             this.x = p.x + direction.x * maxDistance;
             this.y = p.y + direction.y * maxDistance;
             this.z = p.z + direction.z * maxDistance;
-            updateSphericalCoordinates();
         }
     }
 
@@ -88,16 +106,13 @@ public class Point3D {
         this.x = x;
         this.y = y;
         this.z = z;
-        updateSphericalCoordinates();
     }
-
     /**
-     * 更新球坐标参数
+     * 复制数据，创建一个Point3D对象
+     * @param other 另一个Point3D对象
      */
-    private void updateSphericalCoordinates() {
-        this.distance = Math.sqrt(x * x + y * y + z * z);
-        this.azimuth = Math.atan2(y, x);
-        this.polar = (distance > zeroTolerance) ? Math.acos(z / distance) : 0;
+    public Point3D(Point3D other) {
+        this(other.x, other.y, other.z);
     }
 
     /**

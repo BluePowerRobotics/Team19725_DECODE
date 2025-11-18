@@ -49,7 +49,7 @@ public class RobotPosition {
         //instance.pinpointLocalizer.setUnits(DistanceUnit.MM, UnnormalizedAngleUnit.RADIANS);
         Data.instance.setPosition(initialPosition);
         Data.instance.headingRadian=initialHeadingRadian;
-        instance.mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-Data.instance.getPosition(DistanceUnit.INCH).y, +Data.instance.getPosition(DistanceUnit.INCH).x, Data.instance.headingRadian));
+        instance.mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-Data.instance.getPosition(DistanceUnit.INCH).getY(), +Data.instance.getPosition(DistanceUnit.INCH).getX(), Data.instance.headingRadian));
         return instance;
     }
     /**
@@ -72,7 +72,7 @@ public class RobotPosition {
         instance.initialHeadingRadian= Data.instance.headingRadian;
         //instance.pinpointLocalizer=new PinpointLocalizer(hardwareMap, Params.inPerTick, new Pose2d(instance.initialPosition.y,-instance.initialPosition.x,instance.initialHeadingRadian));
         //instance.pinpointLocalizer.setUnits(DistanceUnit.MM, UnnormalizedAngleUnit.RADIANS);
-        instance.mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-Data.instance.getPosition(DistanceUnit.INCH).y, +Data.instance.getPosition(DistanceUnit.INCH).x, Data.instance.headingRadian));
+        instance.mecanumDrive = new MecanumDrive(hardwareMap,Data.getInstance().getPose2d());
         return instance;
     }
 

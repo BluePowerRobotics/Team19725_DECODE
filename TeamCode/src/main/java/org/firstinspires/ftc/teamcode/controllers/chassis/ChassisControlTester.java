@@ -20,7 +20,7 @@ public class ChassisControlTester extends LinearOpMode {
     long lastNanoTime=0;
     @Override
     public void runOpMode() throws InterruptedException {
-        ChassisController chassis = new ChassisController(hardwareMap,new Point2D(0,0),0);
+        ChassisController chassis = new ChassisController(hardwareMap);
         chassis.robotPosition.setMinUpdateIntervalMs(1);//todo 测试更小的时间间隔是否能带来更好的效果
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //chassis.init(hardwareMap);

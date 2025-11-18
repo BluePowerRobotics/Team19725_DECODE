@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.utility;
 
+import com.acmerobotics.roadrunner.Pose2d;
+
+import java.util.Arrays;
+
 public class MathSolver {
     private static final double EPSILON = 1e-10; // 误差容限
     public static double sgn(double n){return Math.abs(n)/n;}
@@ -230,6 +234,47 @@ y_2
     }
     public static double toMM(double Inch){
         return Inch*25.4;
+    }
+
+    public static double hypot(double a, double b) {
+        double r;
+        if (Math.abs(a) > Math.abs(b)) {
+            r = b/a;
+            r = Math.abs(a)*Math.sqrt(1+r*r);
+        } else if (b != 0) {
+            r = a/b;
+            r = Math.abs(b)*Math.sqrt(1+r*r);
+        } else {
+            r = 0.0;
+        }
+        return r;
+    }
+    public static double hypot(Number... numbers){
+        double opr=0;
+        for (Number number : numbers) {
+            opr = Math.hypot(opr,number.doubleValue());
+        }
+        return opr;
+    }
+    public static double normalizeAngle(double angle) {
+        if(Double.isNaN(angle)){
+            return Double.NaN;
+        }
+        while (angle > Math.PI) {
+            angle -= 2 * Math.PI;
+        }
+        while (angle <= -Math.PI) {
+            angle += 2 * Math.PI;
+        }
+        return angle;
+    }
+    public static Pose2d toPose2d(Point2D point2D, double heading){
+        Point2D rotation = Point2D.rotate(point2D,Math.toRadians(-90));
+        return new Pose2d(rotation.getX(), rotation.getY(), heading);
+    }
+    public static Point2D toPoint2D(Pose2d pose2d){
+        Point2D rotation = new Point2D(pose2d.position.x,pose2d.position.y);
+        return Point2D.rotate(rotation,Math.toRadians(90));
     }
 
 }

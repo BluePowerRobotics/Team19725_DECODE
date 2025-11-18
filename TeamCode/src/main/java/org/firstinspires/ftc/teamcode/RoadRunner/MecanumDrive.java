@@ -63,14 +63,16 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         // drive model parameters
-        public double inPerTick = 0.0019835881;
-        public double lateralInPerTick = 0.0017267656009772102;
-        public double trackWidthTicks = 7057.91691;
+        public double inPerTick = 0.001999;
+        public double lateralInPerTick = inPerTick;
+        public double trackWidthTicks = 6029.211;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.751336;
-        public double kV = 0.0003629;
-        public double kA = 0.00015;
+
+        //kV: 0.00034217896323457734, kS: 0.9060470526901572
+        public double kS = 0.9060470526901572;
+        public double kV = 0.00034217896323457734;
+        public double kA = 0.00012;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -82,13 +84,13 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 2;
-        public double lateralGain = 2;
+        public double axialGain = 6;
+        public double lateralGain = 3;
         public double headingGain = 2; // shared with turn
 
-        public double axialVelGain = 0.0;
-        public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.0; // shared with turn
+        public double axialVelGain = 2;
+        public double lateralVelGain = 1;
+        public double headingVelGain = 0.5; // shared with turn
     }
 
     public static Params PARAMS = new Params();
@@ -112,7 +114,7 @@ public final class MecanumDrive {
 
     public final LazyImu lazyImu;
 
-    public final Localizer localizer;
+    public Localizer localizer;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
@@ -138,8 +140,7 @@ public final class MecanumDrive {
             imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
-            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
             this.pose = pose;
         }
@@ -238,7 +239,7 @@ public final class MecanumDrive {
 
         // TODO: reverse motor directions if needed
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        //rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)

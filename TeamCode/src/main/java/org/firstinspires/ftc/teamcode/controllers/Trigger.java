@@ -4,32 +4,28 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-//控制弹射扳机 —— 一个360舵机
+//控制弹射扳机 —— 一个180舵机 *左右各一个
 @Config
 
 public class Trigger {
-    Servo triggerServo;
-    public static double TRIGGER_FULL_SPEED_VEL = 1;
-    public static double TRIGGER_LOWER_SPEED_VEL = 0.9;
-    public static double TRIGGER_CLOSE_VEL = 0.5;
-    public static double TRIGGER_EMERGENCYSTOP_VEL= 0;
+    Servo triggerServo_LEFT;
+    Servo triggerServo_RIGHT;
+    public static double TRIGGER_OPEN_POS = 0;
+    public static double TRIGGER_CLOSE_POS = 0.4;
     public Trigger(HardwareMap hardwareMap){
-        this.triggerServo = hardwareMap.get(Servo.class, "triggerServo");
-        this.triggerServo.setDirection(Servo.Direction.FORWARD);
-        this.triggerServo.setPosition(TRIGGER_CLOSE_VEL);
+        this.triggerServo_LEFT = hardwareMap.get(Servo.class, "trigger_left");
+        this.triggerServo_RIGHT = hardwareMap.get(Servo.class, "trigger_right");
+        this.triggerServo_LEFT.setDirection(Servo.Direction.REVERSE);
+        this.triggerServo_RIGHT.setDirection(Servo.Direction.FORWARD);
+        this.triggerServo_LEFT.setPosition(TRIGGER_CLOSE_POS);
+        this.triggerServo_RIGHT.setPosition(TRIGGER_CLOSE_POS);
     }
-    //for 大三角
-    public void full_speed(){
-        this.triggerServo.setPosition(TRIGGER_FULL_SPEED_VEL);
-    }
-    //for 小三角
-    public void lower_speed(){
-        this.triggerServo.setPosition(TRIGGER_LOWER_SPEED_VEL);
+    public void open(){
+        this.triggerServo_LEFT.setPosition(TRIGGER_OPEN_POS);
+        this.triggerServo_RIGHT.setPosition(TRIGGER_OPEN_POS);
     }
     public void close() {
-        this.triggerServo.setPosition(TRIGGER_CLOSE_VEL);
-    }
-    public void emergencyStop(){
-        this.triggerServo.setPosition(TRIGGER_EMERGENCYSTOP_VEL);
+        this.triggerServo_LEFT.setPosition(TRIGGER_CLOSE_POS);
+        this.triggerServo_RIGHT.setPosition(TRIGGER_CLOSE_POS);
     }
 }

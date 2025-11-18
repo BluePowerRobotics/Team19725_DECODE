@@ -32,6 +32,8 @@ public class ShooterTest extends LinearOpMode {
     public Sweeper sweeper;
     public Shooter shooter1;
     public Shooter shooter2;
+    public static int V1 = 1000;
+    public static int V2 = 1000;
     public static double initSpeed = 2500;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -59,7 +61,8 @@ public class ShooterTest extends LinearOpMode {
         double targetSpeed = 0;
         while (opModeIsActive()) {
             if(gamepad1.a){
-                targetSpeed = initSpeed;
+                shooter1.shoot(V1);
+                shooter2.shoot(V2);
             }
             if(gamepad1.b){
                 targetSpeed = 0;
@@ -70,8 +73,7 @@ public class ShooterTest extends LinearOpMode {
             if(gamepad1.yWasPressed()){
                 targetSpeed += 100;
             }
-            shooter1.shoot(targetSpeed);
-            shooter2.shoot(targetSpeed);
+
             if(gamepad1.dpadLeftWasPressed()){
                 sweeper.GiveArtifact();
             }
