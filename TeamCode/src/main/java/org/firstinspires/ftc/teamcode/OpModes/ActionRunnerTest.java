@@ -16,7 +16,9 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
+import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
+import org.firstinspires.ftc.teamcode.utility.Point2D;
 
 //测试Action在OpMode中的运行情况
 @TeleOp(name = "actionRunnerTest", group = "TEST")
@@ -26,39 +28,30 @@ public class ActionRunnerTest extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         ActionRunner actionRunner = new ActionRunner();
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-            MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+            ChassisController chassis = new ChassisController(hardwareMap, new Pose2d(0,0,0));
+            //MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
             waitForStart();
 
             while (opModeIsActive()) {
-                drive.setDrivePowers(new PoseVelocity2d(
-                        new Vector2d(
-                                -gamepad1.left_stick_y,
-                                -gamepad1.left_stick_x
-                        ),
-                        -gamepad1.right_stick_x
-                ));
 
-                drive.updatePoseEstimate();
 
-                Pose2d pose = drive.localizer.getPose();
+                Pose2d pose = chassis.robotPosition.getData().getPose2d();
+                telemetry.addData("ifBusy",chassis.actionRunner.isBusy());
+                telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
                 telemetry.addData("x", pose.position.x);
                 telemetry.addData("y", pose.position.y);
                 telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
-                //telemetry.addData("current action", actionRunner.getCurrentAction().toString());
                 telemetry.update();
 
 
                 if(gamepad1.a){
-                    TrajectoryActionBuilder return_builder = drive.actionBuilder(pose)
-                            .strafeTo(new Vector2d(0,0));
-                    Action return_action = return_builder.build();
-                    TrajectoryActionBuilder return_builder2 = drive.actionBuilder(pose)
-                            .turnTo(0);
-                    Action return_action2 = return_builder2.build();
-                    actionRunner.add(new ParallelAction(return_action, return_action2));
+                    chassis.setTargetPoint(new Pose2d(0,0,0));
                 }
-                actionRunner.update();
+                double drive = -gamepad1.left_stick_y-gamepad1.right_stick_y; // 前后
+                double strafe = gamepad1.left_stick_x; // 左右
+                double rotate =-gamepad1.right_stick_x; // 旋转
+                chassis.gamepadInput(strafe,drive,rotate);
 
 
                 TelemetryPacket packet = new TelemetryPacket();
