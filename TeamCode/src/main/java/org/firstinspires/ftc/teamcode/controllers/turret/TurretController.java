@@ -43,7 +43,7 @@ class TurretCalculator{
         double h = Param.target.getZ() - Param.turretHeight;
         double vtx = -vx;
         double vty = -vy;
-        return solve(theta, x0, y0, h, vtx, vty);
+        return solveSpeed(theta, x0, y0, h, vtx, vty);
     }
     /**
      * 解算炮台发射参数(固定仰角)
@@ -55,8 +55,8 @@ class TurretCalculator{
      * @param vty 目标y方向速度
      * @return List<TurretInfo> 所有可能解
      */
-    private List<TurretInfo> solve(double theta, double x0, double y0, double h,
-                                  double vtx, double vty){
+    private List<TurretInfo> solveSpeed(double theta, double x0, double y0, double h,
+                                        double vtx, double vty){
         double g = Param.g;
         List<TurretInfo> results = new ArrayList<>();
 
@@ -90,7 +90,80 @@ class TurretCalculator{
 
         return results;
     }
-    public List<TurretInfo> solveTheta(double speed, double x,double y, double vx, double vy){
-        return null;
+    /**
+     * 解算炮台发射参数(固定初速度)
+     * @param speed 发射初速度 (m/s)
+     * @param x0 目标初始x位置差 (m)
+     * @param y0 目标初始y位置差 (m)
+     * @param h 炮台与目标的高度差 (m，目标高则为正)
+     * @param vtx 目标x方向速度 (m/s)
+     * @param vty 目标y方向速度 (m/s)
+     * @return List<TurretInfo> 所有可能解
+     */
+    public List<TurretInfo> solveTheta(double speed, double x0, double y0, double h,
+                                       double vtx, double vty) {
+        double g = Param.g;
+        List<TurretInfo> results = new ArrayList<>();
+
+        // 计算四次方程系数
+        double a4 = g * g / 4.0;
+        double a3 = 0.0;
+        double a2 = vtx * vtx + vty * vty - speed * speed + g * h;
+        double a1 = 2 * (x0 * vtx + y0 * vty);
+        double a0 = x0 * x0 + y0 * y0 + h * h;
+
+        // 求解四次方程
+        double[] roots = MathSolver.solve4(a4, a3, a2, a1, a0);
+        if (roots == null || roots.length == 0) {
+            return results; // 无实数根
+        }
+
+        for (double t : roots) {
+            if (t <= 0) continue; // 时间必须为正
+
+            // 计算速度分量
+            double Vx = x0 / t + vtx;
+            double Vy = y0 / t + vty;
+            double Vz = h / t + 0.5 * g * t;
+
+            // 计算角度
+            double phi = Math.atan2(Vy, Vx);
+            double theta = Math.atan2(Vz, Math.sqrt(Vx * Vx + Vy * Vy));
+
+            results.add(new TurretInfo(speed, phi, theta, t));
+        }
+
+        return results;
+    }
+
+    /**
+     * 解算炮台发射参数(固定初速度)
+     * @param speed 发射初速度 (m/s)
+     * @param pose2d 炮台坐标
+     * @param poseVelocity2d 炮台速度
+     * @return List<TurretInfo> 所有可能解
+     */
+    public List<TurretInfo> solveTheta(double speed, Pose2d pose2d, PoseVelocity2d poseVelocity2d) {
+        return solveTheta(speed, -pose2d.position.y, +pose2d.position.x,
+                -poseVelocity2d.linearVel.y, +poseVelocity2d.linearVel.x);
+    }
+
+    /**
+     * 解算炮台发射参数(固定初速度)
+     * @param speed 发射初速度 (m/s)
+     * @param x 炮台x位置 (m)
+     * @param y 炮台y位置 (m)
+     * @param vx 炮台x方向速度 (m/s)
+     * @param vy 炮台y方向速度 (m/s)
+     * @return List<TurretInfo> 所有可能解
+     */
+    public List<TurretInfo> solveTheta(double speed, double x, double y, double vx, double vy) {
+        double x0 = Param.target.getX() - x;
+        double y0 = Param.target.getY() - y;
+        double h = Param.target.getZ() - Param.turretHeight;
+        double vtx = -vx;
+        double vty = -vy;
+
+        return solveTheta(speed, x0, y0, h, vtx, vty);
     }
 }

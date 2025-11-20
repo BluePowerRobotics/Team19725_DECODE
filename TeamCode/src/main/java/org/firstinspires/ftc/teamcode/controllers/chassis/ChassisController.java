@@ -32,7 +32,7 @@ public class ChassisController {
     boolean HeadingLockRadianReset=true;
     double HeadingLockRadian;
     public double noHeadModeStartError;
-    ActionRunner actionRunner=new ActionRunner();
+    public ActionRunner actionRunner=new ActionRunner();
     ChassisCalculator chassisCalculator= new ChassisCalculator();
     ChassisOutputter chassisOutputter;
 
@@ -89,6 +89,7 @@ public class ChassisController {
                 .strafeToLinearHeading(pose2d.position,pose2d.heading);
         actionRunner.clear();
         actionRunner.add(actionBuilder.build());
+        HeadingLockRadian = pose2d.heading.log();
     }
 
     public void resetPosition(Pose2d pose2d){
@@ -102,7 +103,7 @@ public class ChassisController {
         omega=omega*Params.maxOmega;
         if(!fullyAutoMode){
             if(runningToPoint){
-                if (Math.abs(Math.hypot(vx,vy))<=Params.zeroThresholdV||Math.abs(omega)<=Params.zeroThresholdOmega) {
+                if (Math.abs(Math.hypot(vx,vy))>=Params.zeroThresholdV||Math.abs(omega)>=Params.zeroThresholdOmega) {
                     runningToPoint = false;//打断自动驾驶
                 }else{
                     actionRunner.update();
@@ -110,7 +111,6 @@ public class ChassisController {
                         runningToPoint = false;
                     }
                 }
-                HeadingLockRadian=robotPosition.getData().headingRadian;
             }
             if(!runningToPoint) {
                 if(autoLockHeading){

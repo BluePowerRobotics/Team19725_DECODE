@@ -62,17 +62,17 @@ public class ShootPointSolverTester extends LinearOpMode {
         //x-->-y;   y --> x
 
         if(gamepad1.xWasPressed()){
-            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(0,0,0), SolveShootPoint.r4);
+            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getX(),Point.getY(),0), SolveShootPoint.r1);
         }
 
         if(gamepad1.yWasPressed()){
-            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(0,0,0), SolveShootPoint.r5);
+            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getX(),Point.getY(),0), SolveShootPoint.r2);
         }
         if(gamepad1.aWasPressed()){
-            solvedPoint = SolveShootPoint.solveREDShootPoint(new Pose2d(0,0,0), SolveShootPoint.r4);
+            solvedPoint = SolveShootPoint.solveREDShootPoint(new Pose2d(Point.getX(),Point.getY(),0), SolveShootPoint.r1);
         }
         if(gamepad1.bWasPressed()){
-            solvedPoint = SolveShootPoint.solveREDShootPoint(new Pose2d(0,0,0), SolveShootPoint.r5);
+            solvedPoint = SolveShootPoint.solveREDShootPoint(new Pose2d(Point.getX(),Point.getY(),0), SolveShootPoint.r2);
         }
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
