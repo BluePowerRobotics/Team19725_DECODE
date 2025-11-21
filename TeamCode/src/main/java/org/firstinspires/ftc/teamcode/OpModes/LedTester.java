@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
+import org.firstinspires.ftc.teamcode.controllers.LedPreset;
 
 @TeleOp(name = "LED Controller Tester")
 public class LedTester extends OpMode {
@@ -27,17 +28,17 @@ public class LedTester extends OpMode {
         } else if (gamepad1.b) {
             ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         } else if (gamepad1.y) {
-            ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GOLD);
+            ledController.setPreset(LedPreset.GREEN);
         } else if (gamepad1.x) {
-            ledController.turnOff();
+            ledController.setPreset(LedPreset.ORANGE);
         }
 
 
         if (gamepad1.leftBumperWasPressed()) {
-            ledController.setColorprevious();
+            ledController.setPreviousPreset();
             //colornumber=colornumber-1;
         } else if  (gamepad1.rightBumperWasPressed()) {
-            ledController.setColornext();
+            ledController.setNextPreset();
             //colornumber=colornumber+1;
         }
 
