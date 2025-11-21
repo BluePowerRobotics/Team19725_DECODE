@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -22,10 +23,10 @@ public class Auto_BlueRight extends LinearOpMode {
     MecanumDrive drive;
     AprilTagDetector aprilTagDetector;
     ShooterAction shooterAction;
-    public static final Pose2d START_POSE = new Pose2d(31, 60, -Math.toRadians(90));
+    public static final Pose2d START_POSE = new Pose2d(31, 60, Math.PI);
     public static final Vector2d SCAN_POSE = new Vector2d(18, 54);
     public static final double ShootHeading = -Math.atan((72 + SCAN_POSE.y) / 72 - SCAN_POSE.x);
-    public static final double ShootHeading2 = -Math.PI / 4;
+    public static final double ShootHeading2 = Math.PI / 4;
 
 
 

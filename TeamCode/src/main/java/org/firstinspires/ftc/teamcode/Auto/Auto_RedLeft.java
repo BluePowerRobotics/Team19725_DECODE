@@ -22,9 +22,9 @@ public class Auto_RedLeft extends LinearOpMode {
     MecanumDrive drive;
     AprilTagDetector aprilTagDetector;
     ShooterAction shooterAction;
-    public static final Pose2d START_POSE = new Pose2d(-31, -60, -Math.toRadians(90));
+    public static final Pose2d START_POSE = new Pose2d(-31, -60, 0);
     public static final Vector2d SCAN_POSE = new Vector2d(-24, -24);
-    public static final double ShootHeading = - 3 * Math.PI / 4;
+    public static final double ShootHeading = -Math.PI / 4;
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
     public static final double IntakeHeading = 0;
     public static final Vector2d INTAKE_POSE_PPG = new Vector2d(-24, -12);

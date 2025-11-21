@@ -11,11 +11,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class ShooterAction {
     public static int speed_block = -400;
-    public static int speed2_2 = 900;
-    public static int speed25_25 = 925;
-    public static int speed3_3 = 975;
-    public static int speed25_55 = 1100;
-    public static int speed35_55 = 1230;
+    public static int speed2_2 = 500;
+    public static int speed25_25 = 550;
+    public static int speed3_3 = 600;
+    public static int speed25_55 = 900;
+    public static int speed35_55 = 1000;
     private Telemetry telemetry;
     private Shooter shooter_Left;
     private Shooter shooter_Right;
@@ -28,7 +28,7 @@ public class ShooterAction {
     public static long waitTime = 100;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
         shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
-        shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", true);
+        shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
         telemetry = telerc;
     }
     public boolean setShootSpeed(int Power){

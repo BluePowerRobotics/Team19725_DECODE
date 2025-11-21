@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
+import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -67,8 +68,9 @@ public class DECODE extends LinearOpMode {
     public ShooterAction shooter;
     public Trigger trigger;
     public BlinkinLedController ledController;
+    public AprilTagDetector aprilTagDetector = new AprilTagDetector();
     //
-    public  int targetSpeed = 900;
+    public  int targetSpeed = ShooterAction.speed2_2;
     public Pose2d startPose = new Pose2d(0,0,0);
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
@@ -87,6 +89,7 @@ public class DECODE extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
+        aprilTagDetector.init(hardwareMap);
         sweeper = new Sweeper(hardwareMap);
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
@@ -181,6 +184,9 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("targetSpeed", targetSpeed);
         telemetry.addData("1-power * 1000", shooter.getPower() * 1000);
         telemetry.addData("1-speed", shooter.getCurrent_speed());
+        telemetry.addData("AprilTag_x", aprilTagDetector.getPose().pose.position.x);
+        telemetry.addData("AprilTag_y", aprilTagDetector.getPose().pose.position.y);
+        telemetry.addData("AprilTag_heading", aprilTagDetector.getPose().pose.heading);
         telemetry.update();
     }
     void trigger(){
@@ -229,6 +235,7 @@ public class DECODE extends LinearOpMode {
             rotate = 0;
             //校准
             //todo add 校准
+            chassis.robotPosition.mecanumDrive.localizer.setPose(aprilTagDetector.getPose().pose);
         }
 
 
