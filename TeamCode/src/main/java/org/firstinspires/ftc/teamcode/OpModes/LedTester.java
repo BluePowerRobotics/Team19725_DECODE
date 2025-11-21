@@ -4,18 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SampleRevBlinkinLedDriver;
-import org.firstinspires.ftc.teamcode.utility.BlinkinLedController;
+import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
 
-@TeleOp(name = "LED Controller Example")
-public class LedController extends OpMode {
+@TeleOp(name = "LED Controller Tester")
+public class LedTester extends OpMode {
 
     private BlinkinLedController ledController;
 
     @Override
     public void init() {
         RevBlinkinLedDriver blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        ledController = new BlinkinLedController(blinkin);
+        ledController = new BlinkinLedController(hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -32,7 +31,7 @@ public class LedController extends OpMode {
         } else if (gamepad1.x) {
             ledController.turnOff();
         }
-        //这里，打，什么，数字，对应，哪一个pattern。群里有表自己找。
+
 
         if (gamepad1.leftBumperWasPressed()) {
             ledController.setColorprevious();

@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.utility;
+package org.firstinspires.ftc.teamcode.controllers;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class BlinkinLedController {
 
@@ -8,8 +9,8 @@ public class BlinkinLedController {
     private RevBlinkinLedDriver blinkinLedDriver;
     private RevBlinkinLedDriver.BlinkinPattern currentPattern;
 
-    public BlinkinLedController(RevBlinkinLedDriver blinkinLedDriver) {
-        this.blinkinLedDriver = blinkinLedDriver;
+    public BlinkinLedController(HardwareMap hardwareMap) {
+        this.blinkinLedDriver  = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         this.currentPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
         blinkinLedDriver.setPattern(currentPattern);
     }
@@ -63,7 +64,7 @@ public class BlinkinLedController {
     心跳效果：HEARTBEAT_RED HEARTBEAT_BLUE HEARTBEAT_WHITE
     扫描效果：SINELON_RAINBOW SINELON_PARTY SINELON_OCEAN SINELON_FOREST
     流动效果：LARSON_SCANNER_RED LARSON_SCANNER_BLUE LARSON_SCANNER_GOLD
-            LIGHT_CHASE_RED LIGHT_CHASE_BLUE LIGHT_CHASE_GOLD
+            LIGHT_CHASE_RED LI_BLUEGHT_CHASE LIGHT_CHASE_GOLD
     其他效果：CONFETTI FIREWORKS CPMETTI_SHOT FIRE_LARGE
             FIRE_MEDIUM FIRE_SMALL CANDLE FILLER SHOT_RED SHOT_BLUE
     */

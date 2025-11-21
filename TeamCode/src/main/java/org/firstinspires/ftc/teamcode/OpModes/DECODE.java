@@ -6,11 +6,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
+import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
@@ -64,6 +66,7 @@ public class DECODE extends LinearOpMode {
     public Sweeper sweeper;
     public ShooterAction shooter;
     public Trigger trigger;
+    public BlinkinLedController ledController;
     //
     public  int targetSpeed = 900;
     public Pose2d startPose = new Pose2d(0,0,0);
@@ -88,6 +91,7 @@ public class DECODE extends LinearOpMode {
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
+        ledController = new BlinkinLedController(hardwareMap);
     }
     void inputRobotStatus(){
         if(gamepad1.yWasPressed() || gamepad2.aWasPressed()){
@@ -127,23 +131,33 @@ public class DECODE extends LinearOpMode {
                 sweeperStatus = SWEEPER_STATUS.EAT;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 break;
             case WAITING:
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
+                if(teamColor == TEAM_COLOR.RED){
+                    ledController.showRedTeam();
+                }
+                else{
+                    ledController.showBlueTeam();
+                }
                 break;
             case SHOOTING:
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 shooterStatus = SHOOTER_STATUS.SHOOTING;
                 //sweeper和trigger状态由shooter条件决定，在shoot()中
                 break;
             case EMERGENCY_STOP:
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
                 shooterStatus = SHOOTER_STATUS.STOP;
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
                 //todo 检查是否会压到球/撑坏结构
                 break;
             case OUTPUTTING:
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
                 sweeperStatus = SWEEPER_STATUS.OUTPUT;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
