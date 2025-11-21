@@ -58,8 +58,8 @@ public class Auto_BlueBig1 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 shootPreloadAction,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_high),
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_low),
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
 
         sweeper.Eat();
@@ -71,8 +71,8 @@ public class Auto_BlueBig1 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 returnToShootAction,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_high),
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_low),
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
     }
 }
