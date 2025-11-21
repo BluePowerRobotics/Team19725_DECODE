@@ -9,10 +9,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 public class Sweeper {
     public DcMotorEx motor = null;
     public static double TimeThreshold = 300;
-    public static double CurrentThreshold = 8;
+    public static double CurrentThreshold = 99;
     private long overStartTime = -1;
     public static int EatVel = 1960;
-    public static int GiveTheArtifactVel = 960;
+    public static int GiveTheArtifactVel = 1600;
     public static int OutputVel = -960;
     public Sweeper(HardwareMap hardwareMap){
         motor = hardwareMap.get(DcMotorEx.class, "sweeperMotor");
