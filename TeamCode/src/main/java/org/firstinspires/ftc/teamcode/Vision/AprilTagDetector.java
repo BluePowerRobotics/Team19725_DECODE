@@ -88,7 +88,7 @@ public class AprilTagDetector {
         portal = new VisionPortal.Builder()
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(aprilTag)
-                //TODO DONNOT OVERFLOW.addProcessor(processor)
+                .addProcessor(processor)
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
                 .setCamera(hardWareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
