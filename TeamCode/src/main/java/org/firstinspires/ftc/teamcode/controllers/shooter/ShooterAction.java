@@ -20,9 +20,9 @@ public class ShooterAction {
     private Shooter shooter_Left;
     private Shooter shooter_Right;
 
-    public static int targetSpeed_low = 600;
+    public static int targetSpeed_low = 500;
     public static int targetSpeed_high = 1200;
-    public static int low_speed_threshold = 450;
+    public int low_speed_threshold = 350;
 
     //第一个球被推入飞轮所需的时间
     public static long waitTime = 100;
@@ -79,6 +79,7 @@ public class ShooterAction {
         @Override
         public boolean run(TelemetryPacket packet) {
             if(!ifStart){
+                low_speed_threshold = this.targetSpeed - 100;
                 StartTime = System.currentTimeMillis();
                 ifStart = true;
             }
