@@ -28,6 +28,7 @@ public class Auto_BlueBig1 extends LinearOpMode {
     public static final Vector2d INTAKE_START = new Vector2d(-12, -24);
     public static final Vector2d INTAKE_END = new Vector2d(-12, -60);
     public static final double SHOOT_HEADING = Math.PI / 4;
+    public static final double EAT_HEADING = -Math.PI / 2;
 
     @Override
     public void runOpMode() {
@@ -41,14 +42,14 @@ public class Auto_BlueBig1 extends LinearOpMode {
                 .build();
 
         Action intakeAction = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
-                .strafeTo(INTAKE_START)
+                .strafeToLinearHeading(INTAKE_START, EAT_HEADING)
                 .build();
 
-        Action collectAction = drive.actionBuilder(new Pose2d(INTAKE_START, SHOOT_HEADING))
+        Action collectAction = drive.actionBuilder(new Pose2d(INTAKE_START, EAT_HEADING))
                 .strafeTo(INTAKE_END)
                 .build();
 
-        Action returnToShootAction = drive.actionBuilder(new Pose2d(INTAKE_END, SHOOT_HEADING))
+        Action returnToShootAction = drive.actionBuilder(new Pose2d(INTAKE_END, EAT_HEADING))
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 

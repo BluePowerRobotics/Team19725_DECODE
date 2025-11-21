@@ -25,10 +25,13 @@ public class Auto_BlueBig2 extends LinearOpMode {
 
     public static final Pose2d START_POSE = new Pose2d(-64.8, -17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
-    public static final Vector2d INTAKE_START = new Vector2d(-12, -24);
-    public static final Vector2d INTAKE_END = new Vector2d(-12, -60);
+    public static final Vector2d INTAKE_START1 = new Vector2d(-12, -24);
+    public static final Vector2d INTAKE_END1 = new Vector2d(-12, -60);
+    public static final Vector2d INTAKE_START2 = new Vector2d(12, -24);
+    public static final Vector2d INTAKE_END2 = new Vector2d(12, -60);
     public static final Vector2d OPEN_GATE = new Vector2d(0, -60);
     public static final double SHOOT_HEADING = Math.PI / 4;
+    public static final double EAT_HEADING = -Math.PI / 2;
 
     @Override
     public void runOpMode() {
@@ -45,15 +48,27 @@ public class Auto_BlueBig2 extends LinearOpMode {
                 .strafeTo(OPEN_GATE)
                 .build();
 
-        Action intakeAction = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
-                .strafeTo(INTAKE_START)
+        Action intakeAction1 = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
+                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
                 .build();
 
-        Action collectAction = drive.actionBuilder(new Pose2d(INTAKE_START, SHOOT_HEADING))
-                .strafeTo(INTAKE_END)
+        Action collectAction1 = drive.actionBuilder(new Pose2d(INTAKE_START1, EAT_HEADING))
+                .strafeTo(INTAKE_END1)
                 .build();
 
-        Action returnToShootAction = drive.actionBuilder(new Pose2d(INTAKE_END, SHOOT_HEADING))
+        Action returnToShootAction1 = drive.actionBuilder(new Pose2d(INTAKE_END1, EAT_HEADING))
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
+
+        Action intakeAction2 = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
+                .strafeToLinearHeading(INTAKE_START2, EAT_HEADING)
+                .build();
+
+        Action collectAction2 = drive.actionBuilder(new Pose2d(INTAKE_START2, EAT_HEADING))
+                .strafeTo(INTAKE_END2)
+                .build();
+
+        Action returnToShootAction2 = drive.actionBuilder(new Pose2d(INTAKE_END2, EAT_HEADING))
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
@@ -70,26 +85,26 @@ public class Auto_BlueBig2 extends LinearOpMode {
 
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
-                intakeAction,
-                collectAction
+                intakeAction1,
+                collectAction1
         ));
         sweeper.stop();
 
         Actions.runBlocking(new SequentialAction(
-                returnToShootAction,
+                returnToShootAction1,
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_high),
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
 
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
-                intakeAction,
-                collectAction
+                intakeAction2,
+                collectAction2
         ));
         sweeper.stop();
 
         Actions.runBlocking(new SequentialAction(
-                returnToShootAction,
+                returnToShootAction2,
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_high),
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
