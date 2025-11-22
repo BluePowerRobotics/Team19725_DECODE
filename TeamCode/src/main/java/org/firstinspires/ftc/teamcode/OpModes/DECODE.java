@@ -271,7 +271,20 @@ public class DECODE extends LinearOpMode {
             chassis.resetPosition(aprilTagDetector.getPose().pose);
         }
 
+        //自动对准
+        if(gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1){
+            double heading = 0;
+            if(teamColor == TEAM_COLOR.RED){
+                heading = SolveShootPoint.solveREDShootHeading(pose);
+            }
+            if(teamColor == TEAM_COLOR.BLUE){
+                heading = SolveShootPoint.solveBLUEShootHeading(pose);
+            }
+            chassis.resetNoHeadModeStartError(heading);
+        }
 
+
+        //自瞄
         if(gamepad1.dpadLeftWasPressed() || gamepad2.dpadLeftWasPressed()){
             if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r1));
