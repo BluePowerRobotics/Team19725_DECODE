@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.LedPreset;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
@@ -137,14 +138,25 @@ public class DECODE extends LinearOpMode {
                 ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 break;
             case WAITING:
+                boolean AprilTagStatus = chassis.robotPosition.mecanumDrive.localizer.getAprilTagStatus();
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
                 if(teamColor == TEAM_COLOR.RED){
-                    ledController.showRedTeam();
+                    if(AprilTagStatus){
+                        ledController.setColor(LedPreset.HEARTBEAT_RED.getPattern());
+                    }
+                    else{
+                        ledController.showRedTeam();
+                    }
                 }
                 else{
-                    ledController.showBlueTeam();
+                    if(AprilTagStatus){
+                        ledController.setColor(LedPreset.HEARTBEAT_BLUE.getPattern());
+                    }
+                    else{
+                        ledController.showBlueTeam();
+                    }
                 }
                 break;
             case SHOOTING:
@@ -157,7 +169,6 @@ public class DECODE extends LinearOpMode {
                 shooterStatus = SHOOTER_STATUS.STOP;
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
-                //todo 检查是否会压到球/撑坏结构
                 break;
             case OUTPUTTING:
                 ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.VIOLET);

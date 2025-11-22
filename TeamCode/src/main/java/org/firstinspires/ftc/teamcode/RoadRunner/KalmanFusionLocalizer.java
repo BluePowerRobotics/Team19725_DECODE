@@ -15,6 +15,7 @@ public class KalmanFusionLocalizer implements Localizer{
     HardwareMap hardwareMap;
     double inPerTick;
     Pose2d pose;
+    boolean AprilTagStatus = false;
     public KalmanFusionLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose){
         this.hardwareMap=hardwareMap;
         this.inPerTick=inPerTick;
@@ -48,9 +49,20 @@ public class KalmanFusionLocalizer implements Localizer{
         return poseVelocity2d;
     }
 
+
     private Pose2d Kalman(Pose2d wheel, Pose2d AprilTag){
+        if(Double.isNaN(AprilTag.position.x)) {
+            AprilTagStatus = false;
+        }
+        else{
+            AprilTagStatus = true;
+        }
         PosVelTuple result_x=filter_x.Update(wheel.position.x, AprilTag.position.x);
         PosVelTuple result_y=filter_y.Update(wheel.position.y, AprilTag.position.y);
         return new Pose2d(result_x.position,result_y.position,wheel.heading.toDouble());
     }
+    public boolean getAprilTagStatus(){
+        return AprilTagStatus;
+    }
+
 }

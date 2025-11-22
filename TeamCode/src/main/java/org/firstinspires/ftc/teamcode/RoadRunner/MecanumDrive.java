@@ -131,6 +131,11 @@ public final class MecanumDrive {
         private boolean initialized;
         private Pose2d pose;
 
+
+        public boolean getAprilTagStatus(){
+            return false;
+        };
+
         public DriveLocalizer(Pose2d pose) {
             leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
             leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
