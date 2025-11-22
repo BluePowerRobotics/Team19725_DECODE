@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 
-@TeleOp
+@TeleOp(name = "AprilTagTester_1123")
 public class AprilTagTester extends LinearOpMode {
     AprilTagDetector aprilTagDetector = new AprilTagDetector();
     @Override
