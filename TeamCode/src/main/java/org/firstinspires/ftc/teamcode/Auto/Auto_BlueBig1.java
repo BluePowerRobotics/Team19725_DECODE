@@ -23,6 +23,7 @@ public class Auto_BlueBig1 extends LinearOpMode {
     MecanumDrive drive;
     ShooterAction shooterAction;
     Sweeper sweeper;
+    Trigger trigger;
     public static int INTAKE_END_Y = -55;
 
     public static final Pose2d START_POSE = new Pose2d(-64.8, -17.6, 0);
@@ -37,7 +38,7 @@ public class Auto_BlueBig1 extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooterAction = new ShooterAction(hardwareMap, telemetry);
         sweeper = new Sweeper(hardwareMap);
-        Trigger trigger = new Trigger(hardwareMap);
+        trigger = new Trigger(hardwareMap);
         drive = new MecanumDrive(hardwareMap, START_POSE);
 
         Action shootPreloadAction = drive.actionBuilder(START_POSE)
@@ -64,6 +65,7 @@ public class Auto_BlueBig1 extends LinearOpMode {
                 shootPreloadAction,
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
         ));
+
         trigger.open();
         sweeper.GiveArtifact();
         Actions.runBlocking(new SequentialAction(
@@ -82,10 +84,12 @@ public class Auto_BlueBig1 extends LinearOpMode {
                 returnToShootAction,
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
         ));
+
         trigger.open();
         sweeper.GiveArtifact();
         Actions.runBlocking(new SequentialAction(
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
+        trigger.close();
     }
 }
