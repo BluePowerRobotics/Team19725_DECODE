@@ -18,13 +18,13 @@ public class BlinkinLedController {
 
 
     public void showRedTeam() {
-        setPreset(LedPreset.STROBE_RED);
+        setPreset(LedPreset.RED);
 
 
     }
 
     public void showBlueTeam() {
-        setPreset(LedPreset.STROBE_BLUE);
+        setPreset(LedPreset.BLUE);
     }
 
     public void showReady() {
