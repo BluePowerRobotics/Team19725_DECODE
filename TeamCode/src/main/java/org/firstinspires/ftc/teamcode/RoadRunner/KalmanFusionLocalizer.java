@@ -12,9 +12,12 @@ public class KalmanFusionLocalizer implements Localizer{
     Localizer localizer;
     AprilTagDetector aprilTagDetector;
     OneDimensionKalmanFilter filter_x,filter_y;
+    HardwareMap hardwareMap;
+    double inPerTick;
     Pose2d pose;
-    Pose2d poseError = new Pose2d(0,0,0);
     public KalmanFusionLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose){
+        this.hardwareMap=hardwareMap;
+        this.inPerTick=inPerTick;
         localizer = new PinpointLocalizer(hardwareMap,inPerTick,initialPose);
         aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
@@ -24,13 +27,17 @@ public class KalmanFusionLocalizer implements Localizer{
     }
     @Override
     public void setPose(Pose2d pose) {
+        localizer = new PinpointLocalizer(hardwareMap,inPerTick,pose);
+        aprilTagDetector = new AprilTagDetector();
+        aprilTagDetector.init(hardwareMap);
+        filter_x=new OneDimensionKalmanFilter(pose.position.x, 0.0);
+        filter_y=new OneDimensionKalmanFilter(pose.position.y, 0.0);
         update();
-        poseError = new Pose2d(pose.position.x-this.pose.position.x,pose.position.y-this.pose.position.y,pose.heading.toDouble()-this.pose.heading.toDouble());
-    }
+        }
 
     @Override
     public Pose2d getPose() {
-        return new Pose2d(pose.position.x+poseError.position.x,pose.position.y+poseError.position.y,pose.heading.toDouble()+poseError.heading.toDouble());
+        return new Pose2d(pose.position,pose.heading);
     }
 
     @Override
