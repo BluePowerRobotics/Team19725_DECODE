@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 @Config
 public class Sweeper {
-    public DcMotorEx motor = null;
+    public DcMotorEx motor;
     public static double TimeThreshold = 300;
     public static double CurrentThreshold = 99;
     private long overStartTime = -1;
@@ -50,5 +50,10 @@ public class Sweeper {
             return false;
         }
     }
+    //base:28;
+    //3:1: ()*2.89;
+    //4:1: ()*3.61;
+    //5:1: ()*5.23;
+    public static final double tickPerCycle=28*2.89*3.61;
 }
 

@@ -199,10 +199,28 @@ public class DECODE extends LinearOpMode {
                 break;
         }
     }
-
+    boolean shooterStopped =true;
+    boolean sweeperBackPassed= false;
+    int sweeperBackStartTick=0;
+    //todo 测试：找到可用圈数
+    public static double backRequireCycle=1.0/6;
     void shoot(){
         switch (shooterStatus){
             case SHOOTING:
+                if(shooterStopped){
+                    shooterStopped = false;
+                    sweeperBackPassed=false;
+                    sweeperBackStartTick=sweeper.motor.getCurrentPosition();
+                }
+                if(!sweeperBackPassed){
+                    if(sweeper.motor.getCurrentPosition()<=sweeperBackStartTick-Sweeper.tickPerCycle*backRequireCycle){
+                        sweeperBackPassed=true;
+                    }else{
+                        sweeperStatus=SWEEPER_STATUS.OUTPUT;
+                        triggerStatus=TRIGGER_STATUS.CLOSE;
+                        break;
+                    }
+                }
                 boolean ifHit =   false;//todo = chassisController.wheelSpeeds.length;
                 if(ifHit){
                     robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
@@ -212,11 +230,15 @@ public class DECODE extends LinearOpMode {
                     if(hasReachedTargetSpeed){
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
+                    }else{
+                        sweeperStatus = SWEEPER_STATUS.STOP;
+                        triggerStatus = TRIGGER_STATUS.CLOSE;
                     }
                 }
                 break;
 
             case STOP:
+                shooterStopped=true;
                 shooter.setShootSpeed(0);
                 break;
         }
