@@ -223,7 +223,7 @@ public class DECODE extends LinearOpMode {
     }
     void chassis(){
 
-        Pose2d pose = chassis.robotPosition.mecanumDrive.localizer.getPose();
+        Pose2d pose = chassis.robotPosition.getData().getPose2d();
 
         double drive = -gamepad1.left_stick_y-gamepad1.right_stick_y; // 前后
         double strafe = gamepad1.left_stick_x; // 左右
@@ -235,7 +235,7 @@ public class DECODE extends LinearOpMode {
             rotate = 0;
             //校准
             //todo add 校准
-            chassis.robotPosition.mecanumDrive.localizer.setPose(aprilTagDetector.getPose().pose);
+            chassis.resetPosition(aprilTagDetector.getPose().pose);
         }
 
 
