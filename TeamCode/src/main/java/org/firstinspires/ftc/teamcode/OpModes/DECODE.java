@@ -359,6 +359,20 @@ public class DECODE extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Init();
+        while(opModeInInit()){
+            if(gamepad1.a){
+                teamColor = TEAM_COLOR.BLUE;
+            }
+            if(gamepad1.b){
+                teamColor = TEAM_COLOR.RED;
+            }
+            if(teamColor == TEAM_COLOR.BLUE){
+                ledController.showBlueTeam();
+            }
+            if(teamColor == TEAM_COLOR.RED){
+                ledController.showRedTeam();
+            }
+        }
         waitForStart();
         while (opModeIsActive()) {
             inputRobotStatus();
