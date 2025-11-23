@@ -186,18 +186,16 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
         telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
         telemetry.addData("RobotSTATUS", robotStatus.toString());
-        telemetry.addData("shooterSTATUS", shooterStatus.toString());
-        telemetry.addData("sweeperSTATUS", sweeperStatus.toString());
+//        telemetry.addData("shooterSTATUS", shooterStatus.toString());
+//        telemetry.addData("sweeperSTATUS", sweeperStatus.toString());
         telemetry.addData("SweeperCurrent", sweeper.getCurrent());
-        telemetry.addData("triggerSTATUS", triggerStatus.toString());
-        telemetry.addData("Position(mm)",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
+//        telemetry.addData("triggerSTATUS", triggerStatus.toString());
+//        telemetry.addData("Position(mm)",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
         telemetry.addData("Position(inch)",chassis.robotPosition.getData().getPosition(DistanceUnit.INCH).toString());
         telemetry.addData("targetSpeed", targetSpeed);
-        telemetry.addData("1-power * 1000", shooter.getPower() * 1000);
-        telemetry.addData("1-speed", shooter.getCurrent_speed());
-        telemetry.addData("AprilTag_x", aprilTagDetector.getPose().pose.position.x);
-        telemetry.addData("AprilTag_y", aprilTagDetector.getPose().pose.position.y);
-        telemetry.addData("AprilTag_heading", aprilTagDetector.getPose().pose.heading);
+        telemetry.addData("1-power * 1000", shooter.getPower1() * 1000);
+        telemetry.addData("1-speed", shooter.getCurrent_speed1());
+        telemetry.addData("2-speed", shooter.getCurrent_speed2());
         telemetry.update();
     }
     void trigger(){
@@ -219,20 +217,6 @@ public class DECODE extends LinearOpMode {
     void shoot(){
         switch (shooterStatus){
             case SHOOTING:
-                if(shooterStopped){
-                    shooterStopped = false;
-                    sweeperBackPassed=false;
-                    sweeperBackStartTick=sweeper.motor.getCurrentPosition();
-                }
-                if(!sweeperBackPassed){
-                    if(sweeper.motor.getCurrentPosition()<=sweeperBackStartTick-Sweeper.tickPerCycle*backRequireCycle){
-                        sweeperBackPassed=true;
-                    }else{
-                        sweeperStatus = SWEEPER_STATUS.OUTPUT;
-                        triggerStatus = TRIGGER_STATUS.CLOSE;
-                        break;
-                    }
-                }
                 boolean ifHit =   false;//todo = chassisController.wheelSpeeds.length;
                 if(ifHit){
                     robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
@@ -245,18 +229,36 @@ public class DECODE extends LinearOpMode {
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }else{
-                        // 仅在未曾达到过目标速度时，才设置为停止/关闭
-                        if (!shooterSpeedHasSet) {
-                            sweeperStatus = SWEEPER_STATUS.STOP;
-                            triggerStatus = TRIGGER_STATUS.CLOSE;
+                        //首先，执行后退
+                        if(shooterStopped){
+                            //第一次运行到，记录encoder读数
+                            shooterStopped = false;
+                            sweeperBackPassed=false;
+                            sweeperBackStartTick=sweeper.motor.getCurrentPosition();
                         }
-                        // 若已经达到过目标速度（shooterSpeedHasSet == true），则保持原有发射状态，不回退到 STOP/CLOSE
+                        if(!sweeperBackPassed){
+                            if(sweeper.motor.getCurrentPosition()<=sweeperBackStartTick-Sweeper.tickPerCycle*backRequireCycle){
+                                sweeperBackPassed=true;
+                            }else{
+                                sweeperStatus = SWEEPER_STATUS.OUTPUT;
+                                triggerStatus = TRIGGER_STATUS.CLOSE;
+                                //如果未达到1/6圈，就继续后退，不执行后面的STOP
+                                break;
+                            }
+                        }
+                        // 仅在未曾达到过目标速度且转完1 / 6圈后，才设置为STOP
+                        sweeperStatus = SWEEPER_STATUS.STOP;
+                        triggerStatus = TRIGGER_STATUS.CLOSE;
                     }
                 }
+
+
+
                 break;
 
             case STOP:
                 shooterStopped=true;
+                shooterSpeedHasSet = false;
                 shooter.setShootSpeed(0);
                 break;
         }
@@ -287,7 +289,6 @@ public class DECODE extends LinearOpMode {
             if(teamColor == TEAM_COLOR.BLUE){
                 heading = SolveShootPoint.solveBLUEShootHeading(pose);
             }
-            int a = 1  /0;
             chassis.setHeadingLockRadian(heading);
         }
 
@@ -370,7 +371,6 @@ public class DECODE extends LinearOpMode {
         }
         switch (sweeperStatus){
             case EAT:
-                shooterSpeedHasSet = false;
                 sweeper.Eat();
                 if(sweeper.isStuck()){
                     robotStatus = ROBOT_STATUS.WAITING;
