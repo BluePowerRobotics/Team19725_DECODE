@@ -52,7 +52,7 @@ public class TEST_ACTIONS extends LinearOpMode {
         sweeper.stop();
         trigger.close();
         sleep(5000);
-        telemetry.addData("Speed", shooterAction.getCurrent_speed());
+        telemetry.addData("Speed", shooterAction.getCurrent_speed1());
 
         //todo add UP
         Actions.runBlocking(
