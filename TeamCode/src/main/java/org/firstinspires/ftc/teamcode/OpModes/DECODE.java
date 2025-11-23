@@ -212,6 +212,7 @@ public class DECODE extends LinearOpMode {
     }
     boolean shooterStopped =true;
     boolean sweeperBackPassed= false;
+    boolean shooterSpeedHasSet = false;
     int sweeperBackStartTick=0;
     //todo 测试：找到可用圈数
     public static double backRequireCycle=1.0/6;
@@ -227,8 +228,8 @@ public class DECODE extends LinearOpMode {
                     if(sweeper.motor.getCurrentPosition()<=sweeperBackStartTick-Sweeper.tickPerCycle*backRequireCycle){
                         sweeperBackPassed=true;
                     }else{
-                        sweeperStatus=SWEEPER_STATUS.OUTPUT;
-                        triggerStatus=TRIGGER_STATUS.CLOSE;
+                        sweeperStatus = SWEEPER_STATUS.OUTPUT;
+                        triggerStatus = TRIGGER_STATUS.CLOSE;
                         break;
                     }
                 }
@@ -239,11 +240,17 @@ public class DECODE extends LinearOpMode {
                 else{
                     boolean hasReachedTargetSpeed = shooter.setShootSpeed(targetSpeed);
                     if(hasReachedTargetSpeed){
+                        // 第一次或再次达到目标速度都标记为已达到，并打开发射
+                        shooterSpeedHasSet = true;
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }else{
-                        sweeperStatus = SWEEPER_STATUS.STOP;
-                        triggerStatus = TRIGGER_STATUS.CLOSE;
+                        // 仅在未曾达到过目标速度时，才设置为停止/关闭
+                        if (!shooterSpeedHasSet) {
+                            sweeperStatus = SWEEPER_STATUS.STOP;
+                            triggerStatus = TRIGGER_STATUS.CLOSE;
+                        }
+                        // 若已经达到过目标速度（shooterSpeedHasSet == true），则保持原有发射状态，不回退到 STOP/CLOSE
                     }
                 }
                 break;
@@ -280,6 +287,7 @@ public class DECODE extends LinearOpMode {
             if(teamColor == TEAM_COLOR.BLUE){
                 heading = SolveShootPoint.solveBLUEShootHeading(pose);
             }
+            int a = 1  /0;
             chassis.resetNoHeadModeStartError(heading);
         }
 
@@ -362,6 +370,7 @@ public class DECODE extends LinearOpMode {
         }
         switch (sweeperStatus){
             case EAT:
+                shooterSpeedHasSet = false;
                 sweeper.Eat();
                 if(sweeper.isStuck()){
                     robotStatus = ROBOT_STATUS.WAITING;
