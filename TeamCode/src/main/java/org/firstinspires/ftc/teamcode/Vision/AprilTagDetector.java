@@ -35,10 +35,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class AprilTagDetector {
     //todo 可以参考的文件：FindCandidate.java  && FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\ConceptAprilTagLocalization.java
     //画面大小
+    public static double x = 0;
+    public static double y = -6.22;
+    public static double z = 10.83;
+    public static double yaw = 180;
+    public static double pitch = 73.6;
+    public static double roll = 0;
+
     private Position cameraPosition = new Position(DistanceUnit.INCH,
-            -3.8, -0.3, 16.8, 0);
+            x, y, z, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-            90, -71, 0, 0);
+            yaw, pitch, roll, 0);
     public static int resolutionwidth = 640;
     public static int resolutionheight= 480;
     VisionPortal portal;
@@ -125,7 +132,7 @@ public class AprilTagDetector {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null && detection.id != 21 && detection.id != 22 && detection.id != 23) {
 
-                Pose2d pose = new Pose2d(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, Math.toRadians(detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
+                Pose2d pose = new Pose2d(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, Math.toRadians(detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES))+Math.PI/2);
 
                 AprilTagInfo info = new AprilTagInfo(
                         pose,

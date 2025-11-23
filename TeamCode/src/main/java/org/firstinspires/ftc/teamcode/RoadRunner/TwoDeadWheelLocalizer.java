@@ -140,4 +140,9 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         pose = pose.plus(twist.value());
         return twist.velocity().value();
     }
+
+    @Override
+    public boolean getAprilTagStatus() {
+        return false;
+    }
 }

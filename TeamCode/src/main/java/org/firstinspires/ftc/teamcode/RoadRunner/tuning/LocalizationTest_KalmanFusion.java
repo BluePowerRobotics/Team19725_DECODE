@@ -7,23 +7,24 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.KalmanFusionLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive_Kalman;
-
+@TeleOp
 public class LocalizationTest_KalmanFusion extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         final Pose2d START_POSE = new Pose2d(-64.8, 17.6, 0);
             MecanumDrive_Kalman drive_kalman = new MecanumDrive_Kalman(hardwareMap, START_POSE);
-            MecanumDrive drive = new MecanumDrive(hardwareMap, START_POSE);
+            //MecanumDrive drive = new MecanumDrive(hardwareMap, START_POSE);
             waitForStart();
 
             while (opModeIsActive()) {
-                drive.setDrivePowers(new PoseVelocity2d(
+                drive_kalman.setDrivePowers(new PoseVelocity2d(
                         new Vector2d(
                                 -gamepad1.left_stick_y,
                                 -gamepad1.left_stick_x
@@ -32,7 +33,6 @@ public class LocalizationTest_KalmanFusion extends LinearOpMode {
                 ));
 
                 drive_kalman.updatePoseEstimate();
-                drive.updatePoseEstimate();
 
                 Pose2d pose_kalman = drive_kalman.localizer.getPose();
                 telemetry.addData("kalmanx", pose_kalman.position.x);

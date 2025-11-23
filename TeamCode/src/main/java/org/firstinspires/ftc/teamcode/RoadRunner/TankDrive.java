@@ -223,6 +223,11 @@ public final class TankDrive {
 
             return twist.velocity().value();
         }
+
+        @Override
+        public boolean getAprilTagStatus() {
+            return false;
+        }
     }
 
     public TankDrive(HardwareMap hardwareMap, Pose2d pose) {

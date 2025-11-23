@@ -57,8 +57,11 @@ public class KalmanFusionLocalizer implements Localizer{
         else{
             AprilTagStatus = true;
         }
-        PosVelTuple result_x=filter_x.Update(wheel.position.x, AprilTag.position.x);
-        PosVelTuple result_y=filter_y.Update(wheel.position.y, AprilTag.position.y);
+        double distanceX = Math.min(AprilTag.position.x - 72, AprilTag.position.x + 72);
+        double distanceY = AprilTag.position.y + 72;
+        double distance = Math.sqrt(distanceY * distanceY+ distanceX * distanceX);
+        PosVelTuple result_x=filter_x.Update(wheel.position.x, AprilTag.position.x, distance);
+        PosVelTuple result_y=filter_y.Update(wheel.position.y, AprilTag.position.y, distance);
         return new Pose2d(result_x.position,result_y.position,wheel.heading.toDouble());
     }
     public boolean getAprilTagStatus(){

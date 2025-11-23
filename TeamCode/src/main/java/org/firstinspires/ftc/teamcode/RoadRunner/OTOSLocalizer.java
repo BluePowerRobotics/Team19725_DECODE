@@ -65,4 +65,9 @@ public class OTOSLocalizer implements Localizer {
         Vector2d robotVel = Rotation2d.exp(otosPose.h).inverse().times(fieldVel);
         return new PoseVelocity2d(robotVel, otosVel.h);
     }
+
+    @Override
+    public boolean getAprilTagStatus() {
+        return false;
+    }
 }
