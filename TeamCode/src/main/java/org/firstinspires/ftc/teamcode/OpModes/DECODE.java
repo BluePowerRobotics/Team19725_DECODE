@@ -217,6 +217,20 @@ public class DECODE extends LinearOpMode {
     void shoot(){
         switch (shooterStatus){
             case SHOOTING:
+                if(shooterStopped){
+                    shooterStopped = false;
+                    sweeperBackPassed=false;
+                    sweeperBackStartTick=sweeper.motor.getCurrentPosition();
+                }
+                if(!sweeperBackPassed){
+                    if(sweeper.motor.getCurrentPosition()<=sweeperBackStartTick-Sweeper.tickPerCycle*backRequireCycle){
+                        sweeperBackPassed=true;
+                    }else{
+                        sweeperStatus = SWEEPER_STATUS.OUTPUT;
+                        triggerStatus = TRIGGER_STATUS.CLOSE;
+                        break;
+                    }
+                }
                 boolean ifHit =   false;//todo = chassisController.wheelSpeeds.length;
                 if(ifHit){
                     robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
@@ -229,26 +243,12 @@ public class DECODE extends LinearOpMode {
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }else{
-                        //首先，执行后退
-                        if(shooterStopped){
-                            //第一次运行到，记录encoder读数
-                            shooterStopped = false;
-                            sweeperBackPassed=false;
-                            sweeperBackStartTick=sweeper.motor.getCurrentPosition();
+                        // 仅在未曾达到过目标速度时，才设置为停止/关闭
+                        if (!shooterSpeedHasSet) {
+                            sweeperStatus = SWEEPER_STATUS.STOP;
+                            triggerStatus = TRIGGER_STATUS.CLOSE;
                         }
-                        if(!sweeperBackPassed){
-                            if(sweeper.motor.getCurrentPosition()<=sweeperBackStartTick-Sweeper.tickPerCycle*backRequireCycle){
-                                sweeperBackPassed=true;
-                            }else{
-                                sweeperStatus = SWEEPER_STATUS.OUTPUT;
-                                triggerStatus = TRIGGER_STATUS.CLOSE;
-                                //如果未达到1/6圈，就继续后退，不执行后面的STOP
-                                break;
-                            }
-                        }
-                        // 仅在未曾达到过目标速度且转完1 / 6圈后，才设置为STOP
-                        sweeperStatus = SWEEPER_STATUS.STOP;
-                        triggerStatus = TRIGGER_STATUS.CLOSE;
+                        // 若已经达到过目标速度（shooterSpeedHasSet == true），则保持原有发射状态，不回退到 STOP/CLOSE
                     }
                 }
 
