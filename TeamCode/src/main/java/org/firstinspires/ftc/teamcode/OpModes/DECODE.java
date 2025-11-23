@@ -288,7 +288,7 @@ public class DECODE extends LinearOpMode {
                 heading = SolveShootPoint.solveBLUEShootHeading(pose);
             }
             int a = 1  /0;
-            chassis.resetNoHeadModeStartError(heading);
+            chassis.setHeadingLockRadian(heading);
         }
 
 
