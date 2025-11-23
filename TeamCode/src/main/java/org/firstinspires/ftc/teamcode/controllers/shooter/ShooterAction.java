@@ -116,10 +116,17 @@ public class ShooterAction {
     }
 
 
-    public double getPower(){
+    public double getPower1(){
         return shooter_Left.Power;
     }
-    public double getCurrent_speed(){
+    public double getPower2(){
+        return shooter_Right.Power;
+    }
+
+    public double getCurrent_speed1(){
         return shooter_Left.current_speed;
+    }
+    public double getCurrent_speed2(){
+        return shooter_Right.current_speed;
     }
 }
