@@ -73,9 +73,12 @@ public class Auto_RedSmall1 extends LinearOpMode {
         ));
         trigger.close();
 
+        Actions.runBlocking(new SequentialAction(
+                intakeAction
+        ));
+
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
-                intakeAction,
                 collectAction
         ));
         sweeper.stop();

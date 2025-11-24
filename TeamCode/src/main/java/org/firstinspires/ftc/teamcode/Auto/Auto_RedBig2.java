@@ -30,9 +30,9 @@ public class Auto_RedBig2 extends LinearOpMode {
     public static final Pose2d START_POSE = new Pose2d(-64.8, 17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, 24);
     public static final Vector2d INTAKE_START1 = new Vector2d(-12, 24);
+    public static final Vector2d INTAKE_END1 = new Vector2d(-12, INTAKE_END_Y);
     public static final Vector2d OPEN_START = new Vector2d(-5, 48);
     public static final Vector2d OPEN_END = new Vector2d(-5, OPEN_GATE_Y);
-    public static final Vector2d INTAKE_END1 = new Vector2d(-12, INTAKE_END_Y);
     public static final Vector2d INTAKE_START2 = new Vector2d(12, 24);
     public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y);
     public static final double SHOOT_HEADING = -Math.PI / 4;
@@ -54,14 +54,14 @@ public class Auto_RedBig2 extends LinearOpMode {
                 .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
                 .build();
 
-        Action openGateAction = drive.actionBuilder(new Pose2d(INTAKE_START1, EAT_HEADING))
+        Action collectAction1 = drive.actionBuilder(new Pose2d(INTAKE_START1, EAT_HEADING))
+                .strafeTo(INTAKE_END1)
+                .build();
+
+        Action openGateAction = drive.actionBuilder(new Pose2d(INTAKE_END1, EAT_HEADING))
                 .strafeTo(OPEN_START)
                 .strafeTo(OPEN_END)
                 .strafeTo(OPEN_START)
-                .build();
-
-        Action collectAction1 = drive.actionBuilder(new Pose2d(INTAKE_START1, EAT_HEADING))
-                .strafeTo(INTAKE_END1)
                 .build();
 
         Action returnToShootAction1 = drive.actionBuilder(new Pose2d(INTAKE_END1, EAT_HEADING))
@@ -119,9 +119,12 @@ public class Auto_RedBig2 extends LinearOpMode {
         ));
         trigger.close();
 
+        Actions.runBlocking(new SequentialAction(
+                intakeAction2
+        ));
+
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
-                intakeAction2,
                 collectAction2
         ));
         sweeper.stop();

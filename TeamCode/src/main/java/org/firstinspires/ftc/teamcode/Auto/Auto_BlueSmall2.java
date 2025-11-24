@@ -31,9 +31,10 @@ public class Auto_BlueSmall2 extends LinearOpMode {
     public static final Vector2d SHOOT_POSE = new Vector2d(60, -12);
     public static final Vector2d INTAKE_START1 = new Vector2d(36, -24);
     public static final Vector2d INTAKE_END1 = new Vector2d(36, INTAKE_END_Y);
+    public static final Vector2d OPEN_START = new Vector2d(-5, -48);
+    public static final Vector2d OPEN_END = new Vector2d(-5, OPEN_GATE_Y);
     public static final Vector2d INTAKE_START2 = new Vector2d(12, -24);
     public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y);
-    public static final Vector2d OPEN_GATE = new Vector2d(0, OPEN_GATE_Y);
     public static final double SHOOT_HEADING = Math.PI / 4;
     public static final double EAT_HEADING = -Math.PI / 2;
 
@@ -49,16 +50,18 @@ public class Auto_BlueSmall2 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Action openGateAction = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
-                .strafeTo(OPEN_GATE)
-                .build();
-
         Action intakeAction1 = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
                 .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
                 .build();
 
         Action collectAction1 = drive.actionBuilder(new Pose2d(INTAKE_START1, EAT_HEADING))
                 .strafeTo(INTAKE_END1)
+                .build();
+
+        Action openGateAction = drive.actionBuilder(new Pose2d(INTAKE_END1, EAT_HEADING))
+                .strafeTo(OPEN_START)
+                .strafeTo(OPEN_END)
+                .strafeTo(OPEN_START)
                 .build();
 
         Action returnToShootAction1 = drive.actionBuilder(new Pose2d(INTAKE_END1, EAT_HEADING))
@@ -94,17 +97,17 @@ public class Auto_BlueSmall2 extends LinearOpMode {
         trigger.close();
 
         Actions.runBlocking(new SequentialAction(
-                openGateAction
+                intakeAction1
         ));
 
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
-                intakeAction1,
                 collectAction1
         ));
         sweeper.stop();
 
         Actions.runBlocking(new SequentialAction(
+                openGateAction,
                 returnToShootAction1,
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
         ));
@@ -116,9 +119,12 @@ public class Auto_BlueSmall2 extends LinearOpMode {
         ));
         trigger.close();
 
+        Actions.runBlocking(new SequentialAction(
+                intakeAction2
+        ));
+
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
-                intakeAction2,
                 collectAction2
         ));
         sweeper.stop();
