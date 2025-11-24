@@ -46,43 +46,13 @@ public class Auto_RedSmall2 extends LinearOpMode {
         trigger = new Trigger(hardwareMap);
         drive = new MecanumDrive(hardwareMap, START_POSE);
 
-        Action shootPreloadAction = drive.actionBuilder(START_POSE)
-                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-                .build();
-
-        Action intakeAction1 = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
-                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
-                .build();
-
-        Action collectAction1 = drive.actionBuilder(new Pose2d(INTAKE_START1, EAT_HEADING))
-                .strafeTo(INTAKE_END1)
-                .build();
-
-        Action openGateAction = drive.actionBuilder(new Pose2d(INTAKE_END1, EAT_HEADING))
-                .strafeTo(OPEN_START)
-                .strafeTo(OPEN_END)
-                .strafeTo(OPEN_START)
-                .build();
-
-        Action returnToShootAction1 = drive.actionBuilder(new Pose2d(INTAKE_END1, EAT_HEADING))
-                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-                .build();
-
-        Action intakeAction2 = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
-                .strafeToLinearHeading(INTAKE_START2, EAT_HEADING)
-                .build();
-
-        Action collectAction2 = drive.actionBuilder(new Pose2d(INTAKE_START2, EAT_HEADING))
-                .strafeTo(INTAKE_END2)
-                .build();
-
-        Action returnToShootAction2 = drive.actionBuilder(new Pose2d(INTAKE_END2, EAT_HEADING))
-                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-                .build();
-
         waitForStart();
 
         if (isStopRequested()) return;
+
+        Action shootPreloadAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
 
         Actions.runBlocking(new SequentialAction(
                 shootPreloadAction,
@@ -96,9 +66,17 @@ public class Auto_RedSmall2 extends LinearOpMode {
         ));
         trigger.close();
 
+        Action intakeAction1 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
+                .build();
+
         Actions.runBlocking(new SequentialAction(
                 intakeAction1
         ));
+
+        Action collectAction1 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END1)
+                .build();
 
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
@@ -106,8 +84,21 @@ public class Auto_RedSmall2 extends LinearOpMode {
         ));
         sweeper.stop();
 
+        Action openGateAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(OPEN_START)
+                .strafeTo(OPEN_END)
+                .strafeTo(OPEN_START)
+                .build();
+
         Actions.runBlocking(new SequentialAction(
-                openGateAction,
+                openGateAction
+        ));
+
+        Action returnToShootAction1 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
+
+        Actions.runBlocking(new SequentialAction(
                 returnToShootAction1,
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
         ));
@@ -119,15 +110,27 @@ public class Auto_RedSmall2 extends LinearOpMode {
         ));
         trigger.close();
 
+        Action intakeAction2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START2, EAT_HEADING)
+                .build();
+
         Actions.runBlocking(new SequentialAction(
                 intakeAction2
         ));
+
+        Action collectAction2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END2)
+                .build();
 
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
                 collectAction2
         ));
         sweeper.stop();
+
+        Action returnToShootAction2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
 
         Actions.runBlocking(new SequentialAction(
                 returnToShootAction2,
