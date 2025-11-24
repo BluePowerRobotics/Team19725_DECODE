@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
+import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
@@ -82,6 +83,9 @@ public class ChassisController {
     }
     public void resetNoHeadModeStartError(){
         resetNoHeadModeStartError(0);
+    }
+    public void setHeadingLockRadian(double headingLockRadian){
+        this.HeadingLockRadian = MathSolver.normalizeAngle(headingLockRadian);
     }
 
     public void setTargetPoint(Pose2d pose2d){

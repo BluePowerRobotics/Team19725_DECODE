@@ -184,15 +184,16 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
         telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
         telemetry.addData("RobotSTATUS", robotStatus.toString());
-        telemetry.addData("shooterSTATUS", shooterStatus.toString());
-        telemetry.addData("sweeperSTATUS", sweeperStatus.toString());
+//        telemetry.addData("shooterSTATUS", shooterStatus.toString());
+//        telemetry.addData("sweeperSTATUS", sweeperStatus.toString());
         telemetry.addData("SweeperCurrent", sweeper.getCurrent());
-        telemetry.addData("triggerSTATUS", triggerStatus.toString());
-        telemetry.addData("Position(mm)",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
+//        telemetry.addData("triggerSTATUS", triggerStatus.toString());
+//        telemetry.addData("Position(mm)",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
         telemetry.addData("Position(inch)",chassis.robotPosition.getData().getPosition(DistanceUnit.INCH).toString());
         telemetry.addData("targetSpeed", targetSpeed);
-        telemetry.addData("1-power * 1000", shooter.getPower() * 1000);
-        telemetry.addData("1-speed", shooter.getCurrent_speed());
+        telemetry.addData("1-power * 1000", shooter.getPower1() * 1000);
+        telemetry.addData("1-speed", shooter.getCurrent_speed1());
+        telemetry.addData("2-speed", shooter.getCurrent_speed2());
         telemetry.update();
     }
     void trigger(){
@@ -248,10 +249,14 @@ public class DECODE extends LinearOpMode {
                         // 若已经达到过目标速度（shooterSpeedHasSet == true），则保持原有发射状态，不回退到 STOP/CLOSE
                     }
                 }
+
+
+
                 break;
 
             case STOP:
                 shooterStopped=true;
+                shooterSpeedHasSet = false;
                 shooter.setShootSpeed(0);
                 break;
         }
@@ -282,8 +287,7 @@ public class DECODE extends LinearOpMode {
             if(teamColor == TEAM_COLOR.BLUE){
                 heading = SolveShootPoint.solveBLUEShootHeading(pose);
             }
-            int a = 1  /0;
-            chassis.resetNoHeadModeStartError(heading);
+            chassis.setHeadingLockRadian(heading);
         }
 
 
@@ -365,7 +369,6 @@ public class DECODE extends LinearOpMode {
         }
         switch (sweeperStatus){
             case EAT:
-                shooterSpeedHasSet = false;
                 sweeper.Eat();
                 if(sweeper.isStuck()){
                     robotStatus = ROBOT_STATUS.WAITING;
