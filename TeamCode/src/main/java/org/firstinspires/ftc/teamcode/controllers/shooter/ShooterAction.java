@@ -22,10 +22,11 @@ public class ShooterAction {
 
     public static int targetSpeed_low = 500;
     public static int targetSpeed_high = 1200;
+    public static int speedDescend = 150;
     public int low_speed_threshold = 350;
 
     //第一个球被推入飞轮所需的时间
-    public static long waitTime = 100;
+    public static long waitTime = 300;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
         shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
@@ -79,7 +80,7 @@ public class ShooterAction {
         @Override
         public boolean run(TelemetryPacket packet) {
             if(!ifStart){
-                low_speed_threshold = this.targetSpeed - 100;
+                low_speed_threshold = this.targetSpeed - speedDescend;
                 StartTime = System.currentTimeMillis();
                 ifStart = true;
             }
@@ -96,7 +97,7 @@ public class ShooterAction {
             if(LeftisOK || RightisOk) {
                 hasShot = false;// 再次达到目标速度
             }
-            if(cnt == 3){
+            if(cnt >= 3){
                 //如果立刻设置speed为0，会影响最后一个球的弹射，所以等0.1s再设置为0
                 if(!hasSetStopTime){
                     StopTime = System.currentTimeMillis();

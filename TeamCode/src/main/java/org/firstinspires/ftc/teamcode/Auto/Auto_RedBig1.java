@@ -41,25 +41,13 @@ public class Auto_RedBig1 extends LinearOpMode {
         trigger = new Trigger(hardwareMap);
         drive = new MecanumDrive(hardwareMap, START_POSE);
 
-        Action shootPreloadAction = drive.actionBuilder(START_POSE)
-                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-                .build();
-
-        Action intakeAction = drive.actionBuilder(new Pose2d(SHOOT_POSE, SHOOT_HEADING))
-                .strafeToLinearHeading(INTAKE_START, EAT_HEADING)
-                .build();
-
-        Action collectAction = drive.actionBuilder(new Pose2d(INTAKE_START, EAT_HEADING))
-                .strafeTo(INTAKE_END)
-                .build();
-
-        Action returnToShootAction = drive.actionBuilder(new Pose2d(INTAKE_END, EAT_HEADING))
-                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-                .build();
-
         waitForStart();
 
         if (isStopRequested()) return;
+
+        Action shootPreloadAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
 
         Actions.runBlocking(new SequentialAction(
                 shootPreloadAction,
@@ -73,12 +61,27 @@ public class Auto_RedBig1 extends LinearOpMode {
         ));
         trigger.close();
 
+        Action intakeAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START, EAT_HEADING)
+                .build();
+
+        Actions.runBlocking(new SequentialAction(
+                intakeAction
+        ));
+
+        Action collectAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END)
+                .build();
+
         sweeper.Eat();
         Actions.runBlocking(new SequentialAction(
-                intakeAction,
                 collectAction
         ));
         sweeper.stop();
+
+        Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
 
         Actions.runBlocking(new SequentialAction(
                 returnToShootAction,

@@ -70,7 +70,6 @@ public class DECODE extends LinearOpMode {
     public ShooterAction shooter;
     public Trigger trigger;
     public BlinkinLedController ledController;
-    public AprilTagDetector aprilTagDetector = new AprilTagDetector();
     //
     public  int targetSpeed = ShooterAction.speed2_2;
     public Pose2d startPose = new Pose2d(0,0,0);
@@ -91,7 +90,6 @@ public class DECODE extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
-        aprilTagDetector.init(hardwareMap);
         sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", false);
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
@@ -244,7 +242,7 @@ public class DECODE extends LinearOpMode {
             rotate = 0;
             //校准
             //todo add 校准
-            chassis.resetPosition(aprilTagDetector.getPose().pose);
+            //chassis.resetPosition(aprilTagDetector.getPose().pose);
         }
 
         //自动对准
