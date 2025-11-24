@@ -189,9 +189,12 @@ public class DECODE extends LinearOpMode {
 //        telemetry.addData("sweeperSTATUS", sweeperStatus.toString());
 //        telemetry.addData("triggerSTATUS", triggerStatus.toString());
 //        telemetry.addData("Position(mm)",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
+        telemetry.addData("SweeperSpeeed", sweeper.getCurrent_speed());
+        telemetry.addData("SweeperPower * 1000", sweeper.getPower() * 1000);
         telemetry.addData("Position(inch)",chassis.robotPosition.getData().getPosition(DistanceUnit.INCH).toString());
         telemetry.addData("targetSpeed", targetSpeed);
         telemetry.addData("1-power * 1000", shooter.getPower1() * 1000);
+        telemetry.addData("2-power * 1000", shooter.getPower2() * 1000);
         telemetry.addData("1-speed", shooter.getCurrent_speed1());
         telemetry.addData("2-speed", shooter.getCurrent_speed2());
         telemetry.update();
