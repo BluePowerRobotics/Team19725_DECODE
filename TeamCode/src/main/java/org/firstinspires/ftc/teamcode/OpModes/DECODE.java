@@ -69,7 +69,6 @@ public class DECODE extends LinearOpMode {
     public ShooterAction shooter;
     public Trigger trigger;
     public BlinkinLedController ledController;
-    public AprilTagDetector aprilTagDetector = new AprilTagDetector();
     //
     public  int targetSpeed = ShooterAction.speed2_2;
     public Pose2d startPose = new Pose2d(0,0,0);
@@ -90,7 +89,6 @@ public class DECODE extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
-        aprilTagDetector.init(hardwareMap);
         sweeper = new Sweeper(hardwareMap);
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
@@ -195,9 +193,6 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("targetSpeed", targetSpeed);
         telemetry.addData("1-power * 1000", shooter.getPower() * 1000);
         telemetry.addData("1-speed", shooter.getCurrent_speed());
-        telemetry.addData("AprilTag_x", aprilTagDetector.getPose().pose.position.x);
-        telemetry.addData("AprilTag_y", aprilTagDetector.getPose().pose.position.y);
-        telemetry.addData("AprilTag_heading", aprilTagDetector.getPose().pose.heading);
         telemetry.update();
     }
     void trigger(){
@@ -275,7 +270,7 @@ public class DECODE extends LinearOpMode {
             rotate = 0;
             //校准
             //todo add 校准
-            chassis.resetPosition(aprilTagDetector.getPose().pose);
+            //chassis.resetPosition(aprilTagDetector.getPose().pose);
         }
 
         //自动对准
