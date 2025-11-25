@@ -90,10 +90,16 @@ public class DECODE extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
-        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", false);
+        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", true);
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
+        if(teamColor == TEAM_COLOR.BLUE){
+            chassis.resetNoHeadModeStartError(-Math.PI/2);
+        }
+        else{
+            chassis.resetNoHeadModeStartError(Math.PI/2);
+        }
         ledController = new BlinkinLedController(hardwareMap);
     }
     void inputRobotStatus(){

@@ -57,6 +57,7 @@ public class Shooter {
      */
     //todo:fix low velocity issue
     public boolean shoot(int targetSpeed){
+        pidController.setPID(k_p,k_i,k_d);
         //如果是double，不可以 == 0，需要写abs < 0.0001
         if(targetSpeed == 0){
             shooterMotor.setPower(0);

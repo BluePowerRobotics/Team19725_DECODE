@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 //单个弹射飞轮的PID控制器
 @Config
 public class Sweeper_PID {
-    public static double OutputPower = -0.5;
-    public static int EatVel = 1000;
-    public  static int GiveTheArtifactVel = 400;
+    public static double OutputPower = -0.6;
+    public static int EatVel = 1600;
+    public  static int GiveTheArtifactVel = 800;
     public DcMotorEx SweeperMotor;
     TelemetryPacket packet = new TelemetryPacket();
     Telemetry telemetry;
@@ -26,9 +26,9 @@ public class Sweeper_PID {
     double current_time;
     double previous_time;
     double current_encoder = 0;
-    public static double k_p = 0.1;
+    public static double k_p = 0.003;
     public static double k_i = 0;
-    public static double k_d = 0;
+    public static double k_d = 0.0001  ;
     public static double max_i = 1;
     private PIDController pidController;
 
@@ -53,6 +53,7 @@ public class Sweeper_PID {
      */
     //todo:fix low velocity issue
     public boolean Sweep(int targetSpeed){
+        pidController.setPID(k_p,k_i,k_d);
         //如果是double，不可以 == 0，需要写abs < 0.0001
         if(targetSpeed == 0){
             SweeperMotor.setPower(0);

@@ -21,7 +21,7 @@ public class ShooterAction {
     private Shooter shooter_Right;
 
     public static int targetSpeed_low = 500;
-    public static int targetSpeed_high = 1200;
+    public static int targetSpeed_high = 1000;
     public static int speedDescend = 150;
     public int low_speed_threshold = 350;
 

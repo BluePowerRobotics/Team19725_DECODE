@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Trigger {
     Servo triggerServo_LEFT;
     Servo triggerServo_RIGHT;
-    public static double TRIGGER_OPEN_POS = 0.6;
+    public static double TRIGGER_OPEN_POS = 0.72;
     public static double TRIGGER_CLOSE_POS = 0.31;
     public Trigger(HardwareMap hardwareMap){
         this.triggerServo_LEFT = hardwareMap.get(Servo.class, "trigger_left");
