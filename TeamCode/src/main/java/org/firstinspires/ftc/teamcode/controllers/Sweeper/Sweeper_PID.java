@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 @Config
 public class Sweeper_PID {
     public static double OutputPower = -0.6;
-    public static int EatVel = 1600;
+    public static int EatVel = 1960;
     public  static int GiveTheArtifactVel = 800;
     public DcMotorEx SweeperMotor;
     TelemetryPacket packet = new TelemetryPacket();
