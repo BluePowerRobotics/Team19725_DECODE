@@ -27,20 +27,22 @@ public class Auto_BlueBig2 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper sweeper;
     Trigger trigger;
-    public static int INTAKE_END_Y = -55;
+    public static int INTAKE_END_Y1 = -54;
+    public static int INTAKE_END_Y2 = -62;
     public static int OPEN_GATE_Y = -60;
 
     public static final Pose2d START_POSE = new Pose2d(-64.8, -17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
     public static final Vector2d INTAKE_START1 = new Vector2d(-12, -24);
-    public static final Vector2d INTAKE_END1 = new Vector2d(-12, INTAKE_END_Y);
-    public static final Vector2d OPEN_START = new Vector2d(-5, -48);
-    public static final Vector2d OPEN_END = new Vector2d(-5, OPEN_GATE_Y);
+    public static final Vector2d INTAKE_END1 = new Vector2d(-12, INTAKE_END_Y1);
+    public static final Vector2d OPEN_START = new Vector2d(0, -48);
+    public static final Vector2d OPEN_END = new Vector2d(0, OPEN_GATE_Y);
     public static final Vector2d INTAKE_START2 = new Vector2d(12, -24);
-    public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y);
-    public static final double SHOOT_HEADING = Math.PI / 4;
-    public static final double EAT_HEADING = -Math.PI / 2;
-    public static final double waitSeconds = 1;
+    public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y2);
+    public static double SHOOT_HEADING = Math.PI / 4;
+    public static double EAT_HEADING = -Math.PI / 2;
+    public static double collectWait = 1;
+    public static double openGateWait = 1;
 
     @Override
     public void runOpMode() {
@@ -80,7 +82,7 @@ public class Auto_BlueBig2 extends LinearOpMode {
 
         Action collectAction1 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_END1)
-                .waitSeconds(waitSeconds)
+                .waitSeconds(collectWait)
                 .build();
 
         sweeper.Eat();
@@ -92,6 +94,7 @@ public class Auto_BlueBig2 extends LinearOpMode {
         Action openGateAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(OPEN_START)
                 .strafeTo(OPEN_END)
+                .waitSeconds(openGateWait)
                 .strafeTo(OPEN_START)
                 .build();
 
@@ -125,7 +128,7 @@ public class Auto_BlueBig2 extends LinearOpMode {
 
         Action collectAction2 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_END2)
-                .waitSeconds(waitSeconds)
+                .waitSeconds(collectWait)
                 .build();
 
         sweeper.Eat();
@@ -135,20 +138,21 @@ public class Auto_BlueBig2 extends LinearOpMode {
         sweeper.stop();
 
         Action returnToShootAction2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_START2)
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(new SequentialAction(
-                returnToShootAction2,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
-        ));
-
-        trigger.open();
-        sweeper.GiveArtifact();
-        Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
-        ));
-        trigger.close();
+//        Actions.runBlocking(new SequentialAction(
+//                returnToShootAction2,
+//                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+//        ));
+//
+//        trigger.open();
+//        sweeper.GiveArtifact();
+//        Actions.runBlocking(new SequentialAction(
+//                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+//        ));
+//        trigger.close();
 
         try (FileWriter writer = new FileWriter("/sdcard/FIRST/pose.txt")) {
             writer.write(drive.localizer.getPose().position.x + "," + drive.localizer.getPose().position.y + "," + drive.localizer.getPose().heading.toDouble());

@@ -27,15 +27,15 @@ public class Auto_RedSmall1 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper sweeper;
     Trigger trigger;
-    public static int INTAKE_END_Y = 55;
+    public static int INTAKE_END_Y = 54;
 
     public static final Pose2d START_POSE = new Pose2d(64.8, 17.6, Math.PI);
     public static final Vector2d SHOOT_POSE = new Vector2d(60, 12);
     public static final Vector2d INTAKE_START = new Vector2d(36, 24);
     public static final Vector2d INTAKE_END = new Vector2d(36, INTAKE_END_Y);
-    public static final double SHOOT_HEADING = -Math.PI / 4;
-    public static final double EAT_HEADING = Math.PI / 2;
-    public static final double waitSeconds = 1;
+    public static double SHOOT_HEADING = -Math.PI / 4;
+    public static double EAT_HEADING = Math.PI / 2;
+    public static double waitSeconds = 1;
 
     @Override
     public void runOpMode() {
