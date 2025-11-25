@@ -16,6 +16,9 @@ import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 @Autonomous
 @Config
 public class Auto_BlueSmall1 extends LinearOpMode {
@@ -94,5 +97,11 @@ public class Auto_BlueSmall1 extends LinearOpMode {
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
         trigger.close();
+
+        try (FileWriter writer = new FileWriter("/sdcard/FIRST/pose.txt")) {
+            writer.write(drive.localizer.getPose().position.x + "," + drive.localizer.getPose().position.y + "," + drive.localizer.getPose().heading.toDouble());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
