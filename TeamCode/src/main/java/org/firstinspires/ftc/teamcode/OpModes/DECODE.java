@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
+import org.firstinspires.ftc.teamcode.RoadRunner.KalmanFusionLocalizer;
 import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.LedPreset;
@@ -70,6 +71,7 @@ public class DECODE extends LinearOpMode {
     public ShooterAction shooter;
     public Trigger trigger;
     public BlinkinLedController ledController;
+    AprilTagDetector aprilTagDetector;
     //
     public  int targetSpeed = ShooterAction.speed2_2;
     public Pose2d startPose = new Pose2d(0,0,0);
@@ -94,6 +96,8 @@ public class DECODE extends LinearOpMode {
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
+        aprilTagDetector = new AprilTagDetector();
+        aprilTagDetector.init(hardwareMap);
         if(teamColor == TEAM_COLOR.BLUE){
             chassis.resetNoHeadModeStartError(-Math.PI/2);
         }
@@ -103,7 +107,7 @@ public class DECODE extends LinearOpMode {
         ledController = new BlinkinLedController(hardwareMap);
     }
     void inputRobotStatus(){
-        if(gamepad1.yWasPressed() || gamepad2.aWasPressed()){
+        if(gamepad1.yWasPressed() || gamepad2.yWasPressed()){
             if(robotStatus == ROBOT_STATUS.SHOOTING){
                 robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
             }
@@ -143,7 +147,10 @@ public class DECODE extends LinearOpMode {
                 ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 break;
             case WAITING:
-                boolean AprilTagStatus = chassis.robotPosition.mecanumDrive.localizer.getAprilTagStatus();
+                boolean AprilTagStatus = false;
+                if(!Double.isNaN(aprilTagDetector.getPose().pose.position.x)){
+                    AprilTagStatus = true;
+                }
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
@@ -241,9 +248,9 @@ public class DECODE extends LinearOpMode {
 
         Pose2d pose = chassis.robotPosition.getData().getPose2d();
 
-        double drive = -gamepad1.left_stick_y-gamepad1.right_stick_y; // 前后
-        double strafe = gamepad1.left_stick_x; // 左右
-        double rotate =-gamepad1.right_stick_x; // 旋转
+        double drive = -gamepad1.left_stick_y - 0.3 * gamepad2.left_stick_y; // 前后
+        double strafe = gamepad1.left_stick_x + 0.3 * gamepad2.left_stick_x; // 左右
+        double rotate =-gamepad1.right_stick_x  - 0.3 * gamepad2.right_stick_x; // 旋转
 
         if(gamepad1.left_stick_button && gamepad1.right_stick_button){
             drive = 0;
@@ -251,11 +258,12 @@ public class DECODE extends LinearOpMode {
             rotate = 0;
             //校准
             //todo add 校准
-            //chassis.resetPosition(aprilTagDetector.getPose().pose);
+
+            chassis.resetPosition(aprilTagDetector.getPose().pose);
         }
 
         //自动对准
-        if(gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1){
+        if(gamepad1.left_trigger > 0.6 || gamepad2.left_trigger > 0.6){
             double heading = 0;
             if(teamColor == TEAM_COLOR.RED){
                 heading = SolveShootPoint.solveREDShootHeading(pose);
@@ -266,6 +274,17 @@ public class DECODE extends LinearOpMode {
             chassis.setHeadingLockRadian(heading);
         }
 
+        //自动对准人玩区
+        if(gamepad1.right_trigger > 0.6 || gamepad2.right_trigger > 0.6){
+            double heading = 0;
+            if(teamColor == TEAM_COLOR.RED){
+                heading = -Math.PI / 2;
+            }
+            if(teamColor == TEAM_COLOR.BLUE){
+                heading = Math.PI / 2;
+            }
+            chassis.setHeadingLockRadian(heading);
+        }
 
         //自瞄
         if(gamepad1.dpadLeftWasPressed() || gamepad2.dpadLeftWasPressed()){
