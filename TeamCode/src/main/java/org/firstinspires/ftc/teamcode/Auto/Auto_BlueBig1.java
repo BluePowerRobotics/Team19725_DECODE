@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
+import org.firstinspires.ftc.teamcode.utility.RoadRunnerFileWriter;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,6 +41,7 @@ public class Auto_BlueBig1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        RoadRunnerFileWriter roadRunnerFileWriter = new RoadRunnerFileWriter();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooterAction = new ShooterAction(hardwareMap, telemetry);
         sweeper = new Sweeper(hardwareMap);
@@ -53,10 +56,15 @@ public class Auto_BlueBig1 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(new SequentialAction(
-                shootPreloadAction,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
-        ));
+        Actions.runBlocking(
+                new ParallelAction(
+                        new SequentialAction(
+                                shootPreloadAction,
+                                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+                       ),
+                       roadRunnerFileWriter.WriteFile(drive)
+                )
+        );
 
         trigger.open();
         sweeper.GiveArtifact();
