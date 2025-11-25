@@ -27,6 +27,7 @@ public class ShooterAction {
 
     //第一个球被推入飞轮所需的时间
     public static long waitTime = 300;
+    public static long ShootTime = 3500;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
         shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
@@ -109,7 +110,7 @@ public class ShooterAction {
                     return  false;
                 }
             }
-            return System.currentTimeMillis() - StartTime < 10000;
+            return System.currentTimeMillis() - StartTime < ShootTime;
         }
     }
     public Action ShootThreeArtifacts(int targetSpeed) {
