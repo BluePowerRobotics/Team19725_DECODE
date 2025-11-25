@@ -11,17 +11,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class ShooterAction {
     public static int speed_block = -400;
-    public static int speed2_2 = 500;
-    public static int speed25_25 = 550;
-    public static int speed3_3 = 600;
+    public static int speed2_2 = 700;
+    public static int speed25_25 = 800;
+    public static int speed3_3 = 900;
     public static int speed25_55 = 900;
     public static int speed35_55 = 1000;
     private Telemetry telemetry;
     private Shooter shooter_Left;
     private Shooter shooter_Right;
 
-    public static int targetSpeed_low = 500;
-    public static int targetSpeed_high = 1000;
+    public static int targetSpeed_low = 700;
+    public static int targetSpeed_high = 1200;
     public static int speedDescend = 150;
     public int low_speed_threshold = 350;
 
@@ -109,7 +109,7 @@ public class ShooterAction {
                     return  false;
                 }
             }
-            return true;
+            return System.currentTimeMillis() - StartTime < 10000;
         }
     }
     public Action ShootThreeArtifacts(int targetSpeed) {

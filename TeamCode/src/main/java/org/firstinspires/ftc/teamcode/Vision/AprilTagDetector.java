@@ -37,7 +37,7 @@ public class AprilTagDetector {
     //画面大小
     public static double x = 0;
     public static double y = -6.22;
-    public static double z = 10.83;
+    public static double z = 11.02;
     public static double yaw = 180;
     public static double pitch = 73.6;
     public static double roll = 0;

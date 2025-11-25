@@ -40,6 +40,7 @@ public class Auto_BlueBig2 extends LinearOpMode {
     public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y);
     public static final double SHOOT_HEADING = Math.PI / 4;
     public static final double EAT_HEADING = -Math.PI / 2;
+    public static final double waitSeconds = 1;
 
     @Override
     public void runOpMode() {
@@ -79,6 +80,7 @@ public class Auto_BlueBig2 extends LinearOpMode {
 
         Action collectAction1 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_END1)
+                .waitSeconds(waitSeconds)
                 .build();
 
         sweeper.Eat();
@@ -123,6 +125,7 @@ public class Auto_BlueBig2 extends LinearOpMode {
 
         Action collectAction2 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_END2)
+                .waitSeconds(waitSeconds)
                 .build();
 
         sweeper.Eat();
