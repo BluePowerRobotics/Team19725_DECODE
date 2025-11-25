@@ -69,7 +69,7 @@ public class ChassisController {
      * @param initialPose 初始位置（roadrunner方向）
      */
     public ChassisController(HardwareMap hardwareMap, Pose2d initialPose){
-        this(hardwareMap,new Point2D(-initialPose.position.y,+initialPose.position.x),initialPose.heading.log());
+        this(hardwareMap,new Point2D(+initialPose.position.y,-initialPose.position.x),initialPose.heading.log());
     }
     public void exchangeNoHeadMode(){
         useNoHeadMode=!useNoHeadMode;
