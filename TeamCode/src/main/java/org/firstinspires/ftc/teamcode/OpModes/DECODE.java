@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
+import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 
@@ -214,7 +215,7 @@ public class DECODE extends LinearOpMode {
 //        telemetry.addData("Position(mm)",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
         telemetry.addData("SweeperSpeeed", sweeper.getCurrent_speed());
         telemetry.addData("SweeperPower * 1000", sweeper.getPower() * 1000);
-        telemetry.addData("Position(inch)",chassis.robotPosition.getData().getPosition(DistanceUnit.INCH).toString());
+        telemetry.addData("Position(inch)", Point2D.rotate(chassis.robotPosition.getData().getPosition(DistanceUnit.INCH),teamColor==TEAM_COLOR.BLUE?Math.PI/2:-Math.PI/2).toString());
         telemetry.addData("targetSpeed", targetSpeed + n * additionSpeed);
         telemetry.addData("n", n);
         telemetry.addData("1-power * 1000", shooter.getPower1() * 1000);

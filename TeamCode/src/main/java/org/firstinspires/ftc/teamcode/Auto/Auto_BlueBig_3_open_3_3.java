@@ -21,7 +21,7 @@ import java.io.IOException;
 
 @Autonomous
 @Config
-public class Auto_BlueBig2 extends LinearOpMode {
+public class Auto_BlueBig_3_open_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     ShooterAction shooterAction;
@@ -35,8 +35,8 @@ public class Auto_BlueBig2 extends LinearOpMode {
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
     public static final Vector2d INTAKE_START1 = new Vector2d(-12, -24);
     public static final Vector2d INTAKE_END1 = new Vector2d(-12, INTAKE_END_Y1);
-    public static final Vector2d OPEN_START = new Vector2d(0, -48);
-    public static final Vector2d OPEN_END = new Vector2d(0, OPEN_GATE_Y);
+    public static final Vector2d OPEN_START = new Vector2d(-2, -48);
+    public static final Vector2d OPEN_END = new Vector2d(-2, OPEN_GATE_Y);
     public static final Vector2d INTAKE_START2 = new Vector2d(12, -24);
     public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y2);
     public static double SHOOT_HEADING = Math.PI / 4;
@@ -142,10 +142,10 @@ public class Auto_BlueBig2 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-//        Actions.runBlocking(new SequentialAction(
-//                returnToShootAction2,
-//                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
-//        ));
+        Actions.runBlocking(new SequentialAction(
+                returnToShootAction2
+                //, shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+        ));
 //
 //        trigger.open();
 //        sweeper.GiveArtifact();
