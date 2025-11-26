@@ -75,6 +75,8 @@ public class DECODE extends LinearOpMode {
     //
     public  int targetSpeed = ShooterAction.speed2_2;
     public Pose2d startPose = new Pose2d(0,0,0);
+    public static int additionSpeed = 30;
+    int n = 0;
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
             String[] data = reader.readLine().split(",");
@@ -136,6 +138,14 @@ public class DECODE extends LinearOpMode {
             else{
                 robotStatus = ROBOT_STATUS.OUTPUTTING;
             }
+        }
+        if(gamepad2.xWasPressed()){
+            n += 1;
+            gamepad2.rumble(300,0,150);
+        }
+        if(gamepad2.bWasPressed()){
+            n -= 1;
+            gamepad2.rumble(0,300,150);
         }
     }
     void setStatus(){
@@ -206,6 +216,7 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("SweeperPower * 1000", sweeper.getPower() * 1000);
         telemetry.addData("Position(inch)",chassis.robotPosition.getData().getPosition(DistanceUnit.INCH).toString());
         telemetry.addData("targetSpeed", targetSpeed);
+        telemetry.addData("n * additionSpeed", n * additionSpeed);
         telemetry.addData("1-power * 1000", shooter.getPower1() * 1000);
         telemetry.addData("2-power * 1000", shooter.getPower2() * 1000);
         telemetry.addData("1-speed", shooter.getCurrent_speed1());
@@ -231,7 +242,7 @@ public class DECODE extends LinearOpMode {
                     robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
                 }
                 else{
-                    boolean hasReachedTargetSpeed = shooter.setShootSpeed(targetSpeed);
+                    boolean hasReachedTargetSpeed = shooter.setShootSpeed(targetSpeed + n * additionSpeed);
                     if(hasReachedTargetSpeed){
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
