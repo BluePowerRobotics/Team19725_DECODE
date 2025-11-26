@@ -23,7 +23,7 @@ import java.io.IOException;
 
 @Autonomous
 @Config
-public class Auto_BlueBig1 extends LinearOpMode {
+public class Auto_BlueBig_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     ShooterAction shooterAction;

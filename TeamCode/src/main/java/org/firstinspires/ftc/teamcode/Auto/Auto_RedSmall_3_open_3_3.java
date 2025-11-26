@@ -21,26 +21,26 @@ import java.io.IOException;
 
 @Autonomous
 @Config
-public class Auto_BlueSmall2 extends LinearOpMode {
+public class Auto_RedSmall_3_open_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     ShooterAction shooterAction;
     Sweeper sweeper;
     Trigger trigger;
-    public static int INTAKE_END_Y1 = -54;
-    public static int INTAKE_END_Y2 = -62;
-    public static int OPEN_GATE_Y = -60;
+    public static int INTAKE_END_Y1 = 54;
+    public static int INTAKE_END_Y2 = 62;
+    public static int OPEN_GATE_Y = 60;
 
-    public static final Pose2d START_POSE = new Pose2d(64.8, -17.6, Math.PI);
-    public static final Vector2d SHOOT_POSE = new Vector2d(60, -12);
-    public static final Vector2d INTAKE_START1 = new Vector2d(36, -24);
+    public static final Pose2d START_POSE = new Pose2d(64.8, 17.6, Math.PI);
+    public static final Vector2d SHOOT_POSE = new Vector2d(45.084524053, 8.746427842);
+    public static final Vector2d INTAKE_START1 = new Vector2d(36, 24);
     public static final Vector2d INTAKE_END1 = new Vector2d(36, INTAKE_END_Y1);
-    public static final Vector2d OPEN_START = new Vector2d(-2, -48);
+    public static final Vector2d OPEN_START = new Vector2d(-2, 48);
     public static final Vector2d OPEN_END = new Vector2d(-2, OPEN_GATE_Y);
-    public static final Vector2d INTAKE_START2 = new Vector2d(12, -24);
+    public static final Vector2d INTAKE_START2 = new Vector2d(12, 24);
     public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y2);
-    public static double SHOOT_HEADING = Math.PI / 4;
-    public static double EAT_HEADING = -Math.PI / 2;
+    public static double SHOOT_HEADING = Math.PI-Math.atan(3.0/5.0);
+    public static double EAT_HEADING = Math.PI / 2;
     public static double collectWait = 1;
     public static double openGateWait = 1;
 

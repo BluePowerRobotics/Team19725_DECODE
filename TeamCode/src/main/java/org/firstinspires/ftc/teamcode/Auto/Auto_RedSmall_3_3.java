@@ -21,7 +21,7 @@ import java.io.IOException;
 
 @Autonomous
 @Config
-public class Auto_RedBig1 extends LinearOpMode {
+public class Auto_RedSmall_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     ShooterAction shooterAction;
@@ -29,11 +29,11 @@ public class Auto_RedBig1 extends LinearOpMode {
     Trigger trigger;
     public static int INTAKE_END_Y = 54;
 
-    public static final Pose2d START_POSE = new Pose2d(-64.8, 17.6, 0);
-    public static final Vector2d SHOOT_POSE = new Vector2d(-24, 24);
-    public static final Vector2d INTAKE_START = new Vector2d(-12, 24);
-    public static final Vector2d INTAKE_END = new Vector2d(-12, INTAKE_END_Y);
-    public static double SHOOT_HEADING = -Math.PI / 4;
+    public static final Pose2d START_POSE = new Pose2d(64.8, 17.6, Math.PI);
+    public static final Vector2d SHOOT_POSE = new Vector2d(45.084524053, 8.746427842);
+    public static final Vector2d INTAKE_START = new Vector2d(36, 24);
+    public static final Vector2d INTAKE_END = new Vector2d(36, INTAKE_END_Y);
+    public static double SHOOT_HEADING = Math.PI-Math.atan(3.0/5.0);
     public static double EAT_HEADING = Math.PI / 2;
     public static double waitSeconds = 1;
 
