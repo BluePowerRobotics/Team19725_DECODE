@@ -338,16 +338,16 @@ public class DECODE extends LinearOpMode {
                 targetSpeed = ShooterAction.speed25_55;
             }
         }
-        if(gamepad2.xWasPressed()){
-            if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r5));
-                targetSpeed = ShooterAction.speed35_55;
-            }
-            if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r5));
-                targetSpeed = ShooterAction.speed35_55;
-            }
-        }
+//        if(gamepad2.xWasPressed()){
+//            if(teamColor == TEAM_COLOR.RED){
+//                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r5));
+//                targetSpeed = ShooterAction.speed35_55;
+//            }
+//            if(teamColor == TEAM_COLOR.BLUE){
+//                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r5));
+//                targetSpeed = ShooterAction.speed35_55;
+//            }
+//        }
 
 
         chassis.gamepadInput(strafe, drive, rotate);
