@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 //单个弹射飞轮的PID控制器
 @Config
 public class Sweeper_PID {
-    public static double OutputPower = -0.4;
+    public static double OutputPower = -0.7;
     public static int EatVel = 1960;
     public static int GiveTheArtifactVel = 800;
     public DcMotorEx SweeperMotor;
@@ -82,14 +82,12 @@ public class Sweeper_PID {
     public class SweeperBack implements Action {
         private int sweeperBackStartTick = 0;
         private boolean hasSetStartTicks = false;
-
         @Override
         public boolean run(TelemetryPacket packet) {
             if(!hasSetStartTicks){
                 sweeperBackStartTick = SweeperMotor.getCurrentPosition();
                 hasSetStartTicks = true;
             }
-
             SweeperMotor.setPower(Sweeper_PID.OutputPower);
             if(SweeperMotor.getCurrentPosition() <= sweeperBackStartTick - Sweeper.tickPerCycle * backRequireCycle){
                 SweeperMotor.setPower(0);
@@ -98,7 +96,6 @@ public class Sweeper_PID {
             return true;
         }
     }
-
     public Action SweeperBack() {
         return new SweeperBack();
     }

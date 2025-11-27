@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
+import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 
@@ -25,7 +25,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     ShooterAction shooterAction;
-    Sweeper sweeper;
+    Sweeper_PID sweeper;
     Trigger trigger;
     public static int INTAKE_END_Y = 54;
 
@@ -41,7 +41,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooterAction = new ShooterAction(hardwareMap, telemetry);
-        sweeper = new Sweeper(hardwareMap);
+        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", true);
         trigger = new Trigger(hardwareMap);
         drive = new MecanumDrive(hardwareMap, START_POSE);
 
@@ -59,7 +59,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
         ));
 
         trigger.open();
-        sweeper.GiveArtifact();
+        sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
@@ -78,11 +78,12 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
                 .waitSeconds(waitSeconds)
                 .build();
 
-        sweeper.Eat();
+        sweeper.Sweep(Sweeper_PID.EatVel);
         Actions.runBlocking(new SequentialAction(
                 collectAction
         ));
-        sweeper.stop();
+        sweeper.Sweep(0);
+        sweeper.SweeperBack();
 
         Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
@@ -94,7 +95,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
         ));
 
         trigger.open();
-        sweeper.GiveArtifact();
+        sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));

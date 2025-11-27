@@ -30,7 +30,7 @@ public class Shooter {
     double current_error;
     double previous_error;
     public static double degreePertick = 0;
-    public static double k_p = 0.05;
+    public static double k_p = 0.02;
     public static double k_i = 0;
     public static double k_d = 0.05;
     public static double max_i = 1;

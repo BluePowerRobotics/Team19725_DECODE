@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
+import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 
@@ -25,15 +25,15 @@ public class Auto_BlueSmall_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     ShooterAction shooterAction;
-    Sweeper sweeper;
+    Sweeper_PID sweeper;
     Trigger trigger;
     public static int INTAKE_END_Y = -54;
 
-    public static final Pose2d START_POSE = new Pose2d(64.8, -17.6, Math.PI);
-    public static final Vector2d SHOOT_POSE = new Vector2d(45.084524053, -8.746427842);
+    public static final Pose2d START_POSE = new Pose2d(64.8, -17.6, 0);
+    public static final Vector2d SHOOT_POSE = new Vector2d(44.71220495, -8.613385148);
     public static final Vector2d INTAKE_START = new Vector2d(36, -24);
     public static final Vector2d INTAKE_END = new Vector2d(36, INTAKE_END_Y);
-    public static double SHOOT_HEADING = Math.atan(3.0/5.0)-Math.PI;
+    public static double SHOOT_HEADING = 0.4975317075;
     public static double EAT_HEADING = -Math.PI / 2;
     public static double waitSeconds = 1;
 
@@ -41,7 +41,7 @@ public class Auto_BlueSmall_3_3 extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooterAction = new ShooterAction(hardwareMap, telemetry);
-        sweeper = new Sweeper(hardwareMap);
+        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", true);
         trigger = new Trigger(hardwareMap);
         drive = new MecanumDrive(hardwareMap, START_POSE);
 
@@ -55,13 +55,13 @@ public class Auto_BlueSmall_3_3 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 shootPreloadAction,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
         ));
 
         trigger.open();
-        sweeper.GiveArtifact();
+        sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
 
@@ -78,11 +78,12 @@ public class Auto_BlueSmall_3_3 extends LinearOpMode {
                 .waitSeconds(waitSeconds)
                 .build();
 
-        sweeper.Eat();
+        sweeper.Sweep(Sweeper_PID.EatVel);
         Actions.runBlocking(new SequentialAction(
                 collectAction
         ));
-        sweeper.stop();
+        sweeper.Sweep(0);
+        sweeper.SweeperBack();
 
         Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
@@ -90,13 +91,13 @@ public class Auto_BlueSmall_3_3 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 returnToShootAction,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
         ));
 
         trigger.open();
-        sweeper.GiveArtifact();
+        sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
 

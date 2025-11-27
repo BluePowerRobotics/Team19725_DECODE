@@ -115,6 +115,7 @@ public class DECODE extends LinearOpMode {
     }
     void inputRobotStatus(){
         if(gamepad2.startWasPressed()){
+            actionRunner = new ActionRunner();
             actionRunner.add(sweeper.SweeperBack());
         }
         if(gamepad1.yWasPressed() || gamepad2.yWasPressed()){
@@ -211,7 +212,7 @@ public class DECODE extends LinearOpMode {
     }
 
     void Telemetry(){
-        telemetry.addData("ifBacking", ifBacking);
+        telemetry.addData("isBusy", actionRunner.isBusy());
         telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
         telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
         telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
