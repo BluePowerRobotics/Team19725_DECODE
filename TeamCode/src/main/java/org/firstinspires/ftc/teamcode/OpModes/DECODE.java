@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
+import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
@@ -71,6 +72,7 @@ public class DECODE extends LinearOpMode {
     public Sweeper_PID sweeper;
     public ShooterAction shooter;
     public Trigger trigger;
+    public ActionRunner actionRunner;
     public BlinkinLedController ledController;
     AprilTagDetector aprilTagDetector;
     //
@@ -78,6 +80,7 @@ public class DECODE extends LinearOpMode {
     public Pose2d startPose = new Pose2d(0,0,0);
     public static int additionSpeed = 30;
     int n = 0;
+    boolean ifBacking = false;
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
             String[] data = reader.readLine().split(",");
@@ -101,6 +104,7 @@ public class DECODE extends LinearOpMode {
         chassis = new ChassisController(hardwareMap, startPose);
         aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
+        actionRunner = new ActionRunner();
         if(teamColor == TEAM_COLOR.BLUE){
             chassis.resetNoHeadModeStartError(-Math.PI/2);
         }
@@ -110,6 +114,9 @@ public class DECODE extends LinearOpMode {
         ledController = new BlinkinLedController(hardwareMap);
     }
     void inputRobotStatus(){
+        if(gamepad2.startWasPressed()){
+            actionRunner.add(sweeper.SweeperBack());
+        }
         if(gamepad1.yWasPressed() || gamepad2.yWasPressed()){
             if(robotStatus == ROBOT_STATUS.SHOOTING){
                 robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
@@ -140,13 +147,13 @@ public class DECODE extends LinearOpMode {
                 robotStatus = ROBOT_STATUS.OUTPUTTING;
             }
         }
-        if(gamepad2.xWasPressed()){
-            n += 1;
-            gamepad2.rumble(300,0,150);
-        }
         if(gamepad2.bWasPressed()){
-            n -= 1;
+            n += 1;
             gamepad2.rumble(0,300,150);
+        }
+        if(gamepad2.xWasPressed()){
+            n -= 1;
+            gamepad2.rumble(300,0,150);
         }
     }
     void setStatus(){
@@ -204,7 +211,7 @@ public class DECODE extends LinearOpMode {
     }
 
     void Telemetry(){
-
+        telemetry.addData("ifBacking", ifBacking);
         telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
         telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
         telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
@@ -371,9 +378,9 @@ public class DECODE extends LinearOpMode {
     void sweeper(){
 
 
-        if(gamepad2.yWasPressed()){
-            sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
-        }
+//        if(gamepad2.yWasPressed()){
+//            sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
+//        }
         switch (sweeperStatus){
             case EAT:
                 sweeper.Sweep(Sweeper_PID.EatVel);
@@ -385,7 +392,9 @@ public class DECODE extends LinearOpMode {
                 sweeper.output();
                 break;
             case STOP:
-                sweeper.Sweep(0);
+                if(!actionRunner.isBusy()){
+                    sweeper.Sweep(0);
+                }
                 break;
         }
     }
@@ -417,6 +426,9 @@ public class DECODE extends LinearOpMode {
             trigger();
             chassis();
             Telemetry();
+            if(actionRunner.isBusy()){
+                actionRunner.update();
+            }
         }
     }
 }
