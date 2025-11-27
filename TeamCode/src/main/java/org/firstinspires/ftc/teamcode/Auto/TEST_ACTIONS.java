@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
+import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 
@@ -23,7 +24,7 @@ public class TEST_ACTIONS extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     Trigger trigger;
-    Sweeper sweeper;
+    Sweeper_PID sweeper;
     ShooterAction shooterAction;
 
     public void runOpMode() {
@@ -31,39 +32,44 @@ public class TEST_ACTIONS extends LinearOpMode {
         shooterAction = new ShooterAction(hardwareMap, telemetry);
         trigger = new Trigger(hardwareMap);
         trigger.close();
-        sweeper = new Sweeper(hardwareMap);
+        sweeper = new Sweeper_PID(hardwareMap,telemetry,"sweeperMotor", true);
         waitForStart();
 
         if (isStopRequested()) return;
+
+
+        telemetry.addData("000",0);
+        telemetry.update();
+        Actions.runBlocking(sweeper.SweeperBack());
         telemetry.addData("SWEEPER EAT", 1);
         telemetry.update();
-        sweeper.Eat();
+//        sweeper.Eat();
         sleep(1000);
-        telemetry.addData("Trigger OPEN", 2);
-        telemetry.update();
-        trigger.open();
-        sleep(1000);
-        telemetry.addData("STOP", 3);
-        telemetry.update();
-        sweeper.stop();
-        trigger.close();
-        sleep(5000);
-        telemetry.addData("Speed", shooterAction.getCurrent_speed1());
-
-        //todo add UP
-        Actions.runBlocking(
-                new SequentialAction(
-                        shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
-                )
-        );
-
-        telemetry.addData("SPEEDUP COMPLETED", 4);
-        telemetry.update();
-        Actions.runBlocking(
-                new SequentialAction(
-                        shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
-                )
-        );
+//        telemetry.addData("Trigger OPEN", 2);
+//        telemetry.update();
+//        trigger.open();
+//        sleep(1000);
+//        telemetry.addData("STOP", 3);
+//        telemetry.update();
+////        sweeper.stop();
+//        trigger.close();
+//        sleep(5000);
+//        telemetry.addData("Speed", shooterAction.getCurrent_speed1());
+//
+//        //todo add UP
+//        Actions.runBlocking(
+//                new SequentialAction(
+//                        shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+//                )
+//        );
+//
+//        telemetry.addData("SPEEDUP COMPLETED", 4);
+//        telemetry.update();
+//        Actions.runBlocking(
+//                new SequentialAction(
+//                        shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+//                )
+//        );
 
 
 //        //todo add UP
