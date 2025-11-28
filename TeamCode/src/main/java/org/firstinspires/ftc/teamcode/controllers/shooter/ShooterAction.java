@@ -13,7 +13,7 @@ public class ShooterAction {
     public static int speed_block = -400;
     public static int speed2_2 = 700;
     public static int speed25_25 = 725;
-    public static int speed3_3 = 700;
+    public static int speed3_3 = 750;
     public static int speed25_55 = 850;
     public static int speed35_55 = 875;
     private Telemetry telemetry;

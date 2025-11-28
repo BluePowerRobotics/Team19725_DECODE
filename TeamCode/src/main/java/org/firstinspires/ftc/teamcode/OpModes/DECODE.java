@@ -78,7 +78,7 @@ public class DECODE extends LinearOpMode {
     //
     public  int targetSpeed = ShooterAction.speed2_2;
     public Pose2d startPose = new Pose2d(0,0,0);
-    public static int additionSpeed = 30;
+    public static int additionSpeed = 25;
     int n = 0;
     boolean ifBacking = false;
     void Init(){
@@ -308,6 +308,7 @@ public class DECODE extends LinearOpMode {
 
         //自瞄
         if(gamepad1.dpadLeftWasPressed() || gamepad2.dpadLeftWasPressed()){
+            n = 0;
             if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r1));
                 targetSpeed = ShooterAction.speed2_2;
@@ -318,6 +319,7 @@ public class DECODE extends LinearOpMode {
             }
         }
         if(gamepad1.dpadUpWasPressed() || gamepad2.dpadUpWasPressed()){
+            n = 0;
             if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r2));
                 targetSpeed = ShooterAction.speed25_25;
@@ -328,6 +330,7 @@ public class DECODE extends LinearOpMode {
             }
         }
         if(gamepad1.dpadRightWasPressed() || gamepad2.dpadRightWasPressed()){
+            n = 0;
             if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r3));
                 targetSpeed = ShooterAction.speed3_3;
@@ -338,6 +341,7 @@ public class DECODE extends LinearOpMode {
             }
         }
         if(gamepad1.dpadDownWasPressed() || gamepad2.dpadDownWasPressed()){
+            n = 0;
             if(teamColor == TEAM_COLOR.RED){
                 chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r4));
                 targetSpeed = ShooterAction.speed25_55;

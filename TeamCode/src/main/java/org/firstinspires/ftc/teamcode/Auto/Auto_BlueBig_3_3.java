@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -29,7 +28,7 @@ public class Auto_BlueBig_3_3 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static int INTAKE_END_Y = -54;
+    public static int INTAKE_END_Y = -52;
 
     public static final Pose2d START_POSE = new Pose2d(-64.8, -17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
@@ -56,15 +55,10 @@ public class Auto_BlueBig_3_3 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(
-                new ParallelAction(
-                        new SequentialAction(
-                                shootPreloadAction,
-                                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
-                        ),
-                        roadRunnerFileWriter.WriteFile(drive)
-                )
-        );
+        Actions.runBlocking(new SequentialAction(
+                shootPreloadAction,
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+        ));
 
         trigger.open();
         sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
@@ -91,7 +85,6 @@ public class Auto_BlueBig_3_3 extends LinearOpMode {
                 collectAction
         ));
         sweeper.Sweep(0);
-        sweeper.SweeperBack();
 
         Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_START)
@@ -100,8 +93,12 @@ public class Auto_BlueBig_3_3 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 returnToShootAction,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+                sweeper.SweeperBack()
         ));
+        sleep(500);
+        Actions.runBlocking(
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+        );
 
         trigger.open();
         sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);

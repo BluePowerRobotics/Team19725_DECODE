@@ -27,13 +27,13 @@ public class Auto_RedSmall_3_3 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static int INTAKE_END_Y = 54;
+    public static int INTAKE_END_Y = 62;
 
     public static final Pose2d START_POSE = new Pose2d(64.8, 17.6, 0);
-    public static final Vector2d SHOOT_POSE = new Vector2d(44.71220495, 8.613385148);
+    public static final Vector2d SHOOT_POSE = new Vector2d(44.71220495, -8.613385148);
     public static final Vector2d INTAKE_START = new Vector2d(36, 24);
     public static final Vector2d INTAKE_END = new Vector2d(36, INTAKE_END_Y);
-    public static double SHOOT_HEADING = -0.4975317075;
+    public static double SHOOT_HEADING = -0.4475317075;
     public static double EAT_HEADING = Math.PI / 2;
     public static double waitSeconds = 1;
 
@@ -83,7 +83,6 @@ public class Auto_RedSmall_3_3 extends LinearOpMode {
                 collectAction
         ));
         sweeper.Sweep(0);
-        sweeper.SweeperBack();
 
         Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
@@ -91,6 +90,10 @@ public class Auto_RedSmall_3_3 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 returnToShootAction,
+                sweeper.SweeperBack()
+        ));
+        sleep(500);
+        Actions.runBlocking(new SequentialAction(
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
         ));
 

@@ -21,27 +21,24 @@ import java.io.IOException;
 
 @Autonomous
 @Config
-public class Auto_RedSmall_3_open_3_3 extends LinearOpMode {
+public class Auto_BlueBig_3_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static int INTAKE_END_Y = 62;
-    public static int OPEN_GATE_Y = 60;
+    public static int INTAKE_END_Y1 = -52;
+    public static int INTAKE_END_Y2 = -62;
 
-    public static final Pose2d START_POSE = new Pose2d(64.8, 17.6, 0);
-    public static final Vector2d SHOOT_POSE = new Vector2d(44.71220495, 8.613385148);
-    public static final Vector2d INTAKE_START1 = new Vector2d(36, 24);
-    public static final Vector2d INTAKE_END1 = new Vector2d(36, INTAKE_END_Y);
-    public static final Vector2d OPEN_START = new Vector2d(-2, 48);
-    public static final Vector2d OPEN_END = new Vector2d(-2, OPEN_GATE_Y);
-    public static final Vector2d INTAKE_START2 = new Vector2d(12, 24);
-    public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y);
-    public static double SHOOT_HEADING = -0.4475317075;
-    public static double EAT_HEADING = Math.PI / 2;
+    public static final Pose2d START_POSE = new Pose2d(-64.8, -17.6, 0);
+    public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
+    public static final Vector2d INTAKE_START1 = new Vector2d(-12, -24);
+    public static final Vector2d INTAKE_END1 = new Vector2d(-12, INTAKE_END_Y1);
+    public static final Vector2d INTAKE_START2 = new Vector2d(12, -24);
+    public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y2);
+    public static double SHOOT_HEADING = Math.PI / 4;
+    public static double EAT_HEADING = -Math.PI / 2;
     public static double collectWait = 1;
-    public static double openGateWait = 1;
 
     @Override
     public void runOpMode() {
@@ -61,13 +58,13 @@ public class Auto_RedSmall_3_open_3_3 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 shootPreloadAction,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
         ));
 
         trigger.open();
         sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
         trigger.close();
 
@@ -90,18 +87,8 @@ public class Auto_RedSmall_3_open_3_3 extends LinearOpMode {
         ));
         sweeper.Sweep(0);
 
-        Action openGateAction = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(OPEN_START)
-                .strafeTo(OPEN_END)
-                .waitSeconds(openGateWait)
-                .strafeTo(OPEN_START)
-                .build();
-
-        Actions.runBlocking(new SequentialAction(
-                openGateAction
-        ));
-
         Action returnToShootAction1 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_START1)
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
@@ -111,13 +98,13 @@ public class Auto_RedSmall_3_open_3_3 extends LinearOpMode {
         ));
         sleep(500);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
         ));
 
         trigger.open();
         sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
         trigger.close();
 
@@ -151,13 +138,13 @@ public class Auto_RedSmall_3_open_3_3 extends LinearOpMode {
         ));
         sleep(500);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
         ));
 
         trigger.open();
         sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
         trigger.close();
 

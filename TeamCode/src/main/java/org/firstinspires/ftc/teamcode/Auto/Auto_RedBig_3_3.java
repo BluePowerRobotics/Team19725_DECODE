@@ -27,7 +27,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static int INTAKE_END_Y = 54;
+    public static int INTAKE_END_Y = 52;
 
     public static final Pose2d START_POSE = new Pose2d(-64.8, 17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, 24);
@@ -83,7 +83,6 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
                 collectAction
         ));
         sweeper.Sweep(0);
-        sweeper.SweeperBack();
 
         Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
@@ -91,6 +90,10 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 returnToShootAction,
+                sweeper.SweeperBack()
+        ));
+        sleep(500);
+        Actions.runBlocking(new SequentialAction(
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
         ));
 

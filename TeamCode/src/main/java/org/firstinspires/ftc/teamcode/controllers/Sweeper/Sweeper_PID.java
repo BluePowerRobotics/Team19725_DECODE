@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 public class Sweeper_PID {
     public static double OutputPower = -0.7;
     public static int EatVel = 1960;
-    public static int GiveTheArtifactVel = 800;
+    public static int GiveTheArtifactVel = 1000;
     public DcMotorEx SweeperMotor;
     TelemetryPacket packet = new TelemetryPacket();
     Telemetry telemetry;
@@ -32,7 +32,7 @@ public class Sweeper_PID {
     public static double k_i = 0;
     public static double k_d = 0.0001;
     public static double max_i = 1;
-    public static double backRequireCycle=1.0/6;
+    public static double backRequireCycle=0.5;
     private PIDController pidController;
 
     public Sweeper_PID(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse) {
