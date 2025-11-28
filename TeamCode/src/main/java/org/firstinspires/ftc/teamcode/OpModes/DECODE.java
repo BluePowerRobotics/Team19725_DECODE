@@ -190,37 +190,45 @@ public class DECODE extends LinearOpMode {
 
         }
         double realTargetSpeed = targetSpeed + n * additionSpeed;
-        if(chassis.getUseNoHeadMode()){
-            //useNoHeadMode
-            //LED常亮
-            if(realTargetSpeed<=650)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-            else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-            else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-            else if(realTargetSpeed<=875)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-        }else{
-            long currentTimeMS=System.currentTimeMillis();
-            //roboticBasedMode
-            //LED闪烁
-            if(currentTimeMS-lastSetTimeMS>500/*切换间隔，毫秒*/){
-                showSpeedColor=!showSpeedColor;
-                lastSetTimeMS=currentTimeMS;
-            }
-            if(!showSpeedColor) {
-                if (teamColor == TEAM_COLOR.BLUE) {
-                    ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
-                }
-                else if (teamColor == TEAM_COLOR.RED) {
-                    ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
-                }
-            }else{
-                if(realTargetSpeed<=650)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        if(!actionRunner.isBusy()){
+            if(chassis.getUseNoHeadMode()){
+                //useNoHeadMode
+                //LED常亮
+                if(realTargetSpeed<=700)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
                 else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-                else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-                else if(realTargetSpeed<=875)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                else if(realTargetSpeed<=750)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+            }else{
+                long currentTimeMS=System.currentTimeMillis();
+                //roboticBasedMode
+                //LED闪烁
+                if(currentTimeMS-lastSetTimeMS>500/*切换间隔，毫秒*/){
+                    showSpeedColor=!showSpeedColor;
+                    lastSetTimeMS=currentTimeMS;
+                }
+                if(!showSpeedColor) {
+                    if (teamColor == TEAM_COLOR.BLUE) {
+                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
+                    }
+                    else if (teamColor == TEAM_COLOR.RED) {
+                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
+                    }
+                }else{
+                    if(realTargetSpeed<=650)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                    else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
+                    else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                    else if(realTargetSpeed<=875)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                    else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+                }
             }
         }
+
+
+        else{
+            ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+        }
+
     }
     long lastSetTimeMS=0;
     boolean showSpeedColor=false;
