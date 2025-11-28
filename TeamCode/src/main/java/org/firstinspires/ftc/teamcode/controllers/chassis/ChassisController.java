@@ -28,7 +28,7 @@ public class ChassisController {
     public RobotPosition robotPosition;
     HardwareMap hardwareMap;
     boolean fullyAutoMode = false;
-    public boolean useNoHeadMode=false;
+    boolean useNoHeadMode=false;
     public boolean runningToPoint=false;
     boolean autoLockHeading=true;
     boolean HeadingLockRadianReset=true;

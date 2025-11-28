@@ -214,7 +214,7 @@ public class DECODE extends LinearOpMode {
     void Telemetry(){
         telemetry.addData("isBusy", actionRunner.isBusy());
         telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
-        telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
+        telemetry.addData("NoHeadMode",chassis.getUseNoHeadMode()?"PlayerBased":"RoboticBased");
         telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
         telemetry.addData("RobotSTATUS", robotStatus.toString());
 //        telemetry.addData("shooterSTATUS", shooterStatus.toString());
