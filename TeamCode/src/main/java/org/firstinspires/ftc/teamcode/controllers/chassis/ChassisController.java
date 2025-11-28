@@ -74,6 +74,9 @@ public class ChassisController {
     public void exchangeNoHeadMode(){
         useNoHeadMode=!useNoHeadMode;
     }
+    public boolean getUseNoHeadMode(){
+        return useNoHeadMode;
+    }
     public void setAutoLockHeading(boolean autoLockHeading){
         this.autoLockHeading=autoLockHeading;
     }
