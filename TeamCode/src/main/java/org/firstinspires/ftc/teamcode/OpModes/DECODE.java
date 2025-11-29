@@ -163,6 +163,7 @@ public class DECODE extends LinearOpMode {
                 sweeperStatus = SWEEPER_STATUS.EAT;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 break;
             case WAITING:
                 boolean AprilTagStatus = false;
@@ -172,17 +173,36 @@ public class DECODE extends LinearOpMode {
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
+                if(teamColor == TEAM_COLOR.RED){
+                    if(AprilTagStatus){
+                        ledController.setColor(LedPreset.HEARTBEAT_RED.getPattern());
+                    }
+                    else{
+                        ledController.showRedTeam();
+                    }
+                }
+                else{
+                    if(AprilTagStatus){
+                        ledController.setColor(LedPreset.HEARTBEAT_BLUE.getPattern());
+                    }
+                    else{
+                        ledController.showBlueTeam();
+                    }
+                }
                 break;
             case SHOOTING:
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 shooterStatus = SHOOTER_STATUS.SHOOTING;
                 //sweeper和trigger状态由shooter条件决定，在shoot()中
                 break;
             case EMERGENCY_STOP:
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
                 shooterStatus = SHOOTER_STATUS.STOP;
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
                 break;
             case OUTPUTTING:
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
                 sweeperStatus = SWEEPER_STATUS.OUTPUT;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
