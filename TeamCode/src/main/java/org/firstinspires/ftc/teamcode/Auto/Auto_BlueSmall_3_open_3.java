@@ -27,17 +27,20 @@ public class Auto_BlueSmall_3_open_3 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
+    public static double endx = 24;
+    public static double endy = -20;
     public static int INTAKE_END_Y = -62;
     public static int OPEN_GATE_Y = -60;
-
+    public static final Vector2d Small_End = new Vector2d(endx, endy);
     public static final Pose2d START_POSE = new Pose2d(62.44, -17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(44.71220495, -8.613385148);
     public static final Vector2d INTAKE_START = new Vector2d(36, -24);
     public static final Vector2d INTAKE_END = new Vector2d(36, INTAKE_END_Y);
     public static final Vector2d OPEN_START = new Vector2d(2, -48);
     public static final Vector2d OPEN_END = new Vector2d(2, OPEN_GATE_Y);
-    public static double SHOOT_HEADING = 0.4475317075;
+    public static double SHOOT_HEADING = 0.4975317075;
     public static double EAT_HEADING = -Math.PI / 2;
+    public static double END_HEADING = Math.PI / 2;
     public static double collectWait = 1;
     public static double openGateWait = 1;
 
@@ -118,6 +121,13 @@ public class Auto_BlueSmall_3_open_3 extends LinearOpMode {
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
+
+        Action endAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(Small_End, END_HEADING)
+                .build();
+        Actions.runBlocking(
+                endAction
+        );
 
         try (FileWriter writer = new FileWriter("/sdcard/FIRST/pose.txt")) {
             writer.write(drive.localizer.getPose().position.x + "," + drive.localizer.getPose().position.y + "," + drive.localizer.getPose().heading.toDouble());

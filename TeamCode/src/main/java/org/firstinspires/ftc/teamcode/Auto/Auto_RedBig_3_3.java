@@ -27,19 +27,17 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static int INTAKE_END_Y = 52;
-
     public static double endx = 0;
     public static double endy = 20;
+    public static int INTAKE_END_Y = 52;
     public static final Vector2d Big_End = new Vector2d(endx, endy);
-
-
     public static final Pose2d START_POSE = new Pose2d(-64.8, 17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, 24);
     public static final Vector2d INTAKE_START = new Vector2d(-12, 24);
     public static final Vector2d INTAKE_END = new Vector2d(-12, INTAKE_END_Y);
     public static double SHOOT_HEADING = -Math.PI / 4;
     public static double EAT_HEADING = Math.PI / 2;
+    public static double END_HEADING = -Math.PI / 2;
     public static double waitSeconds = 1;
 
     @Override
@@ -109,9 +107,8 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
         ));
         trigger.close();
 
-
         Action endAction = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(Big_End)
+                .strafeToLinearHeading(Big_End, END_HEADING)
                 .build();
         Actions.runBlocking(
                 endAction

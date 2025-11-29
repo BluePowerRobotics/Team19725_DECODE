@@ -25,7 +25,7 @@ public class SolveShootPoint {
     public static Pose2d solveBLUEShootPoint(Pose2d poseRC, double r) {
         //特别判断小三角情况 100表示小三角离球门进近侧，200表示小三角离球门进远侧
         if(r == 100){
-            return new Pose2d(44.71220495, -8.613385148, 0.4475317075);
+            return new Pose2d(44.71220495, -8.613385148, 0.4975317075);
         }
         if(r == 200){
             return new Pose2d(60, 12, Math.atan(84.0/(60+72)));
@@ -59,7 +59,7 @@ public class SolveShootPoint {
     public static Pose2d solveREDShootPoint(Pose2d poseRC, double r) {
 
         if(r == 100){
-            return new Pose2d(44.71220495, 8.613385148, -0.4475317075);
+            return new Pose2d(44.71220495, 8.613385148, -0.4975317075);
         }
         if(r == 200){
             return new Pose2d(60, -12, -Math.atan(84.0/(60+72)));

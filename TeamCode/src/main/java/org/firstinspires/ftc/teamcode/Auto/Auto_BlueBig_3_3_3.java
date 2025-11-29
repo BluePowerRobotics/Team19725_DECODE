@@ -29,9 +29,9 @@ public class Auto_BlueBig_3_3_3 extends LinearOpMode {
     Trigger trigger;
     public static double endx = 0;
     public static double endy = -20;
-    public static final Vector2d Big_End = new Vector2d(endx, endy);
     public static int INTAKE_END_Y1 = -52;
     public static int INTAKE_END_Y2 = -62;
+    public static final Vector2d Big_End = new Vector2d(endx, endy);
 
     public static final Pose2d START_POSE = new Pose2d(-64.8, -17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
@@ -41,6 +41,7 @@ public class Auto_BlueBig_3_3_3 extends LinearOpMode {
     public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y2);
     public static double SHOOT_HEADING = Math.PI / 4;
     public static double EAT_HEADING = -Math.PI / 2;
+    public static double END_HEADING = Math.PI / 2;
     public static double collectWait = 1;
 
     @Override
@@ -151,9 +152,8 @@ public class Auto_BlueBig_3_3_3 extends LinearOpMode {
         ));
         trigger.close();
 
-
         Action endAction = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(Big_End)
+                .strafeToLinearHeading(Big_End, END_HEADING)
                 .build();
         Actions.runBlocking(
                 endAction

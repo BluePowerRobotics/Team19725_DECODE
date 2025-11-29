@@ -14,14 +14,14 @@ public class ShooterAction {
     public static int speed2_2 = 700;
     public static int speed25_25 = 725;
     public static int speed3_3 = 750;
-    public static int speed25_55 = 850;
+    public static int speed25_55 = 775;
     public static int speed35_55 = 875;
     private Telemetry telemetry;
     private Shooter shooter_Left;
     private Shooter shooter_Right;
 
     public static int targetSpeed_low = 700;
-    public static int targetSpeed_high = 800;
+    public static int targetSpeed_high = 775;
     public static int speedDescend = 150;
     public int low_speed_threshold = 350;
 

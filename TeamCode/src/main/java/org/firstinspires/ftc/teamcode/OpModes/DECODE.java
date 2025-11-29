@@ -94,7 +94,7 @@ public class DECODE extends LinearOpMode {
         }
 
         //todo set team color
-        teamColor = TEAM_COLOR.BLUE;
+        teamColor = TEAM_COLOR.RED;
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
@@ -105,12 +105,7 @@ public class DECODE extends LinearOpMode {
         aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
         actionRunner = new ActionRunner();
-        if(teamColor == TEAM_COLOR.BLUE){
-            chassis.resetNoHeadModeStartError(-Math.PI/2);
-        }
-        else{
-            chassis.resetNoHeadModeStartError(Math.PI/2);
-        }
+
         ledController = new BlinkinLedController(hardwareMap);
     }
     void inputRobotStatus(){
@@ -256,6 +251,7 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("targetSpeed", targetSpeed + n * additionSpeed);
         telemetry.addData("NoHeadMode",chassis.getUseNoHeadMode()?"PlayerBased":"RoboticBased");
         telemetry.addData("isBusy", actionRunner.isBusy());
+        telemetry.addData("TeamColor", teamColor);
         telemetry.addData("RobotSTATUS", robotStatus.toString());
         telemetry.addData("n", n);
         telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
@@ -266,6 +262,7 @@ public class DECODE extends LinearOpMode {
 //        telemetry.addData("Position(mm)",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
         telemetry.addData("SweeperSpeeed", sweeper.getCurrent_speed());
         telemetry.addData("SweeperPower * 1000", sweeper.getPower() * 1000);
+        telemetry.addData("Heading", chassis.robotPosition.getData().headingRadian);
         telemetry.addData("Position(inch)", Point2D.rotate(chassis.robotPosition.getData().getPosition(DistanceUnit.INCH),teamColor==TEAM_COLOR.BLUE?Math.PI/2:-Math.PI/2).toString());
         telemetry.addData("1-power * 1000", shooter.getPower1() * 1000);
         telemetry.addData("2-power * 1000", shooter.getPower2() * 1000);
@@ -462,6 +459,14 @@ public class DECODE extends LinearOpMode {
             if(teamColor == TEAM_COLOR.RED){
                 ledController.showRedTeam();
             }
+            if(teamColor == TEAM_COLOR.BLUE){
+                chassis.resetNoHeadModeStartError(-Math.PI/2);
+            }
+            else{
+                chassis.resetNoHeadModeStartError(Math.PI/2);
+            }
+            telemetry.addData("TEAM_COLOR", teamColor.toString());
+            telemetry.update();
         }
         waitForStart();
         lastSetTimeMS=System.currentTimeMillis();
@@ -471,8 +476,9 @@ public class DECODE extends LinearOpMode {
             shoot();
             sweeper();
             trigger();
-            chassis();
             Telemetry();
+            chassis();
+
             if(actionRunner.isBusy()){
                 actionRunner.update();
             }
