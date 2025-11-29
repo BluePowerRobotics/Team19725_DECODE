@@ -22,7 +22,7 @@ public class ChassisController {
         public double maxA=0.5; // 最大加速度 (m/s²)
         public double maxOmega=Math.PI*1/2; // 最大角速度 (rad/s)
         public double zeroThresholdV =0.05; // 速度零点阈值 (m/s)
-        public double zeroThresholdOmega =Math.toRadians(5); // 角速度零点阈值 (rad/s)
+        public double zeroThresholdOmega =Math.toRadians(0.5); // 角速度零点阈值 (rad/s)
     }
     public static Params PARAMS = new Params();
     public RobotPosition robotPosition;
@@ -131,6 +131,9 @@ public class ChassisController {
                             chassisCalculator.pidRadian.reset();
                             HeadingLockRadian=robotPosition.getData().headingRadian;
                         }
+                        if(Math.abs(robotPosition.getData().headingRadian-HeadingLockRadian)<= PARAMS.zeroThresholdOmega) {
+                            chassisCalculator.pidRadian.reset();
+                        }
                         omega=chassisCalculator.calculatePIDRadian(HeadingLockRadian,robotPosition.getData().headingRadian);
                     }
                 }
@@ -153,7 +156,7 @@ class ChassisCalculator {
         public double pkI = 0;
         public double pkD = 0.00025;
         public double rkP = 0.7;//radian k
-        public double rkI = 0.7;
+        public double rkI = 1.2;
         public double rkD = 0.1;
     }
     public static Params PARAMS = new Params();
