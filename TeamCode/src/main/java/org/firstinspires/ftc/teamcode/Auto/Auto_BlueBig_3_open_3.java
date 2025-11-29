@@ -30,6 +30,11 @@ public class Auto_BlueBig_3_open_3 extends LinearOpMode {
     public static int INTAKE_END_Y = -52;
     public static int OPEN_GATE_Y = -60;
 
+    public static double endx = 0;
+    public static double endy = -20;
+    public static final Vector2d Big_End = new Vector2d(endx, endy);
+
+
     public static final Pose2d START_POSE = new Pose2d(-64.8, -17.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
     public static final Vector2d INTAKE_START = new Vector2d(-12, -24);
@@ -118,6 +123,14 @@ public class Auto_BlueBig_3_open_3 extends LinearOpMode {
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
         trigger.close();
+
+
+        Action endAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(Big_End)
+                .build();
+        Actions.runBlocking(
+                endAction
+        );
 
         try (FileWriter writer = new FileWriter("/sdcard/FIRST/pose.txt")) {
             writer.write(drive.localizer.getPose().position.x + "," + drive.localizer.getPose().position.y + "," + drive.localizer.getPose().heading.toDouble());

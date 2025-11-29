@@ -27,6 +27,9 @@ public class Auto_BlueBig_3_3_3 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
+    public static double endx = 0;
+    public static double endy = -20;
+    public static final Vector2d Big_End = new Vector2d(endx, endy);
     public static int INTAKE_END_Y1 = -52;
     public static int INTAKE_END_Y2 = -62;
 
@@ -147,6 +150,14 @@ public class Auto_BlueBig_3_3_3 extends LinearOpMode {
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
         ));
         trigger.close();
+
+
+        Action endAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(Big_End)
+                .build();
+        Actions.runBlocking(
+                endAction
+        );
 
         try (FileWriter writer = new FileWriter("/sdcard/FIRST/pose.txt")) {
             writer.write(drive.localizer.getPose().position.x + "," + drive.localizer.getPose().position.y + "," + drive.localizer.getPose().heading.toDouble());
