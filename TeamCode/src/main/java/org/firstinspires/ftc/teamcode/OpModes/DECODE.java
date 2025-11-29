@@ -264,6 +264,7 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("SweeperSpeeed", sweeper.getCurrent_speed());
         telemetry.addData("SweeperPower * 1000", sweeper.getPower() * 1000);
         telemetry.addData("Heading", chassis.robotPosition.getData().headingRadian);
+        telemetry.addData("targetHeading",chassis.getHeadingLockRadian());
         telemetry.addData("Position(inch)", Point2D.rotate(chassis.robotPosition.getData().getPosition(DistanceUnit.INCH),teamColor==TEAM_COLOR.BLUE?Math.PI/2:-Math.PI/2).toString());
         telemetry.addData("1-power * 1000", shooter.getPower1() * 1000);
         telemetry.addData("2-power * 1000", shooter.getPower2() * 1000);
@@ -328,6 +329,7 @@ public class DECODE extends LinearOpMode {
             double heading = 0;
             if(teamColor == TEAM_COLOR.RED){
                 heading = SolveShootPoint.solveREDShootHeading(pose);
+                //我认为没啥必要 先去睡觉了 电池充好了记得绑黑色扎带
                 targetSpeed = ShooterAction.speed25_55;
             }
             if(teamColor == TEAM_COLOR.BLUE){

@@ -33,6 +33,7 @@ public class ChassisController {
     boolean autoLockHeading=true;
     boolean HeadingLockRadianReset=true;
     double HeadingLockRadian;
+    public double getHeadingLockRadian(){return HeadingLockRadian;}
     public double noHeadModeStartError;
     public ActionRunner actionRunner=new ActionRunner();
     public static ChassisCalculator chassisCalculator= new ChassisCalculator();
@@ -152,7 +153,7 @@ class ChassisCalculator {
         public double pkI = 0;
         public double pkD = 0.00025;
         public double rkP = 0.7;//radian k
-        public double rkI = 0;
+        public double rkI = 0.7;
         public double rkD = 0.1;
     }
     public static Params PARAMS = new Params();
