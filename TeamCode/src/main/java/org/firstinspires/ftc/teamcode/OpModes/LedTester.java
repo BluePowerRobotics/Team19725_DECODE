@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
 import org.firstinspires.ftc.teamcode.controllers.LedPreset;
 
 @TeleOp(name = "LED Controller Tester")
+@Disabled
 public class LedTester extends OpMode {
 
     private BlinkinLedController ledController;

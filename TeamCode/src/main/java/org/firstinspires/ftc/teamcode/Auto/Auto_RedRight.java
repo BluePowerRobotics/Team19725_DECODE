@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 
 @Autonomous
+@Disabled
 @Config
 public class Auto_RedRight extends LinearOpMode {
     public Pose2d FinalPose;

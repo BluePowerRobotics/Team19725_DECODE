@@ -34,6 +34,7 @@ import android.graphics.Canvas;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -84,6 +85,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Concept: AprilTag", group = "Concept")
+@Disabled
 public class TestAprilTag extends LinearOpMode {
     //一个简单的摄像头画面处理器（processor），可以附加到vision portal上
     // 功能：传输摄像头视频流到FTC dashboard（161行）； 在画面上画网格辅助观察

@@ -253,11 +253,13 @@ public class DECODE extends LinearOpMode {
     long lastSetTimeMS=0;
     boolean showSpeedColor=false;
     void Telemetry(){
-        telemetry.addData("isBusy", actionRunner.isBusy());
-        telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
+        telemetry.addData("targetSpeed", targetSpeed + n * additionSpeed);
         telemetry.addData("NoHeadMode",chassis.getUseNoHeadMode()?"PlayerBased":"RoboticBased");
-        telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
+        telemetry.addData("isBusy", actionRunner.isBusy());
         telemetry.addData("RobotSTATUS", robotStatus.toString());
+        telemetry.addData("n", n);
+        telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
+        telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
 //        telemetry.addData("shooterSTATUS", shooterStatus.toString());
 //        telemetry.addData("sweeperSTATUS", sweeperStatus.toString());
 //        telemetry.addData("triggerSTATUS", triggerStatus.toString());
@@ -265,8 +267,6 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("SweeperSpeeed", sweeper.getCurrent_speed());
         telemetry.addData("SweeperPower * 1000", sweeper.getPower() * 1000);
         telemetry.addData("Position(inch)", Point2D.rotate(chassis.robotPosition.getData().getPosition(DistanceUnit.INCH),teamColor==TEAM_COLOR.BLUE?Math.PI/2:-Math.PI/2).toString());
-        telemetry.addData("targetSpeed", targetSpeed + n * additionSpeed);
-        telemetry.addData("n", n);
         telemetry.addData("1-power * 1000", shooter.getPower1() * 1000);
         telemetry.addData("2-power * 1000", shooter.getPower2() * 1000);
         telemetry.addData("1-speed", shooter.getCurrent_speed1());

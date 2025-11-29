@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
@@ -19,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 @Autonomous
+@Disabled
 @Config
 public class Auto_BlueLeft  extends LinearOpMode {
     public Pose2d FinalPose;
