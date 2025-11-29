@@ -35,6 +35,7 @@ import java.io.FileReader;
 @TeleOp(name="DECODE", group="AAA_DECODE")
 
 public class DECODE extends LinearOpMode {
+    long lastNanoTime;
     public enum ROBOT_STATUS{
         EATING,
         WAITING,
@@ -268,7 +269,9 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("2-power * 1000", shooter.getPower2() * 1000);
         telemetry.addData("1-speed", shooter.getCurrent_speed1());
         telemetry.addData("2-speed", shooter.getCurrent_speed2());
+        telemetry.addData("FPS",1000000000.0/(System.nanoTime()-lastNanoTime));
         telemetry.update();
+        lastNanoTime=System.nanoTime();
     }
     void trigger(){
         switch (triggerStatus){
@@ -325,9 +328,11 @@ public class DECODE extends LinearOpMode {
             double heading = 0;
             if(teamColor == TEAM_COLOR.RED){
                 heading = SolveShootPoint.solveREDShootHeading(pose);
+                targetSpeed = ShooterAction.speed25_55;
             }
             if(teamColor == TEAM_COLOR.BLUE){
                 heading = SolveShootPoint.solveBLUEShootHeading(pose);
+                targetSpeed = ShooterAction.speed25_55;
             }
             chassis.setHeadingLockRadian(heading);
         }
@@ -469,6 +474,7 @@ public class DECODE extends LinearOpMode {
             telemetry.update();
         }
         waitForStart();
+        lastNanoTime=System.nanoTime();
         lastSetTimeMS=System.currentTimeMillis();
         while (opModeIsActive()) {
             inputRobotStatus();
