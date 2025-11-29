@@ -43,6 +43,7 @@ public class PIDController {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+        if(kI==0) integral=0;
     }
     public void setMaxI(double maxI) {
         this.maxI = maxI;
