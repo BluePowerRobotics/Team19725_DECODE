@@ -28,9 +28,9 @@ public class Sweeper_PID {
     double current_time;
     double previous_time;
     double current_encoder = 0;
-    public static double k_p = 0.003;
-    public static double k_i = 0;
-    public static double k_d = 0.0001;
+    public static double k_p = 0.1;
+    public static double k_i = 1.0;
+    public static double k_d = 0.000;
     public static double max_i = 1;
     public static double backRequireCycle=0.5;
     private PIDController pidController;
