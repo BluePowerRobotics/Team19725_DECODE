@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.controllers.chassis;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 @Config
@@ -95,7 +96,7 @@ public class ChassisCalculator {
         }
         double errorRadian = targetRadian - currentRadian;
         // 归一化到[-π, π]
-        errorRadian = (errorRadian + Math.PI) % (2 * Math.PI) - Math.PI;
+        errorRadian = MathSolver.normalizeAngle(errorRadian);
         pidRadian.setPID(PARAMS.rkP, PARAMS.rkI, PARAMS.rkD);
         double output = pidRadian.calculate(errorRadian, 0, (System.nanoTime() - lastTimeRadian) / 1e9);
         lastTimeRadian = System.nanoTime();
