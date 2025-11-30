@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Autonomous
+@Autonomous(name = "Q_five")
 @Config
 public class Auto_RedBig_3_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
@@ -28,7 +28,7 @@ public class Auto_RedBig_3_3_3 extends LinearOpMode {
     Sweeper_PID sweeper;
     Trigger trigger;
     public static double endx = 0;
-    public static double endy = 20;
+    public static double endy = 40;
     public static int INTAKE_END_Y1 = 52;
     public static int INTAKE_END_Y2 = 62;
     public static final Vector2d Big_End = new Vector2d(endx, endy);

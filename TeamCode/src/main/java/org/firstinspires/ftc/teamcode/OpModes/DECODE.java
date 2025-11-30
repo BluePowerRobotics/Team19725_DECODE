@@ -306,13 +306,14 @@ public class DECODE extends LinearOpMode {
                 break;
         }
     }
+    public static double time=2;
     void chassis(){
 
         Pose2d pose = chassis.robotPosition.getData().getPose2d();
 
-        double drive = -gamepad1.left_stick_y - 0.3 * gamepad2.left_stick_y; // 前后
-        double strafe = gamepad1.left_stick_x + 0.3 * gamepad2.left_stick_x; // 左右
-        double rotate =-gamepad1.right_stick_x  - 0.3 * gamepad2.right_stick_x; // 旋转
+        double drive = -time*gamepad1.left_stick_y - 0.3 * gamepad2.left_stick_y; // 前后
+        double strafe = time*gamepad1.left_stick_x + 0.3 * gamepad2.left_stick_x; // 左右
+        double rotate =-time*gamepad1.right_stick_x  - 0.3 * gamepad2.right_stick_x; // 旋转
 
         if(gamepad1.left_stick_button && gamepad1.right_stick_button){
             drive = 0;
