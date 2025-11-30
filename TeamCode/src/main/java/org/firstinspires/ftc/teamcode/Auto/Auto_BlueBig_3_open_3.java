@@ -28,7 +28,7 @@ public class Auto_BlueBig_3_open_3 extends LinearOpMode {
     Sweeper_PID sweeper;
     Trigger trigger;
     public static double endx = 0;
-    public static double endy = -20;
+    public static double endy = -40;
     public static int INTAKE_END_Y = -52;
     public static int OPEN_GATE_Y = -60;
     public static final Vector2d Big_End = new Vector2d(endx, endy);

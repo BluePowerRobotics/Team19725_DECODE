@@ -27,7 +27,7 @@ public class ShooterAction {
 
     //第一个球被推入飞轮所需的时间
     public static long waitTime = 300;
-    public static long ShootTime = 3300;
+    public static long ShootTime = 2800;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
         shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);

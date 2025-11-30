@@ -27,7 +27,7 @@ public class Auto_RedSmall_3_3 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static double endx = 48;
+    public static double endx = 24;
     public static double endy = 20;
     public static int INTAKE_END_Y = 62;
     public static final Vector2d Small_End = new Vector2d(endx, endy);

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Autonomous
+@Autonomous(name = "Q_four")
 @Config
 public class Auto_BlueSmall_3_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
@@ -32,12 +32,12 @@ public class Auto_BlueSmall_3_3_3 extends LinearOpMode {
     public static int INTAKE_END_Y = -62;
     public static final Vector2d Small_End = new Vector2d(endx, endy);
     public static final Pose2d START_POSE = new Pose2d(62.44, -17.6, 0);
-    public static final Vector2d SHOOT_POSE = new Vector2d(44.71220495, -8.613385148);
+    public static final Vector2d SHOOT_POSE = new Vector2d(46.71220495, -11.613385148);
     public static final Vector2d INTAKE_START1 = new Vector2d(36, -24);
     public static final Vector2d INTAKE_END1 = new Vector2d(36, INTAKE_END_Y);
     public static final Vector2d INTAKE_START2 = new Vector2d(12, -24);
     public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y);
-    public static double SHOOT_HEADING = 0.4975317075;
+    public static double SHOOT_HEADING = 0.4475317075;
     public static double EAT_HEADING = -Math.PI / 2;
     public static double END_HEADING = Math.PI / 2;
     public static double collectWait = 1;
