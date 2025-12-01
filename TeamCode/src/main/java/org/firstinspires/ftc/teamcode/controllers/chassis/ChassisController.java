@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
@@ -295,9 +296,13 @@ class ChassisOutputter {
             v_br = v_br / maxV * PARAMS.maxRpm / 60;
         }
         leftFront.setPower(v_fl / (PARAMS.maxRpm / 60));
+        InstanceTelemetry.getTelemetry().addData("LF",v_fl / (PARAMS.maxRpm / 60));
         rightFront.setPower(v_fr / (PARAMS.maxRpm / 60));
+        InstanceTelemetry.getTelemetry().addData("RF",v_fr / (PARAMS.maxRpm / 60));
         leftBack.setPower(v_bl / (PARAMS.maxRpm / 60));
+        InstanceTelemetry.getTelemetry().addData("LB",v_bl / (PARAMS.maxRpm / 60));
         rightBack.setPower(v_br / (PARAMS.maxRpm / 60));
+        InstanceTelemetry.getTelemetry().addData("RB",v_br / (PARAMS.maxRpm / 60));
     }
 
     public void setWheelVelocities(double[] velocities) {
