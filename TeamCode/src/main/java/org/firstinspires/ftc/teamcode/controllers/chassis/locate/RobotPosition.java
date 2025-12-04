@@ -18,7 +18,7 @@ public class RobotPosition {
     public static class Params {
         //todo 在MecanumDrive中调整参数
         static double inPerTick = MecanumDrive.PARAMS.inPerTick;
-        static int minUpdateIntervalMs = 20; // 最小更新时间间隔，单位毫秒
+        static int minUpdateIntervalMs = 1; // 最小更新时间间隔，单位毫秒
         static DistanceUnit distanceUnit = DistanceUnit.MM;
         static UnnormalizedAngleUnit angleUnit = UnnormalizedAngleUnit.RADIANS;
 
