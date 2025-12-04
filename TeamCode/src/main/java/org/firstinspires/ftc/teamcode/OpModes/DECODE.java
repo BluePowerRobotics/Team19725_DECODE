@@ -306,7 +306,7 @@ public class DECODE extends LinearOpMode {
                 break;
         }
     }
-    public static double time=2;
+    public static double time=1;
     void chassis(){
 
         Pose2d pose = chassis.robotPosition.getData().getPose2d();
