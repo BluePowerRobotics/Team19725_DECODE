@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
+import org.firstinspires.ftc.teamcode.utility.AngleMeanFilter;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
@@ -129,7 +130,7 @@ public class ChassisController {
                     }else{
                         if(HeadingLockRadianReset){
                             HeadingLockRadianReset=false;
-                            chassisCalculator.pidRadian.reset();
+                            chassisCalculator.firstRunRadian=true;
                             HeadingLockRadian=robotPosition.getData().headingRadian;
                         }
                         if(Math.abs(robotPosition.getData().headingRadian-HeadingLockRadian)<= PARAMS.zeroThresholdOmega) {
@@ -153,21 +154,26 @@ class ChassisCalculator {
         //todo 调整参数
         public double rb = 0.23; // rb 车轮中心到机器人中心的基本半径 (m)
         // rb 车轮中心到机器人中心的基本半径 (m)
-        public double pkP = 0.002;//point k
-        public double pkI = 0;
-        public double pkD = 0.00025;
+        public double skP = 0.002;//speed k
+        public double skI = 0;
+        public double skD = 0.00025;
         public double rkP = 0.7;//radian k
         public double rkI = 1.2;
         public double rkD = 0.1;
+        public double hkP = 0.7;//speedHeading k
+        public double hkI = 0;
+        public double hkD = 0.1;
     }
     public static Params PARAMS = new Params();
 
-    PIDController pidPoint;
+    PIDController pidSpeed;
+    PIDController pidSpeedHeading;
     PIDController pidRadian;
 
     ChassisCalculator() {
         // 私有构造函数，防止外部实例化
-        pidPoint = new PIDController(PARAMS.pkP, PARAMS.pkI, PARAMS.pkD);
+        pidSpeed = new PIDController(PARAMS.skP, PARAMS.skI, PARAMS.skD);
+        pidSpeedHeading = new PIDController(PARAMS.hkP, PARAMS.hkI, PARAMS.hkD);
         pidRadian = new PIDController(PARAMS.rkP, PARAMS.rkI, PARAMS.rkD);
     }
 
@@ -202,28 +208,35 @@ class ChassisCalculator {
         double vyPro = -vx * Math.sin(headingRadian) + vy * Math.cos(headingRadian);
         return solveChassis(vxPro, vyPro, omega);
     }
-    public double[] solveGround(double[] vxy,double vOmega,double headingRadian){
-        return solveGround(vxy[0],vxy[1],vOmega,headingRadian);
-    }
 
     long lastTimeXY = 0;
     boolean firstRunXY = true;
-
+    double thisTimeHeadingRadian = 0;
+    AngleMeanFilter meanFilter = new AngleMeanFilter(10);
+    Point2D lastcurrent=new Point2D(0,0);
     public double[] calculatePIDXY(Point2D target, Point2D current) {
-        if (firstRunXY) {
-            firstRunXY = false;
-            lastTimeXY = System.nanoTime();
-            pidPoint.reset();
-        }
         double errorX = target.getX() - current.getX();
         double errorY = target.getY() - current.getY();
         double distance = Math.hypot(errorX, errorY);
         double angleToTarget = Math.atan2(errorY, errorX);
-        pidPoint.setPID(PARAMS.pkP, PARAMS.pkI, PARAMS.pkD);
-        double output = pidPoint.calculate(distance, 0, (System.nanoTime() - lastTimeXY) / 1e9);
+        if (firstRunXY) {
+            firstRunXY = false;
+            lastTimeXY = System.nanoTime();
+            pidSpeed.reset();
+            pidSpeedHeading.reset();
+            lastcurrent = current;
+            meanFilter.reset();
+        }
+        thisTimeHeadingRadian = meanFilter.filter(Point2D.translate(current,Point2D.rotate(lastcurrent,Math.PI)).getRadian());
+        lastcurrent=current;
+        pidSpeed.setPID(PARAMS.skP, PARAMS.skI, PARAMS.skD);
+        pidSpeedHeading.setPID(PARAMS.hkP, PARAMS.hkI, PARAMS.hkD);
+        double headingError = MathSolver.normalizeAngle(angleToTarget - thisTimeHeadingRadian);
+        double v = pidSpeed.calculate(distance, 0, (System.nanoTime() - lastTimeXY) / 1e9);
+        double heading = pidSpeedHeading.calculate(0,headingError,(System.nanoTime() - lastTimeXY) / 1e9);
         lastTimeXY = System.nanoTime();
-        double vx = output * Math.cos(angleToTarget);
-        double vy = output * Math.sin(angleToTarget);
+        double vx = v * Math.cos(angleToTarget-heading);
+        double vy = v * Math.sin(angleToTarget-heading);
         return new double[]{vx, vy};
     }
 
