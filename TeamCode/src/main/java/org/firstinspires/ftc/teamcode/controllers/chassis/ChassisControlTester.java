@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
 @Config
@@ -23,6 +24,7 @@ public class ChassisControlTester extends LinearOpMode {
         ChassisController chassis = new ChassisController(hardwareMap);
         chassis.robotPosition.setMinUpdateIntervalMs(1);//todo 测试更小的时间间隔是否能带来更好的效果
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry = InstanceTelemetry.init(telemetry);
         //chassis.init(hardwareMap);
         waitForStart();
         lastNanoTime=System.nanoTime();
