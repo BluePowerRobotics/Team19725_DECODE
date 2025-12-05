@@ -106,7 +106,6 @@ public class DECODE extends LinearOpMode {
         aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
         actionRunner = new ActionRunner();
-
         ledController = new BlinkinLedController(hardwareMap);
     }
     void inputRobotStatus(){
@@ -306,7 +305,7 @@ public class DECODE extends LinearOpMode {
                 break;
         }
     }
-    public static double time=1;
+    public static double time=1.2;
     void chassis(){
 
         Pose2d pose = chassis.robotPosition.getData().getPose2d();
