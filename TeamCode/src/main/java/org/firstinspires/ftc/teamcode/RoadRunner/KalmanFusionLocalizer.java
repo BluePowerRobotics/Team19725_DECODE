@@ -5,8 +5,8 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
-import org.firstinspires.ftc.teamcode.utility.kalmanfilter.OneDimensionKalmanFilter;
-import org.firstinspires.ftc.teamcode.utility.kalmanfilter.PosVelTuple;
+import org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter.OneDimensionKalmanFilter;
+import org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter.PosVelTuple;
 
 public class KalmanFusionLocalizer implements Localizer{
     Localizer localizer;

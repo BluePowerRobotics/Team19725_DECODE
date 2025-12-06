@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.utility.kalmanfilter;
+package org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter;
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.utility.kalmanfilter.jama.*;
+import org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter.jama.Matrix;
 
 /// <summary>
 /// 会根据随动轮移动的位置以更新估计位置 避免随动轮移动的积累误差
