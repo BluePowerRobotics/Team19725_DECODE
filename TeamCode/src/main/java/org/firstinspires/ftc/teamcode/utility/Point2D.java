@@ -115,10 +115,10 @@ public class Point2D {
         return new Point2D(p.x + Distance * Math.cos(Radian), p.y + Distance * Math.sin(Radian));
     }
     /**
-     * 将点p沿着指定的弧度平移，绕原点旋转
+     * 将点p绕原点沿着指定的弧度旋转
      * @param p 原始点
-     * @param Radian 平移的弧度
-     * @return 平移后的新点
+     * @param Radian 旋转的弧度
+     * @return 旋转后的新点
      */
     public static Point2D rotate(Point2D p, double Radian) {
         return new Point2D(p.x * Math.cos(Radian) - p.y * Math.sin(Radian), p.x * Math.sin(Radian) + p.y * Math.cos(Radian));

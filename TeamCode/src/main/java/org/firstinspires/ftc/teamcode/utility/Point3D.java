@@ -139,7 +139,7 @@ public class Point3D {
      * @param p2 第二个点
      * @return 如果两个点的坐标差小于零容差，则认为它们是相同的
      */
-    public static boolean isSame(Point3D p1, Point3D p2) {
+    public static boolean equal(Point3D p1, Point3D p2) {
         return Math.abs(p1.x - p2.x) < zeroTolerance &&
                 Math.abs(p1.y - p2.y) < zeroTolerance &&
                 Math.abs(p1.z - p2.z) < zeroTolerance;
