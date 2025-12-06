@@ -16,7 +16,7 @@ public class AprilTagTester extends LinearOpMode {
     @Override
     public void runOpMode(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        double t = System.currentTimeMillis();
+        long lastNanoTime = System.currentTimeMillis();
         aprilTagDetector.init(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
@@ -30,9 +30,9 @@ public class AprilTagTester extends LinearOpMode {
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
                 telemetry.addData("getrange", aprilTagDetector.getPose().distanceToCameraInINCH);
             }
-            telemetry.addData("FPS", 1000 / (System.currentTimeMillis() - t));
-            t = System.currentTimeMillis();
+            telemetry.addData("FPS",1000000000.0/(System.nanoTime()-lastNanoTime));
             telemetry.update();
+            lastNanoTime=System.nanoTime();
 
         }
     }
