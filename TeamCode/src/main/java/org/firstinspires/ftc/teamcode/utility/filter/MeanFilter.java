@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utility;
+package org.firstinspires.ftc.teamcode.utility.filter;
 
 public class MeanFilter {
     private final int windowSize;

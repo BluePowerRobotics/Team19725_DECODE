@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
-import org.firstinspires.ftc.teamcode.utility.AngleMeanFilter;
+import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;

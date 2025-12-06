@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utility.kalmanfilter;
+package org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter;
 
 public class PosVelTuple {
     public final double position;
