@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
@@ -108,6 +109,8 @@ public class ChassisController {
     }
 
     public double[] wheelSpeeds={0,0,0,0};
+    Point2D targetPoint=new Point2D(0,0);
+    double targetRadian=0;
     public void gamepadInput(double vx,double vy,double omega){
         vx=vx*PARAMS.maxV;
         vy=vy*PARAMS.maxV;
@@ -121,6 +124,18 @@ public class ChassisController {
                     if(!actionRunner.isBusy()){
                         runningToPoint = false;
                     }
+//                    if(targetPoint==null){
+//                        targetPoint=robotPosition.getData().getPosition(DistanceUnit.MM);
+//                    }
+//                    if(Double.isNaN(targetRadian)){
+//                        if(HeadingLockRadianReset) {
+//                            targetRadian = robotPosition.getData().headingRadian;
+//                        }else{
+//                            targetRadian=HeadingLockRadian;
+//                        }
+//                    }
+//                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM)),
+//                            chassisCalculator.calculatePIDRadian(targetRadian,robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
                 }
             }
             if(!runningToPoint) {
@@ -153,7 +168,6 @@ class ChassisCalculator {
     public static class Params {
         //todo 调整参数
         public double rb = 0.23; // rb 车轮中心到机器人中心的基本半径 (m)
-        // rb 车轮中心到机器人中心的基本半径 (m)
         public double skP = 0.002;//speed k
         public double skI = 0;
         public double skD = 0.00025;
@@ -207,6 +221,9 @@ class ChassisCalculator {
         double vxPro = vx * Math.cos(headingRadian) + vy * Math.sin(headingRadian);
         double vyPro = -vx * Math.sin(headingRadian) + vy * Math.cos(headingRadian);
         return solveChassis(vxPro, vyPro, omega);
+    }
+    public double[] solveGround(double[] vxy,double vOmega,double headingRadian){
+        return solveGround(vxy[0],vxy[1],vOmega,headingRadian);
     }
 
     long lastTimeXY = 0;
