@@ -18,9 +18,10 @@ import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
 @Config
 @TeleOp(name = "ShootPointSolverTester", group = "TEST")
-@Disabled
 public class ShootPointSolverTester extends LinearOpMode {
     Pose2d solvedPoint = new Pose2d(0,0,0);
+    double dis = 0;
+    double speed = 0  ;
     public void initiate(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
@@ -48,6 +49,8 @@ public class ShootPointSolverTester extends LinearOpMode {
         telemetry.addLine();
         telemetry.addData("Point", Point.toString());
         telemetry.addData("HeadingRadian", HeadingRadian);
+        telemetry.addData("speed", speed);
+        telemetry.addData("dis", dis);
         telemetry.update();
 
     }
@@ -64,17 +67,8 @@ public class ShootPointSolverTester extends LinearOpMode {
         //x-->-y;   y --> x
 
         if(gamepad1.xWasPressed()){
-            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getX(),Point.getY(),0), SolveShootPoint.r1);
-        }
-
-        if(gamepad1.yWasPressed()){
-            solvedPoint = SolveShootPoint.solveBLUEShootPoint(new Pose2d(Point.getX(),Point.getY(),0), SolveShootPoint.r2);
-        }
-        if(gamepad1.aWasPressed()){
-            solvedPoint = SolveShootPoint.solveREDShootPoint(new Pose2d(Point.getX(),Point.getY(),0), SolveShootPoint.r1);
-        }
-        if(gamepad1.bWasPressed()){
-            solvedPoint = SolveShootPoint.solveREDShootPoint(new Pose2d(Point.getX(),Point.getY(),0), SolveShootPoint.r2);
+            dis = SolveShootPoint.solveBLUEShootDistance(new Pose2d(Point.getX(), Point.getY(), HeadingRadian));
+            speed = SolveShootPoint.solveShootSpeed(dis);
         }
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");

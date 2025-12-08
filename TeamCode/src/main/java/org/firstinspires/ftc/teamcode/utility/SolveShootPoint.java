@@ -15,12 +15,35 @@ public class SolveShootPoint {
     public static double r5 = 200;
     private static double genhao2 = Math.sqrt(2);
 
+    public static double k = 50 / (r3 - r1);
+
+
+    public static int solveShootSpeed(double distance){
+        int speed = 0;
+        //大三角
+        if(distance < r3 + 10 * genhao2){
+            speed = 700 + Math.toIntExact(Math.round(k * (distance - r1)));
+        }
+        //小三角
+        else{
+            speed = 875;
+        }
+        return speed;
+    }
+
     public static double solveBLUEShootHeading(Pose2d poseRC){
         double x = poseRC.position.x;
         double y = poseRC.position.y;
         double heading = Math.atan((y+72)/(x+72));
         return heading;
     }
+    public  static  double solveBLUEShootDistance(Pose2d poseRC){
+        double x = poseRC.position.x;
+        double y = poseRC.position.y;
+        double distance = Math.sqrt((y+72)*(y+72) + (x+72) * (x+72));
+        return distance;
+    }
+
 
     public static Pose2d solveBLUEShootPoint(Pose2d poseRC, double r) {
         //特别判断小三角情况 100表示小三角离球门进近侧，200表示小三角离球门进远侧
@@ -55,6 +78,12 @@ public class SolveShootPoint {
         double y = poseRC.position.y;
         double heading = Math.atan((x+72)/(72-y)) - Math.PI/2;
         return heading;
+    }
+    public  static  double solveREDShootDistance(Pose2d poseRC){
+        double x = poseRC.position.x;
+        double y = poseRC.position.y;
+        double distance = Math.sqrt((y-72)*(y-72) + (x+72)*(x+72));
+        return distance;
     }
     public static Pose2d solveREDShootPoint(Pose2d poseRC, double r) {
 
