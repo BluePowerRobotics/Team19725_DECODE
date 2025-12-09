@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.KalmanFusionLocalizer;
 import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
+import org.firstinspires.ftc.teamcode.controllers.DisSensor;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.LedPreset;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
@@ -74,6 +75,7 @@ public class DECODE extends LinearOpMode {
     public ShooterAction shooter;
     public Trigger trigger;
     public ActionRunner actionRunner;
+    public DisSensor disSensor;
     public BlinkinLedController ledController;
     AprilTagDetector aprilTagDetector;
     //
@@ -103,6 +105,7 @@ public class DECODE extends LinearOpMode {
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
+        disSensor = new DisSensor(hardwareMap);
         aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
         actionRunner = new ActionRunner();
@@ -155,6 +158,10 @@ public class DECODE extends LinearOpMode {
     void setStatus(){
         switch (robotStatus) {
             case EATING:
+                //如果吸满了，自动切换到waiting状态
+                if(disSensor.Whether_full()){
+                    robotStatus = ROBOT_STATUS.WAITING;
+                }
                 sweeperStatus = SWEEPER_STATUS.EAT;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
