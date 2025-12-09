@@ -12,7 +12,6 @@ public class DisSensor {
     public  DistanceSensor sensorDistance;
     public Rev2mDistanceSensor sensorTimeOfFlight;
 
-    double sensor_distance=sensorDistance.getDistance(DistanceUnit.MM);
 
     public static double maxdistance=50;//此变量代表球满时与传感器的距离：最大值
     public static double wrongdistance=30;//那个b传感器，在3cm以内搁那乱转，神经病，写这个变量避免一下这种愚蠢行为。
@@ -29,6 +28,7 @@ public class DisSensor {
      * false 表示3个球未满（未检测到球）
      */
     public boolean Whether_full(){
+        double sensor_distance=sensorDistance.getDistance(DistanceUnit.MM);
 
         if (sensor_distance <= maxdistance & sensor_distance>=wrongdistance) {
             return true;

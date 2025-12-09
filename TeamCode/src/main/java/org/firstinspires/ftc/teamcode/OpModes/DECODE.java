@@ -101,7 +101,7 @@ public class DECODE extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
-        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", true);
+        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", false);
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
