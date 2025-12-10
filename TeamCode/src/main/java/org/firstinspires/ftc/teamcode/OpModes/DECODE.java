@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
+import org.firstinspires.ftc.teamcode.controllers.elevator.ElevatorController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
@@ -74,16 +75,17 @@ public class DECODE extends LinearOpMode {
     public Sweeper_PID sweeper;
     public ShooterAction shooter;
     public Trigger trigger;
+    public ElevatorController elevatorController;
     public ActionRunner actionRunner;
     public DisSensor disSensor;
     public BlinkinLedController ledController;
     AprilTagDetector aprilTagDetector;
     //
-    public  int targetSpeed = ShooterAction.speed2_2;
+    public  int targetSpeed = ShooterAction.speed35_55;
     public Pose2d startPose = new Pose2d(0,0,0);
     public static int additionSpeed = 25;
     int n = 0;
-    boolean ifBacking = false;
+    boolean directControl=false;
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
             String[] data = reader.readLine().split(",");
@@ -105,6 +107,7 @@ public class DECODE extends LinearOpMode {
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
+        elevatorController = new ElevatorController(hardwareMap);
         disSensor = new DisSensor(hardwareMap);
         aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
@@ -116,7 +119,7 @@ public class DECODE extends LinearOpMode {
             actionRunner = new ActionRunner();
             actionRunner.add(sweeper.SweeperBack());
         }
-        if(gamepad1.yWasPressed() || gamepad2.yWasPressed()){
+        if((gamepad1.yWasPressed() || gamepad2.yWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
             if(robotStatus == ROBOT_STATUS.SHOOTING){
                 robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
             }
@@ -125,11 +128,11 @@ public class DECODE extends LinearOpMode {
             }
         }
 
-        if(gamepad1.aWasPressed() || gamepad2.aWasPressed()){
+        if((gamepad1.aWasPressed() || gamepad2.aWasPressed())  && robotStatus != ROBOT_STATUS.CLIMBING){
             robotStatus = ROBOT_STATUS.WAITING;
         }
 
-        if(gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()){
+        if((gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
             if(robotStatus == ROBOT_STATUS.EATING){
                 robotStatus = ROBOT_STATUS.WAITING;
             }
@@ -138,7 +141,7 @@ public class DECODE extends LinearOpMode {
             }
 
         }
-        else if(gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()){
+        else if((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
             if(robotStatus == ROBOT_STATUS.OUTPUTTING){
                 robotStatus = ROBOT_STATUS.WAITING;
             }
@@ -153,6 +156,15 @@ public class DECODE extends LinearOpMode {
         if(gamepad2.xWasPressed()){
             n -= 1;
             gamepad2.rumble(300,0,150);
+        }
+
+        if(gamepad2.startWasPressed()){
+            if(robotStatus != ROBOT_STATUS.CLIMBING){
+                robotStatus = ROBOT_STATUS.CLIMBING;
+            }
+            else{
+                robotStatus = ROBOT_STATUS.WAITING;
+            }
         }
     }
     void setStatus(){
@@ -209,47 +221,63 @@ public class DECODE extends LinearOpMode {
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
                 break;
-
+            case CLIMBING:
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                sweeperStatus = SWEEPER_STATUS.STOP;
+                shooterStatus = SHOOTER_STATUS.STOP;
+                triggerStatus = TRIGGER_STATUS.CLOSE;
+                if (gamepad2.left_trigger > 0.1 || gamepad2.right_trigger > 0.1) {
+                    directControl = true;
+                    elevatorController.setPower(ElevatorController.BalancePower - gamepad2.left_trigger + gamepad2.right_trigger);
+                } else {
+                    int currentPosition = 0;
+                    if (directControl) {
+                        directControl = false;
+                        currentPosition = elevatorController.getPosition();
+                    }
+                    elevatorController.setPosition(currentPosition);
+                }
+                break;
         }
         double realTargetSpeed = targetSpeed + n * additionSpeed;
-        if(!actionRunner.isBusy()){
-            if(chassis.getUseNoHeadMode()){
-                //useNoHeadMode
-                //LED常亮
-                if(realTargetSpeed<=700)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-                else if(realTargetSpeed<=750)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-                else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-            }else{
-                long currentTimeMS=System.currentTimeMillis();
-                //roboticBasedMode
-                //LED闪烁
-                if(currentTimeMS-lastSetTimeMS>500/*切换间隔，毫秒*/){
-                    showSpeedColor=!showSpeedColor;
-                    lastSetTimeMS=currentTimeMS;
-                }
-                if(!showSpeedColor) {
-                    if (teamColor == TEAM_COLOR.BLUE) {
-                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
-                    }
-                    else if (teamColor == TEAM_COLOR.RED) {
-                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
-                    }
-                }else{
-                    if(realTargetSpeed<=650)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                    else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-                    else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-                    else if(realTargetSpeed<=875)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                    else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-                }
-            }
-        }
+//        if(!actionRunner.isBusy()){
+//            if(chassis.getUseNoHeadMode()){
+//                //useNoHeadMode
+//                //LED常亮
+//                if(realTargetSpeed<=700)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+//                else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
+//                else if(realTargetSpeed<=750)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+//                else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//                else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+//            }else{
+//                long currentTimeMS=System.currentTimeMillis();
+//                //roboticBasedMode
+//                //LED闪烁
+//                if(currentTimeMS-lastSetTimeMS>500/*切换间隔，毫秒*/){
+//                    showSpeedColor=!showSpeedColor;
+//                    lastSetTimeMS=currentTimeMS;
+//                }
+//                if(!showSpeedColor) {
+//                    if (teamColor == TEAM_COLOR.BLUE) {
+//                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
+//                    }
+//                    else if (teamColor == TEAM_COLOR.RED) {
+//                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
+//                    }
+//                }else{
+//                    if(realTargetSpeed<=650)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+//                    else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
+//                    else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+//                    else if(realTargetSpeed<=875)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//                    else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+//                }
+//            }
+//        }
 
 
-        else{
-            ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
-        }
+//        else{
+//            ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+//        }
 
     }
     long lastSetTimeMS=0;
@@ -321,33 +349,22 @@ public class DECODE extends LinearOpMode {
         double strafe = time*gamepad1.left_stick_x + 0.3 * gamepad2.left_stick_x; // 左右
         double rotate =-time*gamepad1.right_stick_x  - 0.3 * gamepad2.right_stick_x; // 旋转
 
-        if(gamepad1.left_stick_button && gamepad1.right_stick_button){
-            drive = 0;
-            strafe = 0;
-            rotate = 0;
-            //校准
-            //todo add 校准
-
-            chassis.resetPosition(aprilTagDetector.getPose().pose);
-        }
-
         //自动对准
-        if(gamepad1.left_trigger > 0.6 || gamepad2.left_trigger > 0.6){
+        if(gamepad1.left_trigger > 0.6){
             double heading = 0;
             if(teamColor == TEAM_COLOR.RED){
                 heading = SolveShootPoint.solveREDShootHeading(pose);
-                //我认为没啥必要 先去睡觉了 电池充好了记得绑黑色扎带
-                targetSpeed = ShooterAction.speed25_55;
+                targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
             }
             if(teamColor == TEAM_COLOR.BLUE){
                 heading = SolveShootPoint.solveBLUEShootHeading(pose);
-                targetSpeed = ShooterAction.speed25_55;
+                targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
             }
             chassis.setHeadingLockRadian(heading);
         }
 
         //自动对准人玩区
-        if(gamepad1.right_trigger > 0.6 || gamepad2.right_trigger > 0.6){
+        if(gamepad1.right_trigger > 0.6){
             double heading = 0;
             if(teamColor == TEAM_COLOR.RED){
                 heading = -Math.PI / 2;
@@ -493,7 +510,6 @@ public class DECODE extends LinearOpMode {
             trigger();
             Telemetry();
             chassis();
-
             if(actionRunner.isBusy()){
                 actionRunner.update();
             }
