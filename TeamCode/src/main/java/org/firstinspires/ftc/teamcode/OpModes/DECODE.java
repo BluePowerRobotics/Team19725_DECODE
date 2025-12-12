@@ -283,6 +283,7 @@ public class DECODE extends LinearOpMode {
     long lastSetTimeMS=0;
     boolean showSpeedColor=false;
     void Telemetry(){
+        telemetry.addData("DIS", disSensor.getDis());
         telemetry.addData("targetSpeed", targetSpeed + n * additionSpeed);
         telemetry.addData("NoHeadMode",chassis.getUseNoHeadMode()?"PlayerBased":"RoboticBased");
         telemetry.addData("isBusy", actionRunner.isBusy());
