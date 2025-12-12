@@ -40,7 +40,7 @@ public final class PinpointLocalizer implements Localizer {
 
         // TODO: reverse encoder directions if needed
         initialParDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
-        initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
+        initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
 
         driver.setEncoderDirections(initialParDirection, initialPerpDirection);
 
