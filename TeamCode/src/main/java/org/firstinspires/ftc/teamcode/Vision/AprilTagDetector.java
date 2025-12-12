@@ -35,9 +35,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class AprilTagDetector {
     //todo 可以参考的文件：FindCandidate.java  && FtcRobotController\src\main\java\org\firstinspires\ftc\robotcontroller\external\samples\ConceptAprilTagLocalization.java
     //画面大小
-    public static double x = 1;
-    public static double y = 0;
-    public static double z = 1.8;
+    public static double x = -0.07874;
+    public static double y = -6.703937;
+    public static double z = 10.96496;
     public static double yaw = 180;
     public static double pitch = 73.6;
     public static double roll = 0;
