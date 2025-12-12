@@ -115,7 +115,7 @@ public class DECODE extends LinearOpMode {
         ledController = new BlinkinLedController(hardwareMap);
     }
     void inputRobotStatus(){
-        if(gamepad2.startWasPressed()){
+        if(gamepad2.dpadRightWasPressed()){
             actionRunner = new ActionRunner();
             actionRunner.add(sweeper.SweeperBack());
         }
