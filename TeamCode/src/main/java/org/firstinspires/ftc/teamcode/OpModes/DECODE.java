@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.controllers.elevator.ElevatorController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveClimbPoint;
 import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveShootPoint;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 
@@ -340,95 +341,100 @@ public class DECODE extends LinearOpMode {
         }
     }
     public static double time=1.2;
-    void chassis(){
+    void chassis() {
 
         Pose2d pose = chassis.robotPosition.getData().getPose2d();
 
-        double drive = -time*gamepad1.left_stick_y - 0.3 * gamepad2.left_stick_y; // 前后
-        double strafe = time*gamepad1.left_stick_x + 0.3 * gamepad2.left_stick_x; // 左右
-        double rotate =-time*gamepad1.right_stick_x  - 0.3 * gamepad2.right_stick_x; // 旋转
+        double drive = -time * gamepad1.left_stick_y - 0.3 * gamepad2.left_stick_y; // 前后
+        double strafe = time * gamepad1.left_stick_x + 0.3 * gamepad2.left_stick_x; // 左右
+        double rotate = -time * gamepad1.right_stick_x - 0.3 * gamepad2.right_stick_x; // 旋转
+        if(robotStatus!= ROBOT_STATUS.CLIMBING) {
+            //自动对准
+            if (gamepad1.left_trigger > 0.6) {
+                double heading = 0;
+                if (teamColor == TEAM_COLOR.RED) {
+                    heading = SolveShootPoint.solveREDShootHeading(pose);
+                    targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
+                }
+                if (teamColor == TEAM_COLOR.BLUE) {
+                    heading = SolveShootPoint.solveBLUEShootHeading(pose);
+                    targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
+                }
+                chassis.setHeadingLockRadian(heading);
+            }
 
-        //自动对准
-        if(gamepad1.left_trigger > 0.6){
-            double heading = 0;
-            if(teamColor == TEAM_COLOR.RED){
-                heading = SolveShootPoint.solveREDShootHeading(pose);
-                targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
+            //自动对准人玩区
+            if (gamepad1.right_trigger > 0.6) {
+                double heading = 0;
+                if (teamColor == TEAM_COLOR.RED) {
+                    heading = -Math.PI / 2;
+                }
+                if (teamColor == TEAM_COLOR.BLUE) {
+                    heading = Math.PI / 2;
+                }
+                chassis.setHeadingLockRadian(heading);
             }
-            if(teamColor == TEAM_COLOR.BLUE){
-                heading = SolveShootPoint.solveBLUEShootHeading(pose);
-                targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
-            }
-            chassis.setHeadingLockRadian(heading);
-        }
 
-        //自动对准人玩区
-        if(gamepad1.right_trigger > 0.6){
-            double heading = 0;
-            if(teamColor == TEAM_COLOR.RED){
-                heading = -Math.PI / 2;
+            //自瞄
+            if (gamepad1.dpadLeftWasPressed() || gamepad2.dpadLeftWasPressed()) {
+                n = 0;
+                if (teamColor == TEAM_COLOR.RED) {
+                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r1));
+                    targetSpeed = ShooterAction.speed2_2;
+                }
+                if (teamColor == TEAM_COLOR.BLUE) {
+                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r1));
+                    targetSpeed = ShooterAction.speed2_2;
+                }
             }
-            if(teamColor == TEAM_COLOR.BLUE){
-                heading = Math.PI / 2;
+            if (gamepad1.dpadUpWasPressed() || gamepad2.dpadUpWasPressed()) {
+                n = 0;
+                if (teamColor == TEAM_COLOR.RED) {
+                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r2));
+                    targetSpeed = ShooterAction.speed25_25;
+                }
+                if (teamColor == TEAM_COLOR.BLUE) {
+                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r2));
+                    targetSpeed = ShooterAction.speed25_25;
+                }
             }
-            chassis.setHeadingLockRadian(heading);
-        }
-
-        //自瞄
-        if(gamepad1.dpadLeftWasPressed() || gamepad2.dpadLeftWasPressed()){
-            n = 0;
-            if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r1));
-                targetSpeed = ShooterAction.speed2_2;
+            if (gamepad1.dpadRightWasPressed() || gamepad2.dpadRightWasPressed()) {
+                n = 0;
+                if (teamColor == TEAM_COLOR.RED) {
+                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r3));
+                    targetSpeed = ShooterAction.speed3_3;
+                }
+                if (teamColor == TEAM_COLOR.BLUE) {
+                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r3));
+                    targetSpeed = ShooterAction.speed3_3;
+                }
             }
-            if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r1));
-                targetSpeed = ShooterAction.speed2_2;
+            if (gamepad1.dpadDownWasPressed() || gamepad2.dpadDownWasPressed()) {
+                n = 0;
+                if (teamColor == TEAM_COLOR.RED) {
+                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r4));
+                    targetSpeed = ShooterAction.speed25_55;
+                }
+                if (teamColor == TEAM_COLOR.BLUE) {
+                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r4));
+                    targetSpeed = ShooterAction.speed25_55;
+                }
             }
-        }
-        if(gamepad1.dpadUpWasPressed() || gamepad2.dpadUpWasPressed()){
-            n = 0;
-            if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r2));
-                targetSpeed = ShooterAction.speed25_25;
-            }
-            if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r2));
-                targetSpeed = ShooterAction.speed25_25;
-            }
-        }
-        if(gamepad1.dpadRightWasPressed() || gamepad2.dpadRightWasPressed()){
-            n = 0;
-            if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r3));
-                targetSpeed = ShooterAction.speed3_3;
-            }
-            if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r3));
-                targetSpeed = ShooterAction.speed3_3;
-            }
-        }
-        if(gamepad1.dpadDownWasPressed() || gamepad2.dpadDownWasPressed()){
-            n = 0;
-            if(teamColor == TEAM_COLOR.RED){
-                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r4));
-                targetSpeed = ShooterAction.speed25_55;
-            }
-            if(teamColor == TEAM_COLOR.BLUE){
-                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r4));
-                targetSpeed = ShooterAction.speed25_55;
-            }
-        }
-//        if(gamepad2.xWasPressed()){
-//            if(teamColor == TEAM_COLOR.RED){
-//                chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r5));
-//                targetSpeed = ShooterAction.speed35_55;
+//            if(gamepad2.xWasPressed()){
+//                if(teamColor == TEAM_COLOR.RED){
+//                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r5));
+//                    targetSpeed = ShooterAction.speed35_55;
+//                }
+//                if(teamColor == TEAM_COLOR.BLUE){
+//                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r5));
+//                    targetSpeed = ShooterAction.speed35_55;
+//                }
 //            }
-//            if(teamColor == TEAM_COLOR.BLUE){
-//                chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r5));
-//                targetSpeed = ShooterAction.speed35_55;
-//            }
-//        }
+        }else{
+            if(gamepad2.rightBumperWasPressed()){
+                chassis.setTargetPoint(SolveClimbPoint.solveClimbPoint(teamColor,pose));
+            }
+        }
 
 
         chassis.gamepadInput(strafe, drive, rotate);
