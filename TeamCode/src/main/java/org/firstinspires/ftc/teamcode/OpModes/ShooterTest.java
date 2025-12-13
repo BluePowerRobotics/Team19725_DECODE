@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.shooter.Shooter;
-import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
+import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveShootPoint;
 
 
 //测试弹射以及发射位置解算

@@ -12,12 +12,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
-import org.firstinspires.ftc.teamcode.RoadRunner.KalmanFusionLocalizer;
 import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
 import org.firstinspires.ftc.teamcode.controllers.DisSensor;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.LedPreset;
-import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
 import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
@@ -25,7 +23,7 @@ import org.firstinspires.ftc.teamcode.controllers.elevator.ElevatorController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
-import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
+import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveShootPoint;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 
 import java.io.BufferedReader;
