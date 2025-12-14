@@ -77,7 +77,7 @@ public class OneDimensionKalmanFilter {
 
         // === 关键修正2：使用正确的F矩阵 ===
         //todo 按照lby意见修改，需比较可用性
-        updateF(dtSeconds , deltaPosition/dtSeconds);
+        updateF(deltaPosition/lastEsVelocity , (deltaPosition/dtSeconds) / lastEsVelocity);
         // === 关键修正4：动态更新Q矩阵的数值（因为q_pos和q_vel可能已通过Dashboard调整）===
         // 但是对模型本身没有影响，只是方便了dashboard热调参
         Q.set(0, 0, q_pos);
