@@ -71,25 +71,9 @@ public class OneDimensionKalmanFilter {
         // === 关键修正2：使用正确的F矩阵 ===
         updateF(dtSeconds);
 
-        // === 关键修正3：改进的状态预测（模型为主，随动轮为辅）===
-        // 模型预测：基于上一时刻的速度
-        double modelPredictedPosition = lastEsPosition + lastEsVelocity * dtSeconds;
-        double modelPredictedVelocity = lastEsVelocity;
-
-        // 随动轮测量预测
-        double wheelPredictedPosition = lastEsPosition + deltaPosition;
-        double wheelPredictedVelocity = deltaPosition / dtSeconds;
-
-        // 混合预测（可以调整混合比例）
-        double blendRatio = 0.7;  // 0.7相信模型，0.3相信随动轮
-        double blendedPosition = blendRatio * modelPredictedPosition +
-                (1 - blendRatio) * wheelPredictedPosition;
-        double blendedVelocity = blendRatio * modelPredictedVelocity +
-                (1 - blendRatio) * wheelPredictedVelocity;
-
-        Matrix X_ = new Matrix(new double[][]{
-                {blendedPosition},
-                {blendedVelocity}
+        Matrix X_=new Matrix(new double[][]{
+                {lastEsPosition+deltaPosition},
+                {deltaPosition/dtSeconds}
         });
 
         // === 关键修正4：动态更新Q矩阵的数值（因为q_pos和q_vel可能已通过Dashboard调整）===
