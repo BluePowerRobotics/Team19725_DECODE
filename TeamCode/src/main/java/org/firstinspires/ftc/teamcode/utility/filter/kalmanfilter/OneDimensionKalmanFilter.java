@@ -39,6 +39,7 @@ public class OneDimensionKalmanFilter {
     private void updateF(double dt) {
         this.F = new Matrix(new double[][]{
                 {1.0, dt},
+                //todo 0.95可能也需要动态，原因详见与lby的聊天
                 {0.0, 0.95}  // 轻微衰减，更鲁棒
         });
     }
@@ -50,7 +51,12 @@ public class OneDimensionKalmanFilter {
         // 初始化为单位矩阵，第一次更新时会修正
         this.F = Matrix.identity(2, 2);
     }
-
+    /// <summary>
+    /// 更新卡尔曼滤波结果
+    /// </summary>
+    /// <param name="wheelPosition">随动轮当前位置</param>
+    /// <param name="measurementPosition">视觉位置，如果没有输入 则请输入Double.NaN</param>
+    /// <returns>新的估计位置</returns>
     public PosVelTuple Update(double wheelPosition, double measurementPosition) {
         long currentTime = System.nanoTime();
         double deltaTime = currentTime - lastUpdateTime;
