@@ -35,12 +35,12 @@ public class OneDimensionKalmanFilter {
             {0.0, q_vel}
     });
 
-    // 使用正确的不匀速模型F
-    private void updateF(double dt, double dv) {
+    // 使用正确的匀速模型F
+    private void updateF(double dt) {
         this.F = new Matrix(new double[][]{
                 {1.0, dt},
                 //todo 0.95可能也需要动态，原因详见与lby的聊天
-                {0.0, dv}  // 轻微衰减，更鲁棒
+                {0.0, 0.95}  // 轻微衰减，更鲁棒
         });
     }
 
@@ -68,16 +68,14 @@ public class OneDimensionKalmanFilter {
         double deltaPosition = wheelPosition - lastWheelPosition;
         lastWheelPosition = wheelPosition;
 
-
+        // === 关键修正2：使用正确的F矩阵 ===
+        updateF(dtSeconds);
 
         Matrix X_=new Matrix(new double[][]{
                 {lastEsPosition+deltaPosition},
                 {deltaPosition/dtSeconds}
         });
 
-        // === 关键修正2：使用正确的F矩阵 ===
-        //todo 按照lby意见修改，需比较可用性
-        updateF(deltaPosition/lastEsVelocity , (deltaPosition/dtSeconds) / lastEsVelocity);
         // === 关键修正4：动态更新Q矩阵的数值（因为q_pos和q_vel可能已通过Dashboard调整）===
         // 但是对模型本身没有影响，只是方便了dashboard热调参
         Q.set(0, 0, q_pos);
