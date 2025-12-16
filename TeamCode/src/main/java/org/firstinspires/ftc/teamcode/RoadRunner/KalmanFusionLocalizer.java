@@ -15,8 +15,11 @@ public class KalmanFusionLocalizer implements Localizer{
     HardwareMap hardwareMap;
     double inPerTick;
     Pose2d pose;
+    Pose2d AprilTagPose;
+    Pose2d localizerPose;
     boolean AprilTagStatus = false;
-    public KalmanFusionLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose){
+    PoseData poseData;
+    public KalmanFusionLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose,PoseData poseData){
         this.hardwareMap=hardwareMap;
         this.inPerTick=inPerTick;
         localizer = new PinpointLocalizer(hardwareMap,inPerTick,initialPose);
@@ -44,8 +47,11 @@ public class KalmanFusionLocalizer implements Localizer{
     @Override
     public PoseVelocity2d update() {
         PoseVelocity2d poseVelocity2d = localizer.update();
-        Pose2d localizerPose = localizer.getPose();
-        pose = Kalman(localizerPose,aprilTagDetector.getPose().pose);
+        localizerPose = localizer.getPose();
+        poseData.PinPointPose=localizerPose;
+        AprilTagPose = aprilTagDetector.getPose().pose;
+        poseData.AprilTagPose=AprilTagPose;
+        pose = Kalman(localizerPose,AprilTagPose);
         return poseVelocity2d;
     }
 
@@ -67,5 +73,4 @@ public class KalmanFusionLocalizer implements Localizer{
     public boolean getAprilTagStatus(){
         return AprilTagStatus;
     }
-
 }
