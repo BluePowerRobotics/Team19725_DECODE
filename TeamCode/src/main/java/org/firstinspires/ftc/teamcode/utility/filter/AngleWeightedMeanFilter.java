@@ -34,21 +34,28 @@ public class AngleWeightedMeanFilter {
         if (count < windowSize) {
             // 缓冲区未满
             unitVectors[index] = newVector;
-            vectorSum = Point2D.translate(vectorSum, newVector.getX(), newVector.getY());
+            if(!Double.isNaN(unitVectors[index].getRadian())) {
+                vectorSum = Point2D.translate(vectorSum, newVector.getX(), newVector.getY());
+            }
             count++;
             index = (index + 1) % windowSize;
         } else {
             // 缓冲区已满，替换最旧向量
             Point2D oldest = unitVectors[index];
-            vectorSum = Point2D.translate(vectorSum, -oldest.getX(), -oldest.getY());
-
+            if(!Double.isNaN(oldest.getRadian())) {
+                vectorSum = Point2D.translate(vectorSum, -oldest.getX(), -oldest.getY());
+            }
             unitVectors[index] = newVector;
-            vectorSum = Point2D.translate(vectorSum, newVector.getX(), newVector.getY());
-
+            if(!Double.isNaN(newVector.getRadian())) {
+                vectorSum = Point2D.translate(vectorSum, newVector.getX(), newVector.getY());
+            }
             index = (index + 1) % windowSize;
         }
 
         // 计算平均向量的角度
+        return vectorSum.getRadian();
+    }
+    public double getAverageAngle() {
         return vectorSum.getRadian();
     }
 
