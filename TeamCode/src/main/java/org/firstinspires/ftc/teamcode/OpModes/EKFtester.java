@@ -16,7 +16,7 @@ import java.io.IOException;
 @TeleOp
 @Config
 public class EKFtester extends LinearOpMode {
-    public static double k = 0.0013;
+    public static double k = 0.0002;
     Pose2d[] vis = {
             new Pose2d(-0.011326, -0.012492, 0.006626),
             new Pose2d(Double.NaN, Double.NaN, Double.NaN),
