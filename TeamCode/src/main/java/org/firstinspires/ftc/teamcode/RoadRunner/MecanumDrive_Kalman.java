@@ -124,6 +124,7 @@ public final class MecanumDrive_Kalman {
     public final LazyImu lazyImu;
 
     public Localizer localizer;
+    public PoseData poseData=new PoseData();
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
@@ -263,7 +264,7 @@ public final class MecanumDrive_Kalman {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new KalmanFusionLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer = new KalmanFusionLocalizer(hardwareMap, PARAMS.inPerTick, pose,poseData);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
