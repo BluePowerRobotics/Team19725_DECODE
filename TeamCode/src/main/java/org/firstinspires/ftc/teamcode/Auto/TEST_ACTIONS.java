@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.controllers.DisSensor;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
@@ -20,13 +22,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 @Autonomous
-@Disabled
 @Config
 public class TEST_ACTIONS extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     Trigger trigger;
     Sweeper_PID sweeper;
+    DisSensor disSensor;
     ShooterAction shooterAction;
 
     public void runOpMode() {
@@ -42,7 +44,12 @@ public class TEST_ACTIONS extends LinearOpMode {
 
         telemetry.addData("000",0);
         telemetry.update();
-        Actions.runBlocking(sweeper.SweeperBack());
+        Actions.runBlocking(
+                //todo 加入距离传感器的打断
+                new RaceAction(sweeper.SweeperBack())
+
+
+        );
         telemetry.addData("SWEEPER EAT", 1);
         telemetry.update();
 //        sweeper.Eat();
