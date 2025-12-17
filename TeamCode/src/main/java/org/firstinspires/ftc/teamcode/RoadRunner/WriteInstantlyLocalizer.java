@@ -15,7 +15,7 @@ public class WriteInstantlyLocalizer implements Localizer{
     public WriteInstantlyLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose){
         this.hardwareMap=hardwareMap;
         this.inPerTick=inPerTick;
-        this.localizer =new PinpointLocalizer(hardwareMap,inPerTick,initialPose);
+        this.localizer =new FusionLocalizer(hardwareMap,inPerTick,initialPose);
         pose=localizer.getPose();
     }
     @Override
@@ -33,7 +33,7 @@ public class WriteInstantlyLocalizer implements Localizer{
         PoseVelocity2d poseVelocity2d = localizer.update();
         Pose2d pose = localizer.getPose();
         if(Double.isNaN(pose.position.x)||Double.isNaN(pose.position.y)||Double.isNaN(pose.heading.toDouble())){
-            localizer = new PinpointLocalizer(hardwareMap,inPerTick,this.pose);
+            localizer = new FusionLocalizer(hardwareMap,inPerTick,this.pose);
             poseVelocity2d = localizer.update();
             pose = localizer.getPose();
         }

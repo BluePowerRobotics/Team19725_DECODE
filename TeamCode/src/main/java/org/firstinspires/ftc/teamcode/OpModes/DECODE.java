@@ -106,6 +106,7 @@ public class DECODE extends LinearOpMode {
         trigger = new Trigger(hardwareMap);
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
+        //chassis.robotPosition.setMinUpdateIntervalMs(1);
         elevatorController = new ElevatorController(hardwareMap);
         disSensor = new DisSensor(hardwareMap);
         aprilTagDetector = new AprilTagDetector();
@@ -341,8 +342,9 @@ public class DECODE extends LinearOpMode {
         }
     }
     public static double time=1.2;
+    public static int IntervalMS=1;
     void chassis() {
-
+        chassis.robotPosition.setMinUpdateIntervalMs(IntervalMS);
         Pose2d pose = chassis.robotPosition.getData().getPose2d();
 
         double drive = -time * gamepad1.left_stick_y - 0.3 * gamepad2.left_stick_y; // 前后

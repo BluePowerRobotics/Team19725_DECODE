@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.RoadRunner;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 import org.firstinspires.ftc.teamcode.controllers.IMUSensor;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
@@ -14,7 +16,7 @@ import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 import org.firstinspires.ftc.teamcode.utility.filter.AngleWeightedMeanFilter;
 import org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter.OneDimensionKalmanFilter;
 import org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter.PosVelTuple;
-
+@Config
 public class FusionLocalizer implements Localizer{
     AngleWeightedMeanFilter imusFilter = new AngleWeightedMeanFilter(3);
     IMUSensor imuSensor;
@@ -33,26 +35,18 @@ public class FusionLocalizer implements Localizer{
     double eimuAddition =0;
     double IMUsAddition = 0;
     public FusionLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose){
-        try {
-            imuSensor = new IMUSensor(hardwareMap, "imu", new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
-        } catch (Exception e) {
-            InstanceTelemetry.getTelemetry().addLine(e.getMessage());
-            IMUBelievable = false;
-        }
-        try {
-            eimuSensor = new IMUSensor(hardwareMap, "eimu", new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
-        } catch (Exception e) {
-            InstanceTelemetry.getTelemetry().addLine(e.getMessage());
-            EIMUBelievable = false;
-        }
+        eimuSensor = new IMUSensor(hardwareMap, "eimu", new RevHubOrientationOnRobot(RevHubOrientationOnRobot.xyzOrientation(90,-(180-Math.toDegrees(Math.atan2(3,4))),0)));
+         imuSensor = new IMUSensor(hardwareMap, "imu", new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
         if (!imuSensor.ifInitiated()){
+            imuSensor.reset();
             IMUBelievable=false;
         }
         if (!eimuSensor.ifInitiated()){
+            imuSensor.reset();
             EIMUBelievable=false;
         }
-        imuAddition  = initialPose.heading.log();
-        eimuAddition = initialPose.heading.log();
+        imuAddition  = MathSolver.normalizeAngle(initialPose.heading.log()- imuSensor.getYaw(AngleUnit.RADIANS));
+        eimuAddition = MathSolver.normalizeAngle(initialPose.heading.log()-eimuSensor.getYaw(AngleUnit.RADIANS));
         this.hardwareMap=hardwareMap;
         this.inPerTick=inPerTick;
         localizer = new PinpointLocalizer(hardwareMap,inPerTick,initialPose);
@@ -135,31 +129,31 @@ public class FusionLocalizer implements Localizer{
     int IMULostTime =0;
     int EIMULostTime =0;
     int PINPOINTLostTime=0;
-    int LostMaxTime=2;
-
-
+    public static int LostMaxTime=200;
+    public static int PinPointLostMaxTime=200;
+    public static int MixMaxTime=5;
 
     double IMULastValue =0;
     double EIMULastValue =0;
     double PINPOINTLastValue=0;
     private double fusionIMU(double IMU, double EIMU, double pinpoint){
         if(!Double.isNaN(IMU)){
-            if(IMULastValue ==IMU){
-                IMULostTime++;
-            } else {
+//            if(IMULastValue ==IMU){
+//                IMULostTime++;
+//            } else {
                 IMULastValue = IMU;
                 IMULostTime = 0;
-            }
+//            }
         }else{
             IMULostTime++;
         }
         if(!Double.isNaN(EIMU)){
-            if(EIMULastValue ==EIMU){
-                EIMULostTime++;
-            } else {
+//            if(EIMULastValue ==EIMU){
+//                EIMULostTime++;
+//            } else {
                 EIMULastValue = EIMU;
                 EIMULostTime = 0;
-            }
+//            }
         }else{
             EIMULostTime++;
         }
@@ -173,31 +167,40 @@ public class FusionLocalizer implements Localizer{
         }else{
             PINPOINTLostTime++;
         }
-        if(IMULostTime>=LostMaxTime){
-            IMUBelievable=false;
-        }
-        if(EIMULostTime>=LostMaxTime) {
-            EIMUBelievable = false;
-        }
-        if(PINPOINTLostTime>=LostMaxTime){
-            PINPOINTBelievable=false;
-        }
-        imusFilter.filter(imuAddition+IMU, IMUBelievable?1.0:0.0);
-        imusFilter.filter(eimuAddition+EIMU, EIMUBelievable?1.0:0.0);
-        double fusedAngle=imusFilter.filter(pinpoint, PINPOINTBelievable?2.0:0.0);
+
+         IMUBelievable = !( IMULostTime>=LostMaxTime);
+        EIMUBelievable = !(EIMULostTime>=LostMaxTime);
+        PINPOINTBelievable = !(PINPOINTLostTime>=PinPointLostMaxTime);
+        imusFilter.reset();
+        imusFilter.filter(imuAddition+IMU,  !(IMULostTime>=MixMaxTime)?1.0:0.0);
+        imusFilter.filter(eimuAddition+EIMU, !(EIMULostTime>=MixMaxTime)?1.0:0.0);
+        double fusedAngle=imusFilter.filter(pinpoint, !(PINPOINTLostTime>=MixMaxTime)?2.0:0.0);
+        //InstanceTelemetry.getTelemetry().addData(" IMUBelievable",IMUBelievable);
+        //InstanceTelemetry.getTelemetry().addData("EIMUBelievable",EIMUBelievable);
+        //InstanceTelemetry.getTelemetry().addData("PINPBelievable",PINPOINTBelievable);
+        InstanceTelemetry.getTelemetry().addData("IMU ",MathSolver.normalizeAngle(IMU+imuAddition));
+        //InstanceTelemetry.getTelemetry().addData("IMU_origin",MathSolver.normalizeAngle(IMU));
+        InstanceTelemetry.getTelemetry().addData("IMU_addition",MathSolver.normalizeAngle(imuAddition));
+        InstanceTelemetry.getTelemetry().addData("EIMU",MathSolver.normalizeAngle(EIMU+eimuAddition));
+        //InstanceTelemetry.getTelemetry().addData("EIMU_origin",MathSolver.normalizeAngle(EIMU));
+        InstanceTelemetry.getTelemetry().addData("EIMU_addition",MathSolver.normalizeAngle(eimuAddition));
+        InstanceTelemetry.getTelemetry().addData("PINP",MathSolver.normalizeAngle(pinpoint));
         return fusedAngle;
     }
     private void fixLost(double fusedAngle){
         if(!IMUBelievable){
             imuSensor.reset();
             imuAddition=fusedAngle;
+            IMULostTime=0;
         }
         if(!EIMUBelievable){
             eimuSensor.reset();
             eimuAddition = fusedAngle;
+            EIMULostTime=0;
         }
         if(!PINPOINTBelievable){
             localizer = new PinpointLocalizer(hardwareMap,inPerTick,new Pose2d(pose.position,fusedAngle) );
+            PINPOINTLostTime=0;
         }
     }
     AngleMeanFilter imuFilter = new AngleMeanFilter(10);
