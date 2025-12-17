@@ -83,10 +83,14 @@ public class DECODE extends LinearOpMode {
     //
     public  int targetSpeed = ShooterAction.speed35_55;
     public Pose2d startPose = new Pose2d(0,0,0);
-    public static int additionSpeed = 25;
-    int speedOffset = 0;
+    public static double AdditionK = 0.01;
+    //targetSpeed乘上Kspeed才是真实速度，修正发射速度
+    int Kspeed = 1;
     boolean directControl=false;
+    //修正角度偏差（从读取的底层修改）
+    //todo 让degreeOffset生效 @gyw
     public double degreeOffset = 0;
+    public static double AdditionDegree = 1.0;
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
             String[] data = reader.readLine().split(",");
@@ -123,6 +127,21 @@ public class DECODE extends LinearOpMode {
         if(gamepad2.bWasPressed()){
             targetSpeed = tmpSpeed;
         }
+
+
+        //二操的修正功能
+        if(gamepad2.dpadLeftWasPressed()){
+            degreeOffset -= AdditionDegree;
+        }
+        if(gamepad2.dpadRightWasPressed()){
+            degreeOffset += AdditionDegree;
+        }
+        if(gamepad2.dpadDownWasPressed()){
+            Kspeed -= AdditionK;
+        }
+        if(gamepad2.dpadUpWasPressed()){
+            Kspeed += AdditionK;
+        }
         if((gamepad1.yWasPressed() || gamepad2.yWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
             if(robotStatus == ROBOT_STATUS.SHOOTING){
                 robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
@@ -154,7 +173,7 @@ public class DECODE extends LinearOpMode {
             }
         }
 
-        if(gamepad2.startWasPressed()){
+        if(gamepad2.backWasPressed()){
             if(robotStatus != ROBOT_STATUS.CLIMBING){
                 robotStatus = ROBOT_STATUS.CLIMBING;
             }
@@ -235,7 +254,7 @@ public class DECODE extends LinearOpMode {
                 }
                 break;
         }
-        double realTargetSpeed = targetSpeed + speedOffset * additionSpeed;
+        double realTargetSpeed = targetSpeed*(Kspeed + AdditionK);
 //        if(!actionRunner.isBusy()){
 //            if(chassis.getUseNoHeadMode()){
 //                //useNoHeadMode
@@ -280,12 +299,13 @@ public class DECODE extends LinearOpMode {
     boolean showSpeedColor=false;
     void Telemetry(){
         telemetry.addData("DIS", disSensor.getDis());
-        telemetry.addData("targetSpeed", targetSpeed + speedOffset * additionSpeed);
+        telemetry.addData("kSpeed", Kspeed);
+        telemetry.addData("RealTargetSpeed", targetSpeed * (Kspeed + AdditionK));
+        telemetry.addData("DegreeOffset", degreeOffset);
         telemetry.addData("NoHeadMode",chassis.getUseNoHeadMode()?"PlayerBased":"RoboticBased");
         telemetry.addData("isBusy", actionRunner.isBusy());
         telemetry.addData("TeamColor", teamColor);
         telemetry.addData("RobotSTATUS", robotStatus.toString());
-        telemetry.addData("n", speedOffset);
         telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
         telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
 //        telemetry.addData("shooterSTATUS", shooterStatus.toString());
@@ -324,7 +344,7 @@ public class DECODE extends LinearOpMode {
                     robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
                 }
                 else{
-                    boolean hasReachedTargetSpeed = shooter.setShootSpeed(targetSpeed + speedOffset * additionSpeed);
+                    boolean hasReachedTargetSpeed = shooter.setShootSpeed(targetSpeed * Kspeed);
                     if(hasReachedTargetSpeed){
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
@@ -375,7 +395,6 @@ public class DECODE extends LinearOpMode {
 
             //自瞄
             if (gamepad1.dpadLeftWasPressed()) {
-                speedOffset = 0;
                 if (teamColor == TEAM_COLOR.RED) {
                     chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r1));
                     targetSpeed = ShooterAction.speed2_2;
@@ -386,7 +405,6 @@ public class DECODE extends LinearOpMode {
                 }
             }
             if (gamepad1.dpadUpWasPressed()) {
-                speedOffset = 0;
                 if (teamColor == TEAM_COLOR.RED) {
                     chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r2));
                     targetSpeed = ShooterAction.speed25_25;
@@ -397,7 +415,6 @@ public class DECODE extends LinearOpMode {
                 }
             }
             if (gamepad1.dpadRightWasPressed()) {
-                speedOffset = 0;
                 if (teamColor == TEAM_COLOR.RED) {
                     chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r3));
                     targetSpeed = ShooterAction.speed3_3;
@@ -408,7 +425,6 @@ public class DECODE extends LinearOpMode {
                 }
             }
             if (gamepad1.dpadDownWasPressed()) {
-                speedOffset = 0;
                 if (teamColor == TEAM_COLOR.RED) {
                     chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r4));
                     targetSpeed = ShooterAction.speed25_55;
@@ -419,7 +435,7 @@ public class DECODE extends LinearOpMode {
                 }
             }
         }else{
-            if(gamepad2.rightBumperWasPressed()){
+            if(gamepad2.rightStickButtonWasPressed() || gamepad2.leftStickButtonWasPressed()){
                 chassis.setTargetPoint(SolveClimbPoint.solveClimbPoint(teamColor,pose));
             }
         }
