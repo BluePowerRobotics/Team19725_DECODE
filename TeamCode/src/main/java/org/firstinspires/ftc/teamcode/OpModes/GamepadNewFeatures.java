@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // This OpMode demonstrates the new gamepad features to detect button press and release events
 @TeleOp
-@Disabled
 public class GamepadNewFeatures extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
