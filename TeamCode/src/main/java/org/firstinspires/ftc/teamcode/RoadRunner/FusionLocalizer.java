@@ -20,7 +20,7 @@ public class FusionLocalizer implements Localizer{
     IMUSensor imuSensor;
     IMUSensor eimuSensor;
     Localizer localizer;
-    AprilTagDetector aprilTagDetector;
+    //AprilTagDetector aprilTagDetector;
     OneDimensionKalmanFilter filter_x,filter_y;
     HardwareMap hardwareMap;
     double inPerTick;
@@ -56,8 +56,8 @@ public class FusionLocalizer implements Localizer{
         this.hardwareMap=hardwareMap;
         this.inPerTick=inPerTick;
         localizer = new PinpointLocalizer(hardwareMap,inPerTick,initialPose);
-        aprilTagDetector = new AprilTagDetector();
-        aprilTagDetector.init(hardwareMap);
+        //aprilTagDetector = new AprilTagDetector();
+        //aprilTagDetector.init(hardwareMap);
         filter_x=new OneDimensionKalmanFilter(initialPose.position.x, 0.0);
         filter_y=new OneDimensionKalmanFilter(initialPose.position.y, 0.0);
         pose=initialPose;
@@ -80,8 +80,8 @@ public class FusionLocalizer implements Localizer{
         eimuAddition = pose.heading.log();
         imusFilter = new AngleWeightedMeanFilter(3);
         localizer = new PinpointLocalizer(hardwareMap,inPerTick,pose);
-        aprilTagDetector = new AprilTagDetector();
-        aprilTagDetector.init(hardwareMap);
+        //aprilTagDetector = new AprilTagDetector();
+        //aprilTagDetector.init(hardwareMap);
         filter_x=new OneDimensionKalmanFilter(pose.position.x, 0.0);
         filter_y=new OneDimensionKalmanFilter(pose.position.y, 0.0);
         update();
@@ -96,9 +96,9 @@ public class FusionLocalizer implements Localizer{
     public PoseVelocity2d update() {
         PoseVelocity2d poseVelocity2d = localizer.update();
         Pose2d localizerPose = localizer.getPose();
-        Pose2d aprilTagPose = aprilTagDetector.getPose().pose;
+        //Pose2d aprilTagPose = aprilTagDetector.getPose().pose;
         double localizerHeading=localizerPose.heading.log();
-        double aprilTagHeading = aprilTagPose.heading.log();
+        //double aprilTagHeading = aprilTagPose.heading.log();
         double IMUHeading=Double.NaN;
         double EIMUHeading=Double.NaN;
         try{
@@ -109,7 +109,7 @@ public class FusionLocalizer implements Localizer{
         }
         double heading = fusionIMU(IMUHeading, EIMUHeading, localizerHeading);
         localizerPose = new Pose2d(localizerPose.position, MathSolver.normalizeAngle(heading+IMUsAddition));
-        pose = Kalman(localizerPose,aprilTagPose);
+        pose = /*Kalman(*/localizerPose/*,aprilTagPose)*/;
         fixLost(heading);
         return poseVelocity2d;
     }
