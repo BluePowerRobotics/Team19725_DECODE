@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.controllers;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -16,18 +17,33 @@ public class IMUSensor {
         imu = hardwareMap.get(IMU.class, DeviceName); // "imu"需与手机配置中的名称一致
         parameters = new IMU.Parameters(orientation);
         isInited = imu.initialize(parameters);
-        if(isInited) yawPitchRollAngles=imu.getRobotYawPitchRollAngles();
-        else isInited = imu.initialize(parameters);
+        if(isInited) {
+            try {
+                yawPitchRollAngles = imu.getRobotYawPitchRollAngles();
+            } catch (Exception e) {
+                RobotLog.addGlobalWarningMessage("IMU Sensor: IMU " + imu.getDeviceName() + " continues to return wrong data:\n" + e.getMessage());
+            }
+        } else {
+            isInited = imu.initialize(parameters);
+        }
     }
 
     public YawPitchRollAngles getYawPitchRollAngles() {
 
         if(isInited) {
-            yawPitchRollAngles=imu.getRobotYawPitchRollAngles();
+            try {
+                yawPitchRollAngles = imu.getRobotYawPitchRollAngles();
+            } catch (Exception e) {
+                RobotLog.addGlobalWarningMessage("IMU Sensor: IMU "+imu.getDeviceName()+" continues to return wrong data:\n"+e.getMessage());
+            }
             return yawPitchRollAngles;
         }else {
             isInited = imu.initialize(parameters);
-            yawPitchRollAngles=imu.getRobotYawPitchRollAngles();
+            try {
+                yawPitchRollAngles = imu.getRobotYawPitchRollAngles();
+            } catch (Exception e) {
+                RobotLog.addGlobalWarningMessage("IMU Sensor: IMU "+imu.getDeviceName()+" continues to return wrong data:\n"+e.getMessage());
+            }
             return yawPitchRollAngles;
         }
     }
@@ -41,7 +57,11 @@ public class IMUSensor {
             return yawPitchRollAngles;
         }else{
             isInited = imu.initialize(parameters);
-            yawPitchRollAngles=imu.getRobotYawPitchRollAngles();
+            try {
+                yawPitchRollAngles = imu.getRobotYawPitchRollAngles();
+            } catch (Exception e) {
+                RobotLog.addGlobalWarningMessage("IMU Sensor: IMU "+imu.getDeviceName()+" continues to return wrong data:\n"+e.getMessage());
+            }
             return yawPitchRollAngles;
         }
     }
