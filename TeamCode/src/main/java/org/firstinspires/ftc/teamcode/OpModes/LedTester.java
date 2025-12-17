@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.controllers.BlinkinLedController;
 import org.firstinspires.ftc.teamcode.controllers.LedPreset;
 
 @TeleOp(name = "LED Controller Tester")
-@Disabled
 public class LedTester extends OpMode {
 
     private BlinkinLedController ledController;
