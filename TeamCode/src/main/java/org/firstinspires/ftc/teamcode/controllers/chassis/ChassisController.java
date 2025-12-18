@@ -106,6 +106,9 @@ public class ChassisController {
         actionRunner.add(actionBuilder.build());
         HeadingLockRadian = pose2d.heading.log();
     }
+    public boolean ifTargetPointReached(){
+        return !actionRunner.isBusy();
+    }
 
     public void resetPosition(Pose2d pose2d){
         robotPosition=RobotPosition.refresh(hardwareMap,pose2d);
