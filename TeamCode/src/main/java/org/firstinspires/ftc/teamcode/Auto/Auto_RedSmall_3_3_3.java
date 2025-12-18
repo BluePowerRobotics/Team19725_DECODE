@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
+import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 
 import java.io.FileWriter;
@@ -30,14 +31,17 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
     public static double endx = 24;
     public static double endy = 20;
     public static int INTAKE_END_Y = 62;
+    public static double front = ChassisController.PARAMS.FrontToCenterInch;
+    public static double back = ChassisController.PARAMS.BackToCenterInch;
+    public static double side = ChassisController.PARAMS.SideToCenterInch;
     public static final Vector2d Small_End = new Vector2d(endx, endy);
-    public static final Pose2d START_POSE = new Pose2d(64.8, 17.6, 0);
-    public static final Vector2d SHOOT_POSE = new Vector2d(44.71220495, 8.613385148);
-    public static final Vector2d INTAKE_START1 = new Vector2d(36, 24);
-    public static final Vector2d INTAKE_END1 = new Vector2d(36, INTAKE_END_Y);
-    public static final Vector2d INTAKE_START2 = new Vector2d(12, 24);
-    public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y);
-    public static double SHOOT_HEADING = -0.4975317075;
+    public static final Pose2d START_POSE = new Pose2d(72-front, 24-side, 0);
+    public static final Vector2d SHOOT_POSE = new Vector2d(60, 12);
+    public static final Vector2d INTAKE_START1 = new Vector2d(36, 72-side);
+    public static final Vector2d INTAKE_END1 = new Vector2d(72-front, 72-side);
+    public static final Vector2d INTAKE_START2 = new Vector2d(36, 24);
+    public static final Vector2d INTAKE_END2 = new Vector2d(36, INTAKE_END_Y);
+    public static double SHOOT_HEADING = -0.4993467217;
     public static double EAT_HEADING = Math.PI / 2;
     public static double END_HEADING = -Math.PI / 2;
     public static double collectWait = 1;
@@ -71,7 +75,7 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
         trigger.close();
 
         Action intakeAction1 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
+                .strafeToLinearHeading(INTAKE_START1, 0)
                 .build();
 
         Actions.runBlocking(new SequentialAction(

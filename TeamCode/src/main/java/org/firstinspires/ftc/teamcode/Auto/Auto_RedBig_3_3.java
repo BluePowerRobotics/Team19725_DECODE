@@ -38,7 +38,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
     public static double SHOOT_HEADING = -Math.PI / 4;
     public static double EAT_HEADING = Math.PI / 2;
     public static double END_HEADING = -Math.PI / 2;
-    public static double waitSeconds = 1;
+    public static double CollectWait = 1;
 
     @Override
     public void runOpMode() {
@@ -78,7 +78,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
 
         Action collectAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_END)
-                .waitSeconds(waitSeconds)
+                .waitSeconds(CollectWait)
                 .build();
 
         sweeper.Sweep(Sweeper_PID.EatVel);

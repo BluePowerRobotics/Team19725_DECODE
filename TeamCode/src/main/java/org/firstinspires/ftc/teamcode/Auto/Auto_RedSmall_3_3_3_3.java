@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.controllers.Sweeper.Sweeper_PID;
 import org.firstinspires.ftc.teamcode.controllers.Trigger;
+import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 
 import java.io.FileWriter;
@@ -21,27 +22,30 @@ import java.io.IOException;
 
 @Autonomous
 @Config
-public class Auto_BlueBig_3_3_3 extends LinearOpMode {
+public class Auto_RedSmall_3_3_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
     MecanumDrive drive;
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static double endx = 0;
-    public static double endy = -40;
-    public static int INTAKE_END_Y1 = -52;
-    public static int INTAKE_END_Y2 = -62;
-    public static final Vector2d Big_End = new Vector2d(endx, endy);
-
-    public static final Pose2d START_POSE = new Pose2d(-64.8, -41.6, 0);
-    public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
-    public static final Vector2d INTAKE_START1 = new Vector2d(-12, -24);
-    public static final Vector2d INTAKE_END1 = new Vector2d(-12, INTAKE_END_Y1);
-    public static final Vector2d INTAKE_START2 = new Vector2d(12, -24);
-    public static final Vector2d INTAKE_END2 = new Vector2d(12, INTAKE_END_Y2);
-    public static double SHOOT_HEADING = Math.PI / 4;
-    public static double EAT_HEADING = -Math.PI / 2;
-    public static double END_HEADING = Math.PI / 2;
+    public static double endx = 24;
+    public static double endy = 20;
+    public static int INTAKE_END_Y = 62;
+    public static double front = ChassisController.PARAMS.FrontToCenterInch;
+    public static double back = ChassisController.PARAMS.BackToCenterInch;
+    public static double side = ChassisController.PARAMS.SideToCenterInch;
+    public static final Vector2d Small_End = new Vector2d(endx, endy);
+    public static final Pose2d START_POSE = new Pose2d(72-front, 24-side, 0);
+    public static final Vector2d SHOOT_POSE = new Vector2d(60, 12);
+    public static final Vector2d INTAKE_START1 = new Vector2d(36, 72-side);
+    public static final Vector2d INTAKE_END1 = new Vector2d(72-front, 72-side);
+    public static final Vector2d INTAKE_START2 = new Vector2d(36, 24);
+    public static final Vector2d INTAKE_END2 = new Vector2d(36, INTAKE_END_Y);
+    public static final Vector2d INTAKE_START3 = new Vector2d(12, 24);
+    public static final Vector2d INTAKE_END3 = new Vector2d(12, INTAKE_END_Y);
+    public static double SHOOT_HEADING = -0.4993467217;
+    public static double EAT_HEADING = Math.PI / 2;
+    public static double END_HEADING = -Math.PI / 2;
     public static double collectWait = 1;
 
     @Override
@@ -62,18 +66,18 @@ public class Auto_BlueBig_3_3_3 extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 shootPreloadAction,
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
         ));
 
         trigger.open();
         sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
 
         Action intakeAction1 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
+                .strafeToLinearHeading(INTAKE_START1, 0)
                 .build();
 
         Actions.runBlocking(new SequentialAction(
@@ -102,13 +106,13 @@ public class Auto_BlueBig_3_3_3 extends LinearOpMode {
         ));
         sleep(500);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
         ));
 
         trigger.open();
         sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
 
@@ -142,18 +146,58 @@ public class Auto_BlueBig_3_3_3 extends LinearOpMode {
         ));
         sleep(500);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_low)
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
         ));
 
         trigger.open();
         sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
         Actions.runBlocking(new SequentialAction(
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_low)
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+        ));
+        trigger.close();
+
+        Action intakeAction3 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START3, EAT_HEADING)
+                .build();
+
+        Actions.runBlocking(new SequentialAction(
+                intakeAction3
+        ));
+
+        Action collectAction3 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END3)
+                .waitSeconds(collectWait)
+                .build();
+
+        sweeper.Sweep(Sweeper_PID.EatVel);
+        Actions.runBlocking(new SequentialAction(
+                collectAction3
+        ));
+        sweeper.Sweep(0);
+
+        Action returnToShootAction3 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_START3)
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
+
+        Actions.runBlocking(new SequentialAction(
+                returnToShootAction3,
+                sweeper.SweeperBack()
+        ));
+        sleep(500);
+        Actions.runBlocking(new SequentialAction(
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+        ));
+
+        trigger.open();
+        sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
+        Actions.runBlocking(new SequentialAction(
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
 
         Action endAction = drive.actionBuilder(drive.localizer.getPose())
-                .strafeToLinearHeading(Big_End, END_HEADING)
+                .strafeToLinearHeading(Small_End, END_HEADING)
                 .build();
         Actions.runBlocking(
                 endAction
