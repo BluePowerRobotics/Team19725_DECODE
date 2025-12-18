@@ -26,6 +26,9 @@ public class ChassisController {
         public double maxOmega=Math.PI*1/2; // 最大角速度 (rad/s)
         public double zeroThresholdV =0.05; // 速度零点阈值 (m/s)
         public double zeroThresholdOmega =Math.toRadians(0.5); // 角速度零点阈值 (rad/s)
+        public double FrontToCenterInch=0;
+        public double BackToCenterInch=0;
+        public double SideToCenterInch=0;
     }
     public static Params PARAMS = new Params();
     public RobotPosition robotPosition;
