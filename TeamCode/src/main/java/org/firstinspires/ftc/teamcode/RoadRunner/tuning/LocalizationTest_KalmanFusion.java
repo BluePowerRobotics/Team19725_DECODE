@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.RoadRunner.KalmanFusionLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive_Kalman;
 @TeleOp
-@Disabled
 public class LocalizationTest_KalmanFusion extends LinearOpMode {
     public static double startX = -64.8;
     public static double startY = 17.6;

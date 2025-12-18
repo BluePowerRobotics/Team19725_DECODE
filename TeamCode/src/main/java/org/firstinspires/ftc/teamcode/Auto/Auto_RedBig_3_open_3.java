@@ -32,7 +32,7 @@ public class Auto_RedBig_3_open_3 extends LinearOpMode {
     public static int INTAKE_END_Y = 52;
     public static int OPEN_GATE_Y = 60;
     public static final Vector2d Big_End = new Vector2d(endx, endy);
-    public static final Pose2d START_POSE = new Pose2d(-64.8, 17.6, 0);
+    public static final Pose2d START_POSE = new Pose2d(-64.8, 41.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, 24);
     public static final Vector2d INTAKE_START = new Vector2d(-12, 24);
     public static final Vector2d INTAKE_END = new Vector2d(-12, INTAKE_END_Y);

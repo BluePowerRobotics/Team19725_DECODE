@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Autonomous(name = "Q_four")
+@Autonomous
 @Config
 public class Auto_BlueSmall_3_3_3 extends LinearOpMode {
     public Pose2d FinalPose;
