@@ -47,6 +47,7 @@ public class FusionLocalizer implements Localizer{
         }
         imuAddition  = MathSolver.normalizeAngle(initialPose.heading.log()- imuSensor.getYaw(AngleUnit.RADIANS));
         eimuAddition = MathSolver.normalizeAngle(initialPose.heading.log()-eimuSensor.getYaw(AngleUnit.RADIANS));
+        fusedAngle = initialPose.heading.log();
         this.hardwareMap=hardwareMap;
         this.inPerTick=inPerTick;
         localizer = new PinpointLocalizer(hardwareMap,inPerTick,initialPose);
@@ -70,6 +71,7 @@ public class FusionLocalizer implements Localizer{
             InstanceTelemetry.getTelemetry().addLine(e.getMessage());
             EIMUBelievable=false;
         }
+        fusedAngle = pose.heading.log();
         imuAddition = pose.heading.log();
         eimuAddition = pose.heading.log();
         imusFilter = new AngleWeightedMeanFilter(3);
@@ -136,6 +138,7 @@ public class FusionLocalizer implements Localizer{
     double IMULastValue =0;
     double EIMULastValue =0;
     double PINPOINTLastValue=0;
+    double fusedAngle = 0;
     private double fusionIMU(double IMU, double EIMU, double pinpoint){
         if(!Double.isNaN(IMU)){
 //            if(IMULastValue ==IMU){
@@ -174,7 +177,9 @@ public class FusionLocalizer implements Localizer{
         imusFilter.reset();
         imusFilter.filter(imuAddition+IMU,  !(IMULostTime>=MixMaxTime)?1.0:0.0);
         imusFilter.filter(eimuAddition+EIMU, !(EIMULostTime>=MixMaxTime)?1.0:0.0);
-        double fusedAngle=imusFilter.filter(pinpoint, !(PINPOINTLostTime>=MixMaxTime)?2.0:0.0);
+        if(!Double.isNaN(imusFilter.filter(pinpoint, !(PINPOINTLostTime>=MixMaxTime)?2.0:0.0))){
+            fusedAngle = imusFilter.getAverageAngle();
+        }
         //InstanceTelemetry.getTelemetry().addData(" IMUBelievable",IMUBelievable);
         //InstanceTelemetry.getTelemetry().addData("EIMUBelievable",EIMUBelievable);
         //InstanceTelemetry.getTelemetry().addData("PINPBelievable",PINPOINTBelievable);

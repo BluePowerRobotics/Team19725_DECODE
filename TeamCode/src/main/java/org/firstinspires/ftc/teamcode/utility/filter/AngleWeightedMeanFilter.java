@@ -51,11 +51,12 @@ public class AngleWeightedMeanFilter {
             }
             index = (index + 1) % windowSize;
         }
-
+        if(Point2D.equal(vectorSum,Point2D.ZERO)) return Double.NaN;
         // 计算平均向量的角度
         return vectorSum.getRadian();
     }
     public double getAverageAngle() {
+        if(Point2D.equal(vectorSum,Point2D.ZERO)) return Double.NaN;
         return vectorSum.getRadian();
     }
 
