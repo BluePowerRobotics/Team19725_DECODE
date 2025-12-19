@@ -105,6 +105,7 @@ public class ChassisController {
         actionRunner.clear();
         actionRunner.add(actionBuilder.build());
         HeadingLockRadian = pose2d.heading.log();
+        chassisCalculator.pidRadian.reset();
     }
     public boolean ifTargetPointReached(){
         return !actionRunner.isBusy();
@@ -177,9 +178,9 @@ class ChassisCalculator {
         public double skP = 0.002;//speed k
         public double skI = 0;
         public double skD = 0.00025;
-        public double rkP = 0.7;//radian k
-        public double rkI = 1.2;
-        public double rkD = 0.1;
+        public double rkP = 1;//radian k
+        public double rkI = 2;
+        public double rkD = 0.2;
         public double hkP = 0.7;//speedHeading k
         public double hkI = 0;
         public double hkD = 0.1;
