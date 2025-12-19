@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 
 //单个弹射飞轮的PID控制器
 @Config
 public class Sweeper_PID {
-    public static double OutputPower = -0.7;
+    private boolean ifReverse;
+    public static int OutputSpeed = -400;
     public static int EatVel = 1960;
     public static int GiveTheArtifactVel = 1000;
     public DcMotorEx SweeperMotor;
@@ -35,12 +35,13 @@ public class Sweeper_PID {
     public static double backRequireCycle=0.4;
     private PIDController pidController;
 
-    public Sweeper_PID(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse) {
+    public Sweeper_PID(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverseRC) {
+        this.ifReverse = ifReverseRC;
         SweeperMotor = hardwareMap.get(DcMotorEx.class, motorName);
         SweeperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         SweeperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        if (ifReverse)
+        if (this.ifReverse)
             SweeperMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         else
             SweeperMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -72,8 +73,12 @@ public class Sweeper_PID {
         if (dt <= 0) dt = 1; // 防止除零
         Power = pidController.calculate(targetSpeed, current_speed, dt);
         //避免出现负功率，导致震荡或电机损伤
+        //todo 思考这里是否需要调高下限以减小震荡
         if (targetSpeed > 0) {
             Power = Range.clip(Power, 0.001, 1);
+        }
+        else if(targetSpeed < 0){
+            Power = Range.clip(Power, -1, -0.001);
         }
         SweeperMotor.setPower(Power);
         previous_time = current_time;
@@ -88,7 +93,7 @@ public class Sweeper_PID {
                 sweeperBackStartTick = SweeperMotor.getCurrentPosition();
                 hasSetStartTicks = true;
             }
-            SweeperMotor.setPower(Sweeper_PID.OutputPower);
+            Sweep(OutputSpeed);
             if(SweeperMotor.getCurrentPosition() <= sweeperBackStartTick - Sweeper.tickPerCycle * backRequireCycle){
                 SweeperMotor.setPower(0);
                 return false;
@@ -101,7 +106,7 @@ public class Sweeper_PID {
     }
 
     public void output(){
-        SweeperMotor.setPower(OutputPower);
+        Sweep(OutputSpeed);
     }
 
     public double getCurrent_encoder(){
