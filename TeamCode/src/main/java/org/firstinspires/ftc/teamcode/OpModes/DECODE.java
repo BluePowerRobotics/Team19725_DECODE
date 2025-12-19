@@ -81,16 +81,19 @@ public class DECODE extends LinearOpMode {
     AprilTagDetector aprilTagDetector;
     public static int tmpSpeed = 700;
     //
-    public  int targetSpeed = ShooterAction.speed35_55;
+    public double targetSpeed = ShooterAction.speed35_55;
     public Pose2d startPose = new Pose2d(0,0,0);
     public static double AdditionK = 0.01;
     //targetSpeed乘上Kspeed才是真实速度，修正发射速度
-    int Kspeed = 1;
+    double Kspeed = 1;
     boolean directControl=false;
     //修正角度偏差（从读取的底层修改）
     //todo 让degreeOffset生效 @gyw
     public double degreeOffset = 0;
     public static double AdditionDegree = 1.0;
+    public static double startShootingHeading = Math.PI;
+    public static double toleranceHeading = 0.034907;
+    public boolean ReadyToShoot = false;
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
             String[] data = reader.readLine().split(",");
@@ -142,8 +145,9 @@ public class DECODE extends LinearOpMode {
         if(gamepad2.dpadUpWasPressed()){
             Kspeed += AdditionK;
         }
-        if((gamepad1.yWasPressed() || gamepad2.yWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
+        if(gamepad1.yWasPressed() && robotStatus != ROBOT_STATUS.CLIMBING){
             if(robotStatus == ROBOT_STATUS.SHOOTING){
+                ReadyToShoot = false;
                 robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
             }
             else{
@@ -152,10 +156,12 @@ public class DECODE extends LinearOpMode {
         }
 
         if((gamepad1.aWasPressed() || gamepad2.aWasPressed())  && robotStatus != ROBOT_STATUS.CLIMBING){
+            ReadyToShoot = false;
             robotStatus = ROBOT_STATUS.WAITING;
         }
 
         if((gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
+            ReadyToShoot = false;
             if(robotStatus == ROBOT_STATUS.EATING){
                 robotStatus = ROBOT_STATUS.WAITING;
             }
@@ -165,6 +171,7 @@ public class DECODE extends LinearOpMode {
 
         }
         else if((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
+            ReadyToShoot = false;
             if(robotStatus == ROBOT_STATUS.OUTPUTTING){
                 robotStatus = ROBOT_STATUS.WAITING;
             }
@@ -174,11 +181,36 @@ public class DECODE extends LinearOpMode {
         }
 
         if(gamepad2.backWasPressed()){
+            ReadyToShoot = false;
             if(robotStatus != ROBOT_STATUS.CLIMBING){
                 robotStatus = ROBOT_STATUS.CLIMBING;
             }
             else{
                 robotStatus = ROBOT_STATUS.WAITING;
+            }
+        }
+
+        if(gamepad2.yWasPressed()){
+            ReadyToShoot = !ReadyToShoot;
+            if(ReadyToShoot){
+                double heading = 0;
+                if (teamColor == TEAM_COLOR.RED) {
+                    heading = SolveShootPoint.solveREDShootHeading(pose);
+                    targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
+                }
+                if (teamColor == TEAM_COLOR.BLUE) {
+                    heading = SolveShootPoint.solveBLUEShootHeading(pose);
+                    targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
+                }
+                chassis.setHeadingLockRadian(heading);
+            }
+        }
+
+        if(ReadyToShoot){
+            double currentHeading = chassis.robotPosition.getData().headingRadian;
+            double targetHeading = chassis.getHeadingLockRadian();
+            if(currentHeading - targetHeading < startShootingHeading){
+                robotStatus = ROBOT_STATUS.SHOOTING;
             }
         }
     }
@@ -195,10 +227,7 @@ public class DECODE extends LinearOpMode {
                 ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 break;
             case WAITING:
-                boolean AprilTagStatus = false;
-                if(!Double.isNaN(aprilTagDetector.getPose().pose.position.x)){
-                    AprilTagStatus = true;
-                }
+                boolean AprilTagStatus = !Double.isNaN(aprilTagDetector.getPose().pose.position.x);
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
@@ -254,7 +283,6 @@ public class DECODE extends LinearOpMode {
                 }
                 break;
         }
-        double realTargetSpeed = targetSpeed*(Kspeed + AdditionK);
 //        if(!actionRunner.isBusy()){
 //            if(chassis.getUseNoHeadMode()){
 //                //useNoHeadMode
@@ -298,9 +326,10 @@ public class DECODE extends LinearOpMode {
     long lastSetTimeMS=0;
     boolean showSpeedColor=false;
     void Telemetry(){
+        telemetry.addData("READYTOSHOOT", ReadyToShoot);
         telemetry.addData("DIS", disSensor.getDis());
-        telemetry.addData("kSpeed", Kspeed);
-        telemetry.addData("RealTargetSpeed", targetSpeed * (Kspeed + AdditionK));
+        telemetry.addData("Kspeed", Kspeed);
+        telemetry.addData("RealTargetSpeed", targetSpeed * Kspeed);
         telemetry.addData("DegreeOffset", degreeOffset);
         telemetry.addData("NoHeadMode",chassis.getUseNoHeadMode()?"PlayerBased":"RoboticBased");
         telemetry.addData("isBusy", actionRunner.isBusy());
@@ -339,13 +368,15 @@ public class DECODE extends LinearOpMode {
     void shoot(){
         switch (shooterStatus){
             case SHOOTING:
-                boolean ifHit =   false;//todo = chassisController.wheelSpeeds.length;
+                boolean ifHit = false;//todo = chassisController.wheelSpeeds.length;
                 if(ifHit){
                     robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
                 }
                 else{
-                    boolean hasReachedTargetSpeed = shooter.setShootSpeed(targetSpeed * Kspeed);
-                    if(hasReachedTargetSpeed){
+                    boolean hasReachedTargetSpeed = shooter.setShootSpeed(Math.toIntExact(Math.round(targetSpeed * Kspeed)));
+                    double currentHeading = chassis.robotPosition.getData().headingRadian;
+                    double targetHeading = chassis.getHeadingLockRadian();
+                    if(hasReachedTargetSpeed && currentHeading - targetHeading < toleranceHeading){
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }
@@ -360,9 +391,10 @@ public class DECODE extends LinearOpMode {
     public static double time=1.2;
     public static double time_2=0.3;
     public static int IntervalMS=1;
+    Pose2d pose = new Pose2d(0,0,0);
     void chassis() {
         chassis.robotPosition.setMinUpdateIntervalMs(IntervalMS);
-        Pose2d pose = chassis.robotPosition.getData().getPose2d();
+        pose = chassis.robotPosition.getData().getPose2d();
 
         double drive = -time * gamepad1.left_stick_y - time_2 * gamepad2.left_stick_y; // 前后
         double strafe = time * gamepad1.left_stick_x + time_2 * gamepad2.left_stick_x; // 左右
