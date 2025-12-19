@@ -32,7 +32,7 @@ public class Shooter {
     public static double degreePertick = 0;
     public static double k_p = 0.01;
     public static double k_i = 0.4;
-    public static double k_d = 0.012;
+    public static double k_d = 0.08;
     public static double max_i = 1;
     private PIDController pidController;
 
