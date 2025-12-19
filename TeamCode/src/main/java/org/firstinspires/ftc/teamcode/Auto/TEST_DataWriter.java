@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.Data;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
-import org.firstinspires.ftc.teamcode.utility.SolveShootPoint;
 
 @Config
 @TeleOp(name = "TEST_DataWriter", group = "TEST")
