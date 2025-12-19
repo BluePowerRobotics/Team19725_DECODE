@@ -134,7 +134,9 @@ public class FusionLocalizer implements Localizer{
     public static int LostMaxTime=200;
     public static int PinPointLostMaxTime=200;
     public static int MixMaxTime=20;
-
+    public static double IMUWeight = 1;
+    public static double EIMUWeight = 3;
+    public static double PINPWeight = 2;
     double IMULastValue =0;
     double EIMULastValue =0;
     double PINPOINTLastValue=0;
@@ -175,20 +177,13 @@ public class FusionLocalizer implements Localizer{
         EIMUBelievable = !(EIMULostTime>=LostMaxTime);
         PINPOINTBelievable = !(PINPOINTLostTime>=PinPointLostMaxTime);
         imusFilter.reset();
-        imusFilter.filter(imuAddition+IMU,  !(IMULostTime>=MixMaxTime)?1.0:0.0);
-        imusFilter.filter(eimuAddition+EIMU, !(EIMULostTime>=MixMaxTime)?1.0:0.0);
-        if(!Double.isNaN(imusFilter.filter(pinpoint, !(PINPOINTLostTime>=MixMaxTime)?2.0:0.0))){
+        imusFilter.filter(imuAddition+IMU,  !(IMULostTime>=MixMaxTime)?IMUWeight:0.0);
+        imusFilter.filter(eimuAddition+EIMU, !(EIMULostTime>=MixMaxTime)?EIMUWeight:0.0);
+        if(!Double.isNaN(imusFilter.filter(pinpoint, !(PINPOINTLostTime>=MixMaxTime)?PINPWeight:0.0))){
             fusedAngle = imusFilter.getAverageAngle();
         }
-        //InstanceTelemetry.getTelemetry().addData(" IMUBelievable",IMUBelievable);
-        //InstanceTelemetry.getTelemetry().addData("EIMUBelievable",EIMUBelievable);
-        //InstanceTelemetry.getTelemetry().addData("PINPBelievable",PINPOINTBelievable);
         InstanceTelemetry.getTelemetry().addData("IMU ",MathSolver.normalizeAngle(IMU+imuAddition));
-        //InstanceTelemetry.getTelemetry().addData("IMU_origin",MathSolver.normalizeAngle(IMU));
-        InstanceTelemetry.getTelemetry().addData("IMU_addition",MathSolver.normalizeAngle(imuAddition));
         InstanceTelemetry.getTelemetry().addData("EIMU",MathSolver.normalizeAngle(EIMU+eimuAddition));
-        //InstanceTelemetry.getTelemetry().addData("EIMU_origin",MathSolver.normalizeAngle(EIMU));
-        InstanceTelemetry.getTelemetry().addData("EIMU_addition",MathSolver.normalizeAngle(eimuAddition));
         InstanceTelemetry.getTelemetry().addData("PINP",MathSolver.normalizeAngle(pinpoint));
         return fusedAngle;
     }
