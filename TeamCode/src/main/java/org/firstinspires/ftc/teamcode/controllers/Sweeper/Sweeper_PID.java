@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 @Config
 public class Sweeper_PID {
     private boolean ifReverse;
+    public static double kf = 0.3;
+    public static double minuskf = -0.3;
     public static int OutputSpeed = -400;
     public static int EatVel = 1960;
     public static int GiveTheArtifactVel = 1000;
@@ -73,12 +75,11 @@ public class Sweeper_PID {
         if (dt <= 0) dt = 1; // 防止除零
         Power = pidController.calculate(targetSpeed, current_speed, dt);
         //避免出现负功率，导致震荡或电机损伤
-        //todo 思考这里是否需要调高下限以减小震荡
         if (targetSpeed > 0) {
-            Power = Range.clip(Power, 0.001, 1);
+            Power = Range.clip(Power, kf, 1);
         }
-        else if(targetSpeed < 0){
-            Power = Range.clip(Power, -1, -0.001);
+        else {
+            Power = Range.clip(Power, -1, minuskf);
         }
         SweeperMotor.setPower(Power);
         previous_time = current_time;
@@ -108,6 +109,20 @@ public class Sweeper_PID {
     public void output(){
         Sweep(OutputSpeed);
     }
+
+
+
+    public class SweeperAction implements Action {
+        @Override
+        public boolean run(TelemetryPacket packet) {
+            Sweep(EatVel);
+            return true;
+        }
+    }
+    public Action SweeperAction() {
+        return new SweeperAction();
+    }
+
 
     public double getCurrent_encoder(){
         return current_encoder;
