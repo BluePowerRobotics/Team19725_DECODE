@@ -380,6 +380,10 @@ public class DECODE extends LinearOpMode {
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }
+                    else{
+                        //TODO 留下距离传感器判断是否有球的接口
+                        sweeperStatus = SWEEPER_STATUS.STOP;
+                    }
                 }
                 break;
 
