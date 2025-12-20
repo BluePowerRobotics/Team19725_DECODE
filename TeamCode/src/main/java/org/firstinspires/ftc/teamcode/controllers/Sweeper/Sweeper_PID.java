@@ -30,6 +30,12 @@ public class Sweeper_PID {
     double current_time;
     double previous_time;
     double current_encoder = 0;
+    public static double minus_k_p = 0.1;
+    public static double minus_k_i = 1.0;
+    public static double minus_k_d = 0.000;
+    public static double k_p_f = 0.1;
+    public static double k_d_f = 0;
+    public static double k_i_f = 1;
     public static double k_p = 0.1;
     public static double k_i = 1.0;
     public static double k_d = 0.000;
@@ -59,7 +65,15 @@ public class Sweeper_PID {
      */
     //todo:fix low velocity issue
     public boolean Sweep(int targetSpeed) {
-        pidController.setPID(k_p, k_i, k_d);
+        if(targetSpeed > GiveTheArtifactVel){
+            pidController.setPID(k_p, k_i, k_d);
+        }
+        else if(targetSpeed > 0){
+            pidController.setPID(k_p_f, k_i_f, k_d_f);
+        }
+        else{
+            pidController.setPID(minus_k_p, minus_k_i, minus_k_d);
+        }
         //如果是double，不可以 == 0，需要写abs < 0.0001
         if (targetSpeed == 0) {
             SweeperMotor.setPower(0);
@@ -110,8 +124,6 @@ public class Sweeper_PID {
         Sweep(OutputSpeed);
     }
 
-
-
     public class SweeperAction implements Action {
         @Override
         public boolean run(TelemetryPacket packet) {
@@ -119,6 +131,7 @@ public class Sweeper_PID {
             return true;
         }
     }
+
     public Action SweeperAction() {
         return new SweeperAction();
     }
