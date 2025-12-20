@@ -145,7 +145,7 @@ public class DECODE extends LinearOpMode {
         if(gamepad2.dpadUpWasPressed()){
             Kspeed += AdditionK;
         }
-        if(gamepad1.yWasPressed() && robotStatus != ROBOT_STATUS.CLIMBING){
+        if(gamepad2.yWasPressed() && robotStatus != ROBOT_STATUS.CLIMBING){
             if(robotStatus == ROBOT_STATUS.SHOOTING){
                 ReadyToShoot = false;
                 robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
@@ -180,7 +180,7 @@ public class DECODE extends LinearOpMode {
             }
         }
 
-        if(gamepad2.backWasPressed()){
+        if(gamepad1.bWasPressed()){
             ReadyToShoot = false;
             if(robotStatus != ROBOT_STATUS.CLIMBING){
                 robotStatus = ROBOT_STATUS.CLIMBING;
@@ -190,7 +190,7 @@ public class DECODE extends LinearOpMode {
             }
         }
 
-        if(gamepad2.yWasPressed()){
+        if(gamepad1.yWasPressed()){
             ReadyToShoot = !ReadyToShoot;
             if(ReadyToShoot){
                 double heading = 0;
@@ -427,36 +427,7 @@ public class DECODE extends LinearOpMode {
             }
 
             //自瞄
-            if (gamepad1.dpadLeftWasPressed()) {
-                if (teamColor == TEAM_COLOR.RED) {
-                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r1));
-                    targetSpeed = ShooterAction.speed2_2;
-                }
-                if (teamColor == TEAM_COLOR.BLUE) {
-                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r1));
-                    targetSpeed = ShooterAction.speed2_2;
-                }
-            }
-            if (gamepad1.dpadUpWasPressed()) {
-                if (teamColor == TEAM_COLOR.RED) {
-                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r2));
-                    targetSpeed = ShooterAction.speed25_25;
-                }
-                if (teamColor == TEAM_COLOR.BLUE) {
-                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r2));
-                    targetSpeed = ShooterAction.speed25_25;
-                }
-            }
-            if (gamepad1.dpadRightWasPressed()) {
-                if (teamColor == TEAM_COLOR.RED) {
-                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r3));
-                    targetSpeed = ShooterAction.speed3_3;
-                }
-                if (teamColor == TEAM_COLOR.BLUE) {
-                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r3));
-                    targetSpeed = ShooterAction.speed3_3;
-                }
-            }
+
             if (gamepad1.dpadDownWasPressed()) {
                 if (teamColor == TEAM_COLOR.RED) {
                     chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r4));
@@ -476,9 +447,6 @@ public class DECODE extends LinearOpMode {
 
         chassis.gamepadInput(strafe, drive, rotate);
         if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();
-        //if(gamepad1.yWasReleased()) {
-        //    chassis.setTargetPoint(new Pose2d(new Vector2d(0,0), Rotation2d.fromDouble(0)));
-        //}
         telemetry.addData("y-power",drive);
         telemetry.addData("x-power",strafe);
         telemetry.addData("r-power",rotate);
@@ -492,11 +460,6 @@ public class DECODE extends LinearOpMode {
     }
 
     void sweeper(){
-
-
-//        if(gamepad2.yWasPressed()){
-//            sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
-//        }
         switch (sweeperStatus){
             case EAT:
                 sweeper.Sweep(Sweeper_PID.EatVel);
