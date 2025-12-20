@@ -31,6 +31,7 @@ public class Auto_BlueBig_3_3 extends LinearOpMode {
     public static double endy = -40;
     public static int INTAKE_END_Y = -52;
     public static final Vector2d Big_End = new Vector2d(endx, endy);
+    //todo -41.6是否准确？
     public static final Pose2d START_POSE = new Pose2d(-64.8, -41.6, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, -24);
     public static final Vector2d INTAKE_START = new Vector2d(-12, -24);
