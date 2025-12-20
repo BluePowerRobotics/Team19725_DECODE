@@ -368,7 +368,7 @@ public class DECODE extends LinearOpMode {
     void shoot(){
         switch (shooterStatus){
             case SHOOTING:
-                boolean ifHit = false;//todo = chassisController.wheelSpeeds.length;
+                boolean ifHit = false;
                 if(ifHit){
                     robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
                 }
