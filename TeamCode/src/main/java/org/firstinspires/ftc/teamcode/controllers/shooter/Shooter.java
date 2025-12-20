@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 //单个弹射飞轮的PID控制器
 @Config
 public class Shooter {
+    public static int SpeedTolerance = 40;
+    public static double MinPower = 0.3;
     public static double BlockPower = -0.3;
     public DcMotorEx shooterMotor;
     TelemetryPacket packet = new TelemetryPacket();
@@ -74,11 +76,11 @@ public class Shooter {
         Power = pidController.calculate(targetSpeed, current_speed, dt);
         //避免射球时出现负功率，导致震荡或电机损伤
         if(targetSpeed > 0){
-            Power = Range.clip(Power, 0.001, 1);
+            Power = Range.clip(Power, MinPower, 1);
         }
         shooterMotor.setPower(Power);
         previous_time = current_time;
-        if(Math.abs(targetSpeed - current_speed) < 50){
+        if(Math.abs(targetSpeed - current_speed) < SpeedTolerance){
             return true;
         } else {
             return false;
