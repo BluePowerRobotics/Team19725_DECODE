@@ -4,7 +4,9 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -32,7 +34,6 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
     public static double endy = 20;
     public static int INTAKE_END_Y = 62;
     public static double front = ChassisController.PARAMS.FrontToCenterInch;
-    public static double back = ChassisController.PARAMS.BackToCenterInch;
     public static double side = ChassisController.PARAMS.SideToCenterInch;
     public static final Vector2d Small_End = new Vector2d(endx, endy);
     public static final Pose2d START_POSE = new Pose2d(72-front, 24-side, 0);
@@ -68,27 +69,27 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
         ));
 
         trigger.open();
-        sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
+        sweeper.Sweep(0);
 
         Action intakeAction1 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(INTAKE_START1, 0)
                 .build();
-
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(
                 intakeAction1
-        ));
+        );
 
         Action collectAction1 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_END1)
                 .waitSeconds(collectWait)
                 .build();
 
-        sweeper.Sweep(Sweeper_PID.EatVel);
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.EatVel),
                 collectAction1
         ));
         sweeper.Sweep(0);
@@ -98,37 +99,37 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(new ParallelAction(
                 returnToShootAction1,
                 sweeper.SweeperBack()
         ));
-        sleep(500);
+        //sleep(500);
         Actions.runBlocking(new SequentialAction(
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
         ));
 
         trigger.open();
-        sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
+        sweeper.Sweep(0);
 
         Action intakeAction2 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(INTAKE_START2, EAT_HEADING)
                 .build();
-
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(
                 intakeAction2
-        ));
+        );
 
         Action collectAction2 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_END2)
                 .waitSeconds(collectWait)
                 .build();
 
-        sweeper.Sweep(Sweeper_PID.EatVel);
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.EatVel),
                 collectAction2
         ));
         sweeper.Sweep(0);
@@ -138,21 +139,22 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(new ParallelAction(
                 returnToShootAction2,
                 sweeper.SweeperBack()
         ));
-        sleep(500);
+        //sleep(500);
         Actions.runBlocking(new SequentialAction(
                 shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
         ));
 
         trigger.open();
-        sweeper.Sweep(Sweeper_PID.GiveTheArtifactVel);
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
                 shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
         ));
         trigger.close();
+        sweeper.Sweep(0);
 
         Action endAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(Small_End, END_HEADING)

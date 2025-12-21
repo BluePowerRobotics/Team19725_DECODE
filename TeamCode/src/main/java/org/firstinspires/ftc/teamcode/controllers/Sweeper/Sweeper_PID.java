@@ -125,6 +125,11 @@ public class Sweeper_PID {
     }
 
     public class SweeperAction implements Action {
+        int targetSpeed;
+        public SweeperAction(int targetSpeed) {
+            this.targetSpeed = targetSpeed;
+        }
+
         @Override
         public boolean run(TelemetryPacket packet) {
             Sweep(EatVel);
@@ -132,8 +137,8 @@ public class Sweeper_PID {
         }
     }
 
-    public Action SweeperAction() {
-        return new SweeperAction();
+    public Action SweeperAction(int targetSpeed) {
+        return new SweeperAction(targetSpeed);
     }
 
 

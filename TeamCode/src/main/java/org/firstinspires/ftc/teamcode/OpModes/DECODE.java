@@ -91,7 +91,7 @@ public class DECODE extends LinearOpMode {
     //todo 让degreeOffset生效 @gyw
     public double degreeOffset = 0;
     public static double AdditionDegree = 1.0;
-    public static double startShootingHeading = Math.PI;
+    public static double startShootingHeading = Math.PI / 2;
     public static double toleranceHeading = 0.034907;
     public boolean ReadyToShoot = false;
     void Init(){
@@ -209,7 +209,7 @@ public class DECODE extends LinearOpMode {
         if(ReadyToShoot){
             double currentHeading = chassis.robotPosition.getData().headingRadian;
             double targetHeading = chassis.getHeadingLockRadian();
-            if(currentHeading - targetHeading < startShootingHeading){
+            if(Math.abs(currentHeading - targetHeading) < startShootingHeading){
                 robotStatus = ROBOT_STATUS.SHOOTING;
             }
         }
@@ -376,7 +376,7 @@ public class DECODE extends LinearOpMode {
                     boolean hasReachedTargetSpeed = shooter.setShootSpeed(Math.toIntExact(Math.round(targetSpeed * Kspeed)));
                     double currentHeading = chassis.robotPosition.getData().headingRadian;
                     double targetHeading = chassis.getHeadingLockRadian();
-                    if(hasReachedTargetSpeed && currentHeading - targetHeading < toleranceHeading){
+                    if(hasReachedTargetSpeed && Math.abs(currentHeading - targetHeading) < toleranceHeading){
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }
