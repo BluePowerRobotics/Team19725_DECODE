@@ -36,7 +36,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
     public static double front = ChassisController.PARAMS.FrontToCenterInch;
     public static double side = ChassisController.PARAMS.SideToCenterInch;
     public static final Vector2d Big_End = new Vector2d(endx, endy);
-    public static final Pose2d START_POSE = new Pose2d(front-71.6, 48-side, 0);
+    public static final Pose2d START_POSE = new Pose2d(front-71.6, 46.5-side, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(-24, 24);
     public static final Vector2d INTAKE_START = new Vector2d(-12, 24);
     public static final Vector2d INTAKE_END = new Vector2d(-12, INTAKE_END_Y);
@@ -49,7 +49,7 @@ public class Auto_RedBig_3_3 extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooterAction = new ShooterAction(hardwareMap, telemetry);
-        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", true);
+        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", false);
         trigger = new Trigger(hardwareMap);
         drive = new MecanumDrive(hardwareMap, START_POSE);
 

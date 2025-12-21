@@ -38,10 +38,10 @@ public class Auto_RedSmall_3_3_3_3 extends LinearOpMode {
     public static final Vector2d Small_End = new Vector2d(endx, endy);
     public static final Pose2d START_POSE = new Pose2d(72-front, 24-side, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(60, 12);
-    public static final Vector2d INTAKE_START1 = new Vector2d(36, 72-side);
-    public static final Vector2d INTAKE_END1 = new Vector2d(72-front, 72-side);
-    public static final Vector2d INTAKE_START2 = new Vector2d(36, 24);
-    public static final Vector2d INTAKE_END2 = new Vector2d(36, INTAKE_END_Y);
+    public static final Vector2d INTAKE_START1 = new Vector2d(36, 24);
+    public static final Vector2d INTAKE_END1 = new Vector2d(36, INTAKE_END_Y);
+    public static final Vector2d INTAKE_START2 = new Vector2d(36, 72-side);
+    public static final Vector2d INTAKE_END2 = new Vector2d(72-front, 72-side);
     public static final Vector2d INTAKE_START3 = new Vector2d(12, 24);
     public static final Vector2d INTAKE_END3 = new Vector2d(12, INTAKE_END_Y);
     public static double SHOOT_HEADING = -0.4993467217;
@@ -53,7 +53,7 @@ public class Auto_RedSmall_3_3_3_3 extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooterAction = new ShooterAction(hardwareMap, telemetry);
-        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", true);
+        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", false);
         trigger = new Trigger(hardwareMap);
         drive = new MecanumDrive(hardwareMap, START_POSE);
 
@@ -78,125 +78,125 @@ public class Auto_RedSmall_3_3_3_3 extends LinearOpMode {
         trigger.close();
         sweeper.Sweep(0);
 
-        Action intakeAction1 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeToLinearHeading(INTAKE_START1, 0)
-                .build();
-        Actions.runBlocking(
-                intakeAction1
-        );
-
-        Action collectAction1 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_END1)
-                .waitSeconds(collectWait)
-                .build();
-
-        Actions.runBlocking(new RaceAction(
-                sweeper.SweeperAction(Sweeper_PID.EatVel),
-                collectAction1
-        ));
-        sweeper.Sweep(0);
-
-        Action returnToShootAction1 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_START1)
-                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-                .build();
-
-        Actions.runBlocking(new ParallelAction(
-                returnToShootAction1,
-                sweeper.SweeperBack()
-        ));
-        //sleep(500);
-        Actions.runBlocking(new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
-        ));
-
-        trigger.open();
-        Actions.runBlocking(new RaceAction(
-                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
-        ));
-        trigger.close();
-        sweeper.Sweep(0);
-
-        Action intakeAction2 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeToLinearHeading(INTAKE_START2, EAT_HEADING)
-                .build();
-        Actions.runBlocking(
-                intakeAction2
-        );
-
-        Action collectAction2 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_END2)
-                .waitSeconds(collectWait)
-                .build();
-
-        Actions.runBlocking(new RaceAction(
-                sweeper.SweeperAction(Sweeper_PID.EatVel),
-                collectAction2
-        ));
-        sweeper.Sweep(0);
-
-        Action returnToShootAction2 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_START2)
-                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-                .build();
-
-        Actions.runBlocking(new ParallelAction(
-                returnToShootAction2,
-                sweeper.SweeperBack()
-        ));
-        //sleep(500);
-        Actions.runBlocking(new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
-        ));
-
-        trigger.open();
-        Actions.runBlocking(new RaceAction(
-                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
-        ));
-        trigger.close();
-        sweeper.Sweep(0);
-
-        Action intakeAction3 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeToLinearHeading(INTAKE_START3, EAT_HEADING)
-                .build();
-        Actions.runBlocking(
-                intakeAction3
-        );
-
-        Action collectAction3 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_END3)
-                .waitSeconds(collectWait)
-                .build();
-
-        Actions.runBlocking(new RaceAction(
-                sweeper.SweeperAction(Sweeper_PID.EatVel),
-                collectAction3
-        ));
-        sweeper.Sweep(0);
-
-        Action returnToShootAction3 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_START3)
-                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-                .build();
-
-        Actions.runBlocking(new ParallelAction(
-                returnToShootAction3,
-                sweeper.SweeperBack()
-        ));
-        //sleep(500);
-        Actions.runBlocking(new SequentialAction(
-                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
-        ));
-
-        trigger.open();
-        Actions.runBlocking(new RaceAction(
-                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
-                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
-        ));
-        trigger.close();
-        sweeper.Sweep(0);
+//        Action intakeAction1 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
+//                .build();
+//        Actions.runBlocking(
+//                intakeAction1
+//        );
+//
+//        Action collectAction1 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeTo(INTAKE_END1)
+//                .waitSeconds(collectWait)
+//                .build();
+//
+//        Actions.runBlocking(new RaceAction(
+//                sweeper.SweeperAction(Sweeper_PID.EatVel),
+//                collectAction1
+//        ));
+//        sweeper.Sweep(0);
+//
+//        Action returnToShootAction1 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeTo(INTAKE_START1)
+//                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+//                .build();
+//
+//        Actions.runBlocking(new ParallelAction(
+//                returnToShootAction1,
+//                sweeper.SweeperBack()
+//        ));
+//        //sleep(500);
+//        Actions.runBlocking(new SequentialAction(
+//                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+//        ));
+//
+//        trigger.open();
+//        Actions.runBlocking(new RaceAction(
+//                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
+//                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+//        ));
+//        trigger.close();
+//        sweeper.Sweep(0);
+//
+//        Action intakeAction2 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeToLinearHeading(INTAKE_START2, 0)
+//                .build();
+//        Actions.runBlocking(
+//                intakeAction2
+//        );
+//
+//        Action collectAction2 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeTo(INTAKE_END2)
+//                .waitSeconds(collectWait)
+//                .build();
+//
+//        Actions.runBlocking(new RaceAction(
+//                sweeper.SweeperAction(Sweeper_PID.EatVel),
+//                collectAction2
+//        ));
+//        sweeper.Sweep(0);
+//
+//        Action returnToShootAction2 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeTo(INTAKE_START2)
+//                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+//                .build();
+//
+//        Actions.runBlocking(new ParallelAction(
+//                returnToShootAction2,
+//                sweeper.SweeperBack()
+//        ));
+//        //sleep(500);
+//        Actions.runBlocking(new SequentialAction(
+//                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+//        ));
+//
+//        trigger.open();
+//        Actions.runBlocking(new RaceAction(
+//                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
+//                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+//        ));
+//        trigger.close();
+//        sweeper.Sweep(0);
+//
+//        Action intakeAction3 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeToLinearHeading(INTAKE_START3, EAT_HEADING)
+//                .build();
+//        Actions.runBlocking(
+//                intakeAction3
+//        );
+//
+//        Action collectAction3 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeTo(INTAKE_END3)
+//                .waitSeconds(collectWait)
+//                .build();
+//
+//        Actions.runBlocking(new RaceAction(
+//                sweeper.SweeperAction(Sweeper_PID.EatVel),
+//                collectAction3
+//        ));
+//        sweeper.Sweep(0);
+//
+//        Action returnToShootAction3 = drive.actionBuilder(drive.localizer.getPose())
+//                .strafeTo(INTAKE_START3)
+//                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+//                .build();
+//
+//        Actions.runBlocking(new ParallelAction(
+//                returnToShootAction3,
+//                sweeper.SweeperBack()
+//        ));
+//        //sleep(500);
+//        Actions.runBlocking(new SequentialAction(
+//                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+//        ));
+//
+//        trigger.open();
+//        Actions.runBlocking(new RaceAction(
+//                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
+//                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+//        ));
+//        trigger.close();
+//        sweeper.Sweep(0);
 
         Action endAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(Small_End, END_HEADING)

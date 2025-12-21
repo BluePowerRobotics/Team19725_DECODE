@@ -32,18 +32,22 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
     Trigger trigger;
     public static double endx = 24;
     public static double endy = 20;
+    public static int INTAKE_START_X = 56;
     public static int INTAKE_END_Y = 62;
     public static double front = ChassisController.PARAMS.FrontToCenterInch;
     public static double side = ChassisController.PARAMS.SideToCenterInch;
     public static final Vector2d Small_End = new Vector2d(endx, endy);
     public static final Pose2d START_POSE = new Pose2d(72-front, 24-side, 0);
     public static final Vector2d SHOOT_POSE = new Vector2d(60, 12);
-    public static final Vector2d INTAKE_START1 = new Vector2d(36, 72-side);
-    public static final Vector2d INTAKE_END1 = new Vector2d(72-front, 72-side);
-    public static final Vector2d INTAKE_START2 = new Vector2d(36, 24);
-    public static final Vector2d INTAKE_END2 = new Vector2d(36, INTAKE_END_Y);
+    public static final Vector2d INTAKE_START1 = new Vector2d(36, 24);
+    public static final Vector2d INTAKE_END1 = new Vector2d(36, INTAKE_END_Y);
+    public static final Vector2d INTAKE_START2_1 = new Vector2d(48, 48);
+    public static final Vector2d INTAKE_END2_1 = new Vector2d(52.7, 60);
+    public static final Vector2d INTAKE_START2_2 = new Vector2d(INTAKE_START_X, 48);
+    public static final Vector2d INTAKE_END2_2 = new Vector2d(INTAKE_START_X + 4.7, 60);
     public static double SHOOT_HEADING = -0.4993467217;
-    public static double EAT_HEADING = Math.PI / 2;
+    public static double EAT_HEADING1 = Math.PI / 2;
+    public static double EAT_HEADING2 = 1.197494436;
     public static double END_HEADING = -Math.PI / 2;
     public static double collectWait = 1;
 
@@ -51,7 +55,7 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         shooterAction = new ShooterAction(hardwareMap, telemetry);
-        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", true);
+        sweeper = new Sweeper_PID(hardwareMap, telemetry, "sweeperMotor", false);
         trigger = new Trigger(hardwareMap);
         drive = new MecanumDrive(hardwareMap, START_POSE);
 
@@ -77,7 +81,7 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
         sweeper.Sweep(0);
 
         Action intakeAction1 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeToLinearHeading(INTAKE_START1, 0)
+                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING1)
                 .build();
         Actions.runBlocking(
                 intakeAction1
@@ -95,7 +99,7 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
         sweeper.Sweep(0);
 
         Action returnToShootAction1 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_START1)
+                //.strafeTo(INTAKE_START1)
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
@@ -116,26 +120,42 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
         trigger.close();
         sweeper.Sweep(0);
 
-        Action intakeAction2 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeToLinearHeading(INTAKE_START2, EAT_HEADING)
+        Action intakeAction2_1 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START2_1, EAT_HEADING2)
                 .build();
         Actions.runBlocking(
-                intakeAction2
+                intakeAction2_1
         );
 
-        Action collectAction2 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_END2)
+        Action collectAction2_1 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END2_1)
                 .waitSeconds(collectWait)
                 .build();
 
         Actions.runBlocking(new RaceAction(
                 sweeper.SweeperAction(Sweeper_PID.EatVel),
-                collectAction2
+                collectAction2_1
+        ));
+
+        Action intakeAction2_2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START2_2, EAT_HEADING2)
+                .build();
+        Actions.runBlocking(
+                intakeAction2_2
+        );
+
+        Action collectAction2_2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END2_2)
+                .waitSeconds(collectWait)
+                .build();
+
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.EatVel),
+                collectAction2_2
         ));
         sweeper.Sweep(0);
 
         Action returnToShootAction2 = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_START2)
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
