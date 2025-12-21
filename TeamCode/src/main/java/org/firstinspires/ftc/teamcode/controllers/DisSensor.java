@@ -13,7 +13,7 @@ public class DisSensor {
     public Rev2mDistanceSensor sensorTimeOfFlight;
 
 
-    public static double maxdistance=50;//此变量代表球满时与传感器的距离：最大值
+    public static double maxdistance=20;//此变量代表球满时与传感器的距离：最大值
     public static double wrongdistance=30;//那个b传感器，在3cm以内搁那乱转，神经病，写这个变量避免一下这种愚蠢行为。
 
 
