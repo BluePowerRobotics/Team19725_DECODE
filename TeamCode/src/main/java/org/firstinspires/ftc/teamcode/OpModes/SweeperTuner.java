@@ -109,11 +109,14 @@ public class SweeperTuner extends LinearOpMode {
     // ==================== SWEEPER CONTROL ====================
     private void controlSweeper() {
         // 模式切换
-        if (gamepad1.b) {
+        if(gamepad1.aWasPressed()){
+            currentSweeperMode = SweeperMode.EAT;
+        }
+        if (gamepad1.bWasPressed()) {
             currentSweeperMode = SweeperMode.OUTPUT;
-        } else if (gamepad1.dpad_up) {
+        } else if (gamepad1.xWasPressed()) {
             currentSweeperMode = SweeperMode.GIVE_ARTIFACT;
-        } else if (gamepad1.dpad_down) {
+        } else if (gamepad1.yWasPressed()) {
             currentSweeperMode = SweeperMode.STOP;
         }
 
