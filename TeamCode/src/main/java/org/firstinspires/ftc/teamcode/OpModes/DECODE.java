@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveClimbPoint;
+import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveEatPoint;
 import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveShootPoint;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 
@@ -196,11 +197,12 @@ public class DECODE extends LinearOpMode {
         if(gamepad1.right_trigger > 0.6){
             double heading = 0;
             if (teamColor == TEAM_COLOR.RED) {
-                heading = SolveShootPoint.solveREDEatHeading(pose);
+                heading = SolveEatPoint.solveREDEatHeading(pose);
             }
             if (teamColor == TEAM_COLOR.BLUE) {
-                heading = SolveShootPoint.solveBLUEEatHeading(pose);
+                heading = SolveEatPoint.solveBLUEEatHeading(pose);
             }
+            //todo
             chassis.setHeadingLockRadian(heading);
         }
 
@@ -428,18 +430,6 @@ public class DECODE extends LinearOpMode {
                 if (teamColor == TEAM_COLOR.BLUE) {
                     heading = SolveShootPoint.solveBLUEShootHeading(pose);
                     targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
-                }
-                chassis.setHeadingLockRadian(heading);
-            }
-
-            //自动对准人玩区
-            if (gamepad1.right_trigger > 0.6) {
-                double heading = 0;
-                if (teamColor == TEAM_COLOR.RED) {
-                    heading = -Math.PI / 2;
-                }
-                if (teamColor == TEAM_COLOR.BLUE) {
-                    heading = Math.PI / 2;
                 }
                 chassis.setHeadingLockRadian(heading);
             }
