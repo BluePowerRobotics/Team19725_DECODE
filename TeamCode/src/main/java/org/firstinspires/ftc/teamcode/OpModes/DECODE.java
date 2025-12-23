@@ -124,6 +124,7 @@ public class DECODE extends LinearOpMode {
     }
     void inputRobotStatus(){
         if(gamepad2.xWasPressed()){
+            robotStatus = ROBOT_STATUS.WAITING;
             actionRunner = new ActionRunner();
             actionRunner.add(sweeper.SweeperBack());
         }
@@ -160,7 +161,9 @@ public class DECODE extends LinearOpMode {
             robotStatus = ROBOT_STATUS.WAITING;
         }
 
-        if((gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
+        //一操 二操切换 二操可强制开启
+        if(((gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()))
+                && robotStatus != ROBOT_STATUS.CLIMBING){
             ReadyToShoot = false;
             if(robotStatus == ROBOT_STATUS.EATING){
                 robotStatus = ROBOT_STATUS.WAITING;
@@ -218,7 +221,7 @@ public class DECODE extends LinearOpMode {
         switch (robotStatus) {
             case EATING:
                 //如果吸满了，自动切换到waiting状态
-                if(disSensor.Whether_full()){
+                if(disSensor.Whether_full() && (!gamepad2.left_bumper)){
                     robotStatus = ROBOT_STATUS.WAITING;
                 }
                 sweeperStatus = SWEEPER_STATUS.EAT;
