@@ -17,23 +17,11 @@ public class SolveShootPoint {
 
     public static double k = 50 / (r3 - r1);
 
-    public static double solveBLUEEatHeading(Pose2d poseRC){
-        double x = poseRC.position.x;
-        double y = poseRC.position.y;
-        double heading = Math.atan2(y-72, x-72);
-        return heading;
-    }
-    public static double solveREDEatHeading(Pose2d poseRC){
-        double x = poseRC.position.x;
-        double y = poseRC.position.y;
-        double heading = Math.atan2(y+72,x-72);
-        return heading;
-    }
     public static int solveShootSpeed(double distance){
         int speed = 0;
         //大三角
         if(distance < r3 + 10 * genhao2){
-            speed = 700 + Math.toIntExact(Math.round(k * (distance - r1)));
+            speed = Math.toIntExact(Math.round(+0.008681131283 * distance * distance - 0.4419563936 * distance + 650));
         }
         //小三角
         else{
