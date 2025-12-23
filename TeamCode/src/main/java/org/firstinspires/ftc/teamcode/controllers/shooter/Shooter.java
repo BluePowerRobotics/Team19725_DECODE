@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 
 //单个弹射飞轮的PID控制器
@@ -40,10 +41,10 @@ public class Shooter {
     //这里的small指的是小三角发射，而不是更小的PID
 
     public static double MinPower_small = 0.4;
-    public static double k_p_small = 0.0005;
+    public static double k_p_small = 0.005;
     public static double k_d_small = 0.08;
-    public static double k_i_small = 0.6;
-    public static double max_i_small = 0.3;
+    public static double k_i_small = 0.7;
+    public static double max_i_small = 0.6;
 
     private PIDController pidController;
 
@@ -66,12 +67,12 @@ public class Shooter {
      */
     public boolean shoot(int targetSpeed){
         if(targetSpeed < 750){
-            telemetry.addData("current PID", "BIG");
+            InstanceTelemetry.getTelemetry().addData("current PID", "BIG");
             pidController.setPID(k_p,k_i,k_d);
             pidController.setMaxI(max_i);
         }
         else{
-            telemetry.addData("current PID", "SMALL");
+            InstanceTelemetry.getTelemetry().addData("current PID", "SMALL");
             pidController.setPID(k_p_small, k_i_small, k_d_small);
             pidController.setMaxI(max_i_small);
         }
