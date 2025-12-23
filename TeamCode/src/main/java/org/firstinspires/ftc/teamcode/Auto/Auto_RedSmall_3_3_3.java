@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -103,7 +102,7 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(new ParallelAction(
+        Actions.runBlocking(new SequentialAction(
                 returnToShootAction1,
                 sweeper.SweeperBack()
         ));
@@ -159,7 +158,7 @@ public class Auto_RedSmall_3_3_3 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(new ParallelAction(
+        Actions.runBlocking(new SequentialAction(
                 returnToShootAction2,
                 sweeper.SweeperBack()
         ));

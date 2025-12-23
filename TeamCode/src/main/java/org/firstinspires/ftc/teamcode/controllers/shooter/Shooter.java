@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 //单个弹射飞轮的PID控制器
 @Config
 public class Shooter {
-    public static int SpeedTolerance = 40;
+    public static int SpeedTolerance = 80;
     public static double MinPower = 0.15;
     public static double BlockPower = -0.3;
     public DcMotorEx shooterMotor;

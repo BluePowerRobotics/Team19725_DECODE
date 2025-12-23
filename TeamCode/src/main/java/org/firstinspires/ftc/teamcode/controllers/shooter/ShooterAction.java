@@ -33,8 +33,8 @@ public class ShooterAction {
     public static long ShootTime = 2800;
     public static int WindowSize = 3;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
-        FilterLeft = new MeanFilter(3);
-        FilterRight = new MeanFilter(3);
+        FilterLeft = new MeanFilter(WindowSize);
+        FilterRight = new MeanFilter(WindowSize);
         shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
         telemetry = telerc;

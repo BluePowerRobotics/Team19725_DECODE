@@ -193,6 +193,17 @@ public class DECODE extends LinearOpMode {
             }
         }
 
+        if(gamepad1.right_trigger > 0.6){
+            double heading = 0;
+            if (teamColor == TEAM_COLOR.RED) {
+                heading = SolveShootPoint.solveREDEatHeading(pose);
+            }
+            if (teamColor == TEAM_COLOR.BLUE) {
+                heading = SolveShootPoint.solveBLUEEatHeading(pose);
+            }
+            chassis.setHeadingLockRadian(heading);
+        }
+
         if(gamepad1.yWasPressed()){
             ReadyToShoot = !ReadyToShoot;
             if(ReadyToShoot){
