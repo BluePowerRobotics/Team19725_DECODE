@@ -66,10 +66,12 @@ public class Shooter {
      */
     public boolean shoot(int targetSpeed){
         if(targetSpeed < 750){
+            telemetry.addData("current PID", "BIG");
             pidController.setPID(k_p,k_i,k_d);
             pidController.setMaxI(max_i);
         }
         else{
+            telemetry.addData("current PID", "SMALL");
             pidController.setPID(k_p_small, k_i_small, k_d_small);
             pidController.setMaxI(max_i_small);
         }
