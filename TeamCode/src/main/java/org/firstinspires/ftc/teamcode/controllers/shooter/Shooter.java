@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 @Config
 public class Shooter {
     public static int SpeedTolerance = 40;
-    public static double MinPower = 0.3;
+    public static double MinPower = 0.15;
     public static double BlockPower = -0.3;
     public DcMotorEx shooterMotor;
     TelemetryPacket packet = new TelemetryPacket();
@@ -32,8 +32,8 @@ public class Shooter {
     double current_error;
     double previous_error;
     public static double degreePertick = 0;
-    public static double k_p = 0.01;
-    public static double k_i = 0.4;
+    public static double k_p = 0.005;
+    public static double k_i = 0.6;
     public static double k_d = 0.08;
     public static double max_i = 1;
     private PIDController pidController;
