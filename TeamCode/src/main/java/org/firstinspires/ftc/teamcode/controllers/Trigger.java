@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 //控制弹射扳机 —— 一个180舵机 *左右各一个
 @Config
 
+//todo 确定一个能平滑摩擦的扳机值
 public class Trigger {
     Servo triggerServo_LEFT;
     Servo triggerServo_RIGHT;
