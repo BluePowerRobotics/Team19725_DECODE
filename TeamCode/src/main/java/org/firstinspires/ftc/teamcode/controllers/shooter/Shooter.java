@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 @Config
 public class Shooter {
     public static int SpeedTolerance = 80;
-    public static double MinPower = 0.15;
+
     public static double BlockPower = -0.3;
     public DcMotorEx shooterMotor;
     TelemetryPacket packet = new TelemetryPacket();
@@ -32,10 +32,19 @@ public class Shooter {
     double current_error;
     double previous_error;
     public static double degreePertick = 0;
-    public static double k_p = 0.005;
-    public static double k_i = 0.6;
+    public static double MinPower = 0.2;
+    public static double k_p = 0.0008;
+    public static double k_i = 0.5;
     public static double k_d = 0.08;
-    public static double max_i = 1;
+    public static double max_i = 0.2;
+    //这里的small指的是小三角发射，而不是更小的PID
+
+    public static double MinPower_small = 0.4;
+    public static double k_p_small = 0.0005;
+    public static double k_d_small = 0.08;
+    public static double k_i_small = 0.6;
+    public static double max_i_small = 0.3;
+
     private PIDController pidController;
 
     public Shooter(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse){
@@ -53,13 +62,17 @@ public class Shooter {
     }
 
     /**
-     *
-     * 单位：与°/s线性相关，但大概率不是°/s(idk)
-     *应该比预期转速高80-100
+     *两套PID 分别对应大，小三角
      */
-    //todo:fix low velocity issue
     public boolean shoot(int targetSpeed){
-        pidController.setPID(k_p,k_i,k_d);
+        if(targetSpeed < 750){
+            pidController.setPID(k_p,k_i,k_d);
+            pidController.setMaxI(max_i);
+        }
+        else{
+            pidController.setPID(k_p_small, k_i_small, k_d_small);
+            pidController.setMaxI(max_i_small);
+        }
         //如果是double，不可以 == 0，需要写abs < 0.0001
         if(targetSpeed == 0){
             shooterMotor.setPower(0);
@@ -75,8 +88,11 @@ public class Shooter {
         if (dt <= 0) dt = 1; // 防止除零
         Power = pidController.calculate(targetSpeed, current_speed, dt);
         //避免射球时出现负功率，导致震荡或电机损伤
-        if(targetSpeed > 0){
+        if(targetSpeed > 0 && targetSpeed < 750){
             Power = Range.clip(Power, MinPower, 1);
+        }
+        else if(targetSpeed > 0 && targetSpeed >=750){
+            Power = Range.clip(Power, MinPower_small, 1);
         }
         shooterMotor.setPower(Power);
         previous_time = current_time;
