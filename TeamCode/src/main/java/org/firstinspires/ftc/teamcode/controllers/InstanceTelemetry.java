@@ -12,9 +12,7 @@ public class InstanceTelemetry implements Telemetry {
         this.telemetry = telemetry;
     }
     public static InstanceTelemetry init(Telemetry telemetry){
-        if(instance==null){
-            instance = new InstanceTelemetry(telemetry);
-        }
+        instance = new InstanceTelemetry(telemetry);
         return instance;
     }
 
