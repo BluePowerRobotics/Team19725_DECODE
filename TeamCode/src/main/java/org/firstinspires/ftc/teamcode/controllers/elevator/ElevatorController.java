@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 public class ElevatorController {
     PIDController pidController;
     DcMotorEx elevatorMotor;
-    public static double kp=0.028,ki=0.00001,kd=0.00128,maxI=0.5;
+    public static double kp=0.0028,ki=0.0000,kd=0.000128,maxI=0;
     public static double BalancePower=0;
     public ElevatorController(HardwareMap hardwareMap){
         elevatorMotor=hardwareMap.get(DcMotorEx.class,"elevatorMotor");
