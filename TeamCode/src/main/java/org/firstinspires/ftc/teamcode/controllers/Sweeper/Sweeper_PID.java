@@ -11,17 +11,18 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 
 //单个弹射飞轮的PID控制器
 @Config
 public class Sweeper_PID {
     private boolean ifReverse;
-    public static double kf = 0.3;
+    public static double kf = 0.8;
     public static double minuskf = -0.3;
     public static int OutputSpeed = -400;
     public static int EatVel = 1960;
-    public static int GiveTheArtifactVel = 1000;
+    public static int GiveTheArtifactVel = 800;
     public DcMotorEx SweeperMotor;
     TelemetryPacket packet = new TelemetryPacket();
     Telemetry telemetry;
@@ -141,7 +142,7 @@ public class Sweeper_PID {
         return new SweeperAction(targetSpeed);
     }
 
-
+    public double getCurrent(){return SweeperMotor.getCurrent(CurrentUnit.AMPS);}
     public double getCurrent_encoder(){
         return current_encoder;
     }

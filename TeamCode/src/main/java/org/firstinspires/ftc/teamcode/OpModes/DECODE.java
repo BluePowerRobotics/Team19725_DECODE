@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveClimbPoint;
+import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveEatPoint;
 import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveShootPoint;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetector;
 
@@ -124,6 +125,7 @@ public class DECODE extends LinearOpMode {
     }
     void inputRobotStatus(){
         if(gamepad2.xWasPressed()){
+            robotStatus = ROBOT_STATUS.WAITING;
             actionRunner = new ActionRunner();
             actionRunner.add(sweeper.SweeperBack());
         }
@@ -160,7 +162,9 @@ public class DECODE extends LinearOpMode {
             robotStatus = ROBOT_STATUS.WAITING;
         }
 
-        if((gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
+        //一操 二操切换 二操可强制开启
+        if(((gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()))
+                && robotStatus != ROBOT_STATUS.CLIMBING){
             ReadyToShoot = false;
             if(robotStatus == ROBOT_STATUS.EATING){
                 robotStatus = ROBOT_STATUS.WAITING;
@@ -188,6 +192,18 @@ public class DECODE extends LinearOpMode {
             else{
                 robotStatus = ROBOT_STATUS.WAITING;
             }
+        }
+
+        if(gamepad1.right_trigger > 0.6){
+            double heading = 0;
+            if (teamColor == TEAM_COLOR.RED) {
+                heading = SolveEatPoint.solveREDEatHeading(pose);
+            }
+            if (teamColor == TEAM_COLOR.BLUE) {
+                heading = SolveEatPoint.solveBLUEEatHeading(pose);
+            }
+            //todo
+            chassis.setHeadingLockRadian(heading);
         }
 
         if(gamepad1.yWasPressed()){
@@ -218,7 +234,7 @@ public class DECODE extends LinearOpMode {
         switch (robotStatus) {
             case EATING:
                 //如果吸满了，自动切换到waiting状态
-                if(disSensor.Whether_full()){
+                if(disSensor.Whether_full() && (!gamepad2.left_bumper)){
                     robotStatus = ROBOT_STATUS.WAITING;
                 }
                 sweeperStatus = SWEEPER_STATUS.EAT;
@@ -414,18 +430,6 @@ public class DECODE extends LinearOpMode {
                 if (teamColor == TEAM_COLOR.BLUE) {
                     heading = SolveShootPoint.solveBLUEShootHeading(pose);
                     targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
-                }
-                chassis.setHeadingLockRadian(heading);
-            }
-
-            //自动对准人玩区
-            if (gamepad1.right_trigger > 0.6) {
-                double heading = 0;
-                if (teamColor == TEAM_COLOR.RED) {
-                    heading = -Math.PI / 2;
-                }
-                if (teamColor == TEAM_COLOR.BLUE) {
-                    heading = Math.PI / 2;
                 }
                 chassis.setHeadingLockRadian(heading);
             }

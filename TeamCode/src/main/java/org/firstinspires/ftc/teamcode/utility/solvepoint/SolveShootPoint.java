@@ -17,12 +17,11 @@ public class SolveShootPoint {
 
     public static double k = 50 / (r3 - r1);
 
-
     public static int solveShootSpeed(double distance){
         int speed = 0;
         //大三角
         if(distance < r3 + 10 * genhao2){
-            speed = 700 + Math.toIntExact(Math.round(k * (distance - r1)));
+            speed = Math.toIntExact(Math.round(+0.008681131283 * distance * distance - 0.4419563936 * distance + 650));
         }
         //小三角
         else{
@@ -34,7 +33,7 @@ public class SolveShootPoint {
     public static double solveBLUEShootHeading(Pose2d poseRC){
         double x = poseRC.position.x;
         double y = poseRC.position.y;
-        double heading = Math.atan((y+72)/(x+72));
+        double heading = Math.atan2(y+72,x+72);
         return heading;
     }
     public  static  double solveBLUEShootDistance(Pose2d poseRC){
@@ -64,7 +63,7 @@ public class SolveShootPoint {
             double heading = Math.atan((y+72)/(x+72));
             Pose2d pose = new Pose2d(ansX, ansY, heading);
             return pose;
-}       //点在大三角区边线上
+        }   //点在大三角区边线上
         else {
             double ansX = r/Math.sqrt(2)-72;
             double ansY = r/Math.sqrt(2)-72;
@@ -76,7 +75,7 @@ public class SolveShootPoint {
     public static double solveREDShootHeading(Pose2d poseRC){
         double x = poseRC.position.x;
         double y = poseRC.position.y;
-        double heading = Math.atan((x+72)/(72-y)) - Math.PI/2;
+        double heading = Math.atan2(x+72,72-y) - Math.PI/2;
         return heading;
     }
     public  static  double solveREDShootDistance(Pose2d poseRC){

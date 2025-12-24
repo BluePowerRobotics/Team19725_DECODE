@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,8 +17,7 @@ public class SweeperTuner extends LinearOpMode {
 
     // ==================== CONFIGURATION PARAMETERS ====================
     // 这些参数可以在 FTC Dashboard 上实时调整
-    public static double SWEEPER_POWER = 0.5;
-    public static double SWEEPER_VELOCITY = 1000.0; // RPM
+    public static double SWEEPER_VELOCITY = 1960; // RPM
     public static double EAT_VELOCITY = 1200.0;
     public static double OUTPUT_VELOCITY = -1000.0;
     public static double GIVE_ARTIFACT_VELOCITY = 800.0;
@@ -54,6 +55,7 @@ public class SweeperTuner extends LinearOpMode {
 
     // ==================== INITIALIZATION ====================
     private void initHardware() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("Initializing Sweeper Tuner...");
         telemetry.update();
 
@@ -71,17 +73,16 @@ public class SweeperTuner extends LinearOpMode {
 
     // ==================== TELEMETRY DISPLAY ====================
     private void updateTelemetry() {
-        telemetry.clear();
+//        telemetry.clear();
         telemetry.addLine("====== SWEEPER TUNER ======");
         telemetry.addLine();
 
         // Sweeper 状态
         telemetry.addLine("=== SWEEPER ===");
         telemetry.addData("Mode", currentSweeperMode);
-        telemetry.addData("Target Power", SWEEPER_POWER);
-        telemetry.addData("Target Velocity", SWEEPER_VELOCITY);
+        telemetry.addData("I", sweeper.getCurrent());
         telemetry.addData("Current Speed (RPM)", sweeper.getCurrent_speed());
-        telemetry.addData("Motor Power", sweeper.getPower());
+        telemetry.addData("Motor Power *1000", sweeper.getPower() * 1000);
 
         telemetry.addLine();
 
@@ -109,32 +110,18 @@ public class SweeperTuner extends LinearOpMode {
     // ==================== SWEEPER CONTROL ====================
     private void controlSweeper() {
         // 模式切换
-        if (gamepad1.b) {
+        if(gamepad1.aWasPressed()){
+            currentSweeperMode = SweeperMode.EAT;
+        }
+        if (gamepad1.bWasPressed()) {
             currentSweeperMode = SweeperMode.OUTPUT;
-        } else if (gamepad1.dpad_up) {
+        } else if (gamepad1.xWasPressed()) {
             currentSweeperMode = SweeperMode.GIVE_ARTIFACT;
-        } else if (gamepad1.dpad_down) {
+        } else if (gamepad1.yWasPressed()) {
             currentSweeperMode = SweeperMode.STOP;
         }
 
-        // 实时调整参数
-        if (gamepad1.right_trigger > 0.1) {
-            if (currentSweeperMode == SweeperMode.POWER_CONTROL) {
-                SWEEPER_POWER += 0.01;
-                SWEEPER_POWER = Math.min(1.0, SWEEPER_POWER);
-            } else if (currentSweeperMode == SweeperMode.VELOCITY_CONTROL) {
-                SWEEPER_VELOCITY += 50;
-            }
-        }
 
-        if (gamepad1.left_trigger > 0.1) {
-            if (currentSweeperMode == SweeperMode.POWER_CONTROL) {
-                SWEEPER_POWER -= 0.01;
-                SWEEPER_POWER = Math.max(-1.0, SWEEPER_POWER);
-            } else if (currentSweeperMode == SweeperMode.VELOCITY_CONTROL) {
-                SWEEPER_VELOCITY -= 50;
-            }
-        }
 
         // 应用当前模式
         switch (currentSweeperMode) {

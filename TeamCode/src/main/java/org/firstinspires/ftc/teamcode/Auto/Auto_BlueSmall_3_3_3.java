@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -32,6 +31,7 @@ public class Auto_BlueSmall_3_3_3 extends LinearOpMode {
     Trigger trigger;
     public static double endx = 24;
     public static double endy = -20;
+    public static int INTAKE_START_X = 56;
     public static int INTAKE_END_Y = -62;
     public static double front = ChassisController.PARAMS.FrontToCenterInch;
     public static double side = ChassisController.PARAMS.SideToCenterInch;
@@ -42,8 +42,8 @@ public class Auto_BlueSmall_3_3_3 extends LinearOpMode {
     public static final Vector2d INTAKE_END1 = new Vector2d(36, INTAKE_END_Y);
     public static final Vector2d INTAKE_START2_1 = new Vector2d(48, -48);
     public static final Vector2d INTAKE_END2_1 = new Vector2d(52.7, -60);
-    public static final Vector2d INTAKE_START2_2 = new Vector2d(53, -48);
-    public static final Vector2d INTAKE_END2_2 = new Vector2d(58.7, -60);
+    public static final Vector2d INTAKE_START2_2 = new Vector2d(INTAKE_START_X, -48);
+    public static final Vector2d INTAKE_END2_2 = new Vector2d(INTAKE_START_X + 4.7, -60);
     public static double SHOOT_HEADING = 0.4993467217;
     public static double EAT_HEADING1 = -Math.PI / 2;
     public static double EAT_HEADING2 = -1.197494436;
@@ -102,7 +102,7 @@ public class Auto_BlueSmall_3_3_3 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(new ParallelAction(
+        Actions.runBlocking(new SequentialAction(
                 returnToShootAction1,
                 sweeper.SweeperBack()
         ));
@@ -158,7 +158,7 @@ public class Auto_BlueSmall_3_3_3 extends LinearOpMode {
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
-        Actions.runBlocking(new ParallelAction(
+        Actions.runBlocking(new SequentialAction(
                 returnToShootAction2,
                 sweeper.SweeperBack()
         ));

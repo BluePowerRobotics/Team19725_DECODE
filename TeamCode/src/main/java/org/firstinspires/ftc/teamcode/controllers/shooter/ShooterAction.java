@@ -6,10 +6,13 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utility.filter.MeanFilter;
 
 // 控制双发射轮的共同运作和自动化动作
 @Config
 public class ShooterAction {
+    MeanFilter FilterLeft;
+    MeanFilter FilterRight;
     public static int speed_block = -400;
     public static int speed2_2 = 700;
     public static int speed25_25 = 725;
@@ -28,14 +31,23 @@ public class ShooterAction {
     //第一个球被推入飞轮所需的时间
     public static long waitTime = 300;
     public static long ShootTime = 2800;
+    public static int WindowSize = 3;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
+        FilterLeft = new MeanFilter(WindowSize);
+        FilterRight = new MeanFilter(WindowSize);
         shooter_Left = new Shooter(hardwareMap, telemetry, "shooterMotor1", true);
         shooter_Right = new Shooter(hardwareMap, telemetry, "shooterMotor2", false);
         telemetry = telerc;
     }
-    public boolean setShootSpeed(int Power){
-        boolean left = shooter_Left.shoot(Power);
-        boolean right = shooter_Right.shoot(Power);
+    public boolean setShootSpeed(int TargetSpeedRC){
+        boolean left;
+        shooter_Left.shoot(TargetSpeedRC);
+        boolean right;
+        shooter_Right.shoot(TargetSpeedRC);
+        FilterLeft.filter(shooter_Left.getCurrent_speed());
+        FilterRight.filter(shooter_Right.getCurrent_speed());
+        left = (Math.abs(FilterLeft.getMean() - TargetSpeedRC) < Shooter.SpeedTolerance);
+        right = (Math.abs(FilterRight.getMean() - TargetSpeedRC) < Shooter.SpeedTolerance);
         //todo 检查这里所有&&和||的逻辑
         return (left && right);
     }
