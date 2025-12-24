@@ -18,11 +18,11 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 @Config
 public class Sweeper_PID {
     private boolean ifReverse;
-    public static double kf = 0.8;
+    public static double kf = 0.6;
     public static double minuskf = -0.3;
     public static int OutputSpeed = -400;
     public static int EatVel = 1960;
-    public static int GiveTheArtifactVel = 800;
+    public static int GiveTheArtifactVel = 600;
     public DcMotorEx SweeperMotor;
     TelemetryPacket packet = new TelemetryPacket();
     Telemetry telemetry;

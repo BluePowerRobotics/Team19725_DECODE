@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.utility.PIDController;
 //单个弹射飞轮的PID控制器
 @Config
 public class Shooter {
-    public static int SpeedTolerance = 80;
+    public static int SpeedTolerance = 40;
 
     public static double BlockPower = -0.3;
     public DcMotorEx shooterMotor;
@@ -34,16 +34,16 @@ public class Shooter {
     double previous_error;
     public static double degreePertick = 0;
     public static double MinPower = 0.2;
-    public static double k_p = 0.0008;
+    public static double k_p = 0.005;
     public static double k_i = 0.5;
     public static double k_d = 0.08;
     public static double max_i = 0.2;
     //这里的small指的是小三角发射，而不是更小的PID
 
-    public static double MinPower_small = 0.4;
-    public static double k_p_small = 0.005;
+    public static double MinPower_small = 0.55;
+    public static double k_p_small = 0.01;
     public static double k_d_small = 0.08;
-    public static double k_i_small = 0.7;
+    public static double k_i_small = 0.05;
     public static double max_i_small = 0.6;
 
     private PIDController pidController;

@@ -80,7 +80,7 @@ public class DECODE extends LinearOpMode {
     public DisSensor disSensor;
     public BlinkinLedController ledController;
     AprilTagDetector aprilTagDetector;
-    public static int tmpSpeed = 700;
+    public static int tmpSpeed = 880;
     //
     public double targetSpeed = ShooterAction.speed35_55;
     public Pose2d startPose = new Pose2d(0,0,0);
