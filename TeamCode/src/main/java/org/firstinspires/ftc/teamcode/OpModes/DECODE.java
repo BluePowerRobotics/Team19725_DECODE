@@ -88,6 +88,7 @@ public class DECODE extends LinearOpMode {
     //targetSpeed乘上Kspeed才是真实速度，修正发射速度
     double Kspeed = 1;
     boolean directControl=false;
+    int currentPosition = 0;
     //修正角度偏差（从读取的底层修改）
     //todo 让degreeOffset生效 @gyw
     public double degreeOffset = 0;
@@ -290,7 +291,6 @@ public class DECODE extends LinearOpMode {
                     directControl = true;
                     elevatorController.setPower(ElevatorController.BalancePower - gamepad2.left_trigger + gamepad2.right_trigger);
                 } else {
-                    int currentPosition = 0;
                     if (directControl) {
                         directControl = false;
                         currentPosition = elevatorController.getPosition();
@@ -413,6 +413,8 @@ public class DECODE extends LinearOpMode {
     public static int IntervalMS=1;
     Pose2d pose = new Pose2d(0,0,0);
     void chassis() {
+        chassis.setAutoLockHeading(robotStatus!=ROBOT_STATUS.CLIMBING);
+
         chassis.robotPosition.setMinUpdateIntervalMs(IntervalMS);
         pose = chassis.robotPosition.getData().getPose2d();
 
