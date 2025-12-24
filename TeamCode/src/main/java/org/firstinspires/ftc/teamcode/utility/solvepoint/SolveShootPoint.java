@@ -25,7 +25,7 @@ public class SolveShootPoint {
         }
         //小三角
         else{
-            speed = 875;
+            speed = Math.toIntExact(Math.round(+0.388591305955534 * distance * distance - 110.97118934937072 * distance + 8746.12184605068));
         }
         return speed;
     }
