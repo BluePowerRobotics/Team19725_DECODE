@@ -33,15 +33,15 @@ public class Shooter {
     double current_error;
     double previous_error;
     public static double degreePertick = 0;
-    public static double MinPower = 0.2;
-    public static double k_p = 0.005;
-    public static double k_i = 0.5;
-    public static double k_d = 0.08;
-    public static double max_i = 0.2;
+    public static double MinPower = 0.1;
+    public static double k_p = 0.01;
+    public static double k_i = 0.2;
+    public static double k_d = 0.05;
+    public static double max_i = 1;
     //这里的small指的是小三角发射，而不是更小的PID
 
-    public static double MinPower_small = 0.55;
-    public static double k_p_small = 0.01;
+    public static double MinPower_small = 0.3;
+    public static double k_p_small = 0.011;
     public static double k_d_small = 0.08;
     public static double k_i_small = 0.05;
     public static double max_i_small = 0.6;
