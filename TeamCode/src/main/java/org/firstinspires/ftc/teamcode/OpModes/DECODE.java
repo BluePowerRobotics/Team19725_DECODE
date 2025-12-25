@@ -164,8 +164,7 @@ public class DECODE extends LinearOpMode {
         }
 
         //一操 二操切换 二操可强制开启
-        if(((gamepad1.leftBumperWasPressed() || gamepad2.leftBumperWasPressed()))
-                && robotStatus != ROBOT_STATUS.CLIMBING){
+        if(gamepad2.leftBumperWasPressed() && robotStatus != ROBOT_STATUS.CLIMBING){
             ReadyToShoot = false;
             if(robotStatus == ROBOT_STATUS.EATING){
                 robotStatus = ROBOT_STATUS.WAITING;
@@ -174,6 +173,11 @@ public class DECODE extends LinearOpMode {
                 robotStatus = ROBOT_STATUS.EATING;
             }
 
+        }
+
+        if(gamepad1.leftBumperWasPressed() && robotStatus != ROBOT_STATUS.CLIMBING){
+            ReadyToShoot = false;
+            robotStatus = ROBOT_STATUS.EATING;
         }
         else if((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed()) && robotStatus != ROBOT_STATUS.CLIMBING){
             ReadyToShoot = false;
