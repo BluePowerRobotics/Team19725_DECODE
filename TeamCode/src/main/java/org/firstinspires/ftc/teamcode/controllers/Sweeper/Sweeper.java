@@ -12,7 +12,7 @@ public class Sweeper {
     public static double CurrentThreshold = 99;
     private long overStartTime = -1;
     public static int EatVel = 1960;
-    public static int GiveTheArtifactVel = 960;
+    public static int GiveTheArtifactVel = 1960;
     public static int OutputVel = -960;
     public Sweeper(HardwareMap hardwareMap){
         motor = hardwareMap.get(DcMotorEx.class, "sweeperMotor");
