@@ -77,7 +77,7 @@ public class DECODE extends LinearOpMode {
     public Trigger trigger;
     public ElevatorController elevatorController;
     public ActionRunner actionRunner;
-    public DisSensor disSensor;
+    //public DisSensor disSensor;
     public BlinkinLedController ledController;
     AprilTagDetector aprilTagDetector;
     public static int tmpSpeed = 880;
@@ -118,7 +118,7 @@ public class DECODE extends LinearOpMode {
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
         elevatorController = new ElevatorController(hardwareMap);
-        disSensor = new DisSensor(hardwareMap);
+        //disSensor = new DisSensor(hardwareMap);
         aprilTagDetector = new AprilTagDetector();
         aprilTagDetector.init(hardwareMap);
         actionRunner = new ActionRunner();
@@ -235,9 +235,9 @@ public class DECODE extends LinearOpMode {
         switch (robotStatus) {
             case EATING:
                 //如果吸满了，自动切换到waiting状态
-                if(disSensor.Whether_full() && (!gamepad2.left_bumper)){
-                    robotStatus = ROBOT_STATUS.WAITING;
-                }
+//                if(disSensor.Whether_full() && (!gamepad2.left_bumper)){
+//                    robotStatus = ROBOT_STATUS.WAITING;
+//                }
                 sweeperStatus = SWEEPER_STATUS.EAT;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
@@ -343,7 +343,7 @@ public class DECODE extends LinearOpMode {
     boolean showSpeedColor=false;
     void Telemetry(){
         telemetry.addData("READYTOSHOOT", ReadyToShoot);
-        telemetry.addData("DIS", disSensor.getDis());
+//        telemetry.addData("DIS", disSensor.getDis());
         telemetry.addData("Kspeed", Kspeed);
         telemetry.addData("RealTargetSpeed", targetSpeed * Kspeed);
         telemetry.addData("DegreeOffset", degreeOffset);
@@ -515,6 +515,7 @@ public class DECODE extends LinearOpMode {
             }
             telemetry.addData("Position(inch)", Point2D.rotate(chassis.robotPosition.getData().getPosition(DistanceUnit.INCH),teamColor==TEAM_COLOR.BLUE?Math.PI/2:-Math.PI/2).toString());
             telemetry.addData("TEAM_COLOR", teamColor.toString());
+            telemetry.addData("FPS",1000000000.0/(System.nanoTime()-lastNanoTime));
             telemetry.update();
         }
         waitForStart();
