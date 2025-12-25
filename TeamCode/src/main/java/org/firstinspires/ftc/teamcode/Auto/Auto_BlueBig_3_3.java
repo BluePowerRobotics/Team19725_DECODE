@@ -92,7 +92,7 @@ public class Auto_BlueBig_3_3 extends LinearOpMode {
         sweeper.Sweep(0);
 
         Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
-                .strafeTo(INTAKE_START)
+                //.strafeTo(INTAKE_START)
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
