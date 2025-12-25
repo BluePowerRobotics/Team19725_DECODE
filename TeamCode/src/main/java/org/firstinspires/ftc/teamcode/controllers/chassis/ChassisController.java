@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
@@ -42,7 +41,7 @@ public class ChassisController {
     public double getHeadingLockRadian(){return HeadingLockRadian;}
     public double noHeadModeStartError;
     public ActionRunner actionRunner=new ActionRunner();
-    public static ChassisCalculator chassisCalculator= new ChassisCalculator();
+    static ChassisCalculator chassisCalculator= new ChassisCalculator();
     ChassisOutputter chassisOutputter;
 
     /**
@@ -87,7 +86,6 @@ public class ChassisController {
     public void setAutoLockHeading(boolean autoLockHeading){
         this.autoLockHeading=autoLockHeading;
     }
-
     public void resetNoHeadModeStartError(double Radian){
         noHeadModeStartError = Radian;
     }
@@ -95,6 +93,7 @@ public class ChassisController {
         resetNoHeadModeStartError(0);
     }
     public void setHeadingLockRadian(double headingLockRadian){
+        chassisCalculator.lastHeadingSetTimeMS = System.currentTimeMillis();
         this.HeadingLockRadian = MathSolver.normalizeAngle(headingLockRadian);
     }
 
@@ -105,7 +104,7 @@ public class ChassisController {
         actionRunner.clear();
         actionRunner.add(actionBuilder.build());
         HeadingLockRadian = pose2d.heading.log();
-        chassisCalculator.pidRadian.reset();
+        chassisCalculator.pidRadianHeadLock.reset();
     }
     public boolean ifTargetPointReached(){
         return !actionRunner.isBusy();
@@ -156,7 +155,7 @@ public class ChassisController {
                             HeadingLockRadian=robotPosition.getData().headingRadian;
                         }
                         if(Math.abs(robotPosition.getData().headingRadian-HeadingLockRadian)<= PARAMS.zeroThresholdOmega) {
-                            chassisCalculator.pidRadian.reset();
+                            chassisCalculator.pidRadianHeadLock.reset();
                         }
                         omega=chassisCalculator.calculatePIDRadian(HeadingLockRadian,robotPosition.getData().headingRadian);
                     }
@@ -184,18 +183,24 @@ class ChassisCalculator {
         public double hkP = 0.7;//speedHeading k
         public double hkI = 0;
         public double hkD = 0.1;
+        public double drkP=0.2;
+        public double drkI=0;
+        public double drkD=0.05;
+        public double powerfulPIDRadianUseTimeMS = 1000;
     }
     public static Params PARAMS = new Params();
-
+    long lastHeadingSetTimeMS=0;
     PIDController pidSpeed;
     PIDController pidSpeedHeading;
-    PIDController pidRadian;
+    PIDController pidRadianHeadLock;
+    PIDController pidRadianDrive;
 
     ChassisCalculator() {
         // 私有构造函数，防止外部实例化
         pidSpeed = new PIDController(PARAMS.skP, PARAMS.skI, PARAMS.skD);
         pidSpeedHeading = new PIDController(PARAMS.hkP, PARAMS.hkI, PARAMS.hkD);
-        pidRadian = new PIDController(PARAMS.rkP, PARAMS.rkI, PARAMS.rkD);
+        pidRadianHeadLock = new PIDController(PARAMS.rkP, PARAMS.rkI, PARAMS.rkD);
+        pidRadianDrive = new PIDController(PARAMS.drkP, PARAMS.drkI, PARAMS.drkD);
     }
 
     /**
@@ -271,13 +276,20 @@ class ChassisCalculator {
         if (firstRunRadian) {
             firstRunRadian = false;
             lastTimeRadian = System.nanoTime();
-            pidRadian.reset();
+            pidRadianDrive.reset();
         }
         double errorRadian = targetRadian - currentRadian;
         // 归一化到[-π, π]
         errorRadian = MathSolver.normalizeAngle(errorRadian);
-        pidRadian.setPID(PARAMS.rkP, PARAMS.rkI, PARAMS.rkD);
-        double output = pidRadian.calculate(errorRadian, 0, (System.nanoTime() - lastTimeRadian) / 1e9);
+
+        if(System.currentTimeMillis()-lastHeadingSetTimeMS>=PARAMS.powerfulPIDRadianUseTimeMS){
+            pidRadianDrive.setPID(PARAMS.drkP, PARAMS.drkI, PARAMS.drkD);
+            double output = pidRadianDrive.calculate(errorRadian, 0, (System.nanoTime() - lastTimeRadian) / 1e9);
+            lastTimeRadian = System.nanoTime();
+            return output;
+        }
+        pidRadianHeadLock.setPID(PARAMS.rkP, PARAMS.rkI, PARAMS.rkD);
+        double output = pidRadianHeadLock.calculate(errorRadian, 0, (System.nanoTime() - lastTimeRadian) / 1e9);
         lastTimeRadian = System.nanoTime();
         return output;
     }
@@ -325,7 +337,10 @@ class ChassisOutputter {
         v_fr = v_fr * 1000 / PARAMS.wheelDiameter;
         v_bl = v_bl * 1000 / PARAMS.wheelDiameter;
         v_br = v_br * 1000 / PARAMS.wheelDiameter;
-        if(Math.abs(v_fl) > PARAMS.maxRpm / 60 || Math.abs(v_fr) > PARAMS.maxRpm / 60 || Math.abs(v_bl) > PARAMS.maxRpm / 60 || Math.abs(v_br) > PARAMS.maxRpm / 60){
+        if(     Math.abs(v_fl) > PARAMS.maxRpm / 60 ||
+                Math.abs(v_fr) > PARAMS.maxRpm / 60 ||
+                Math.abs(v_bl) > PARAMS.maxRpm / 60 ||
+                Math.abs(v_br) > PARAMS.maxRpm / 60){
             double maxV = Math.max(Math.max(Math.abs(v_fl), Math.abs(v_fr)), Math.max(Math.abs(v_bl), Math.abs(v_br)));
             v_fl = v_fl / maxV * PARAMS.maxRpm / 60;// range to [-maxRpm/60, maxRpm/60]
             v_fr = v_fr / maxV * PARAMS.maxRpm / 60;
