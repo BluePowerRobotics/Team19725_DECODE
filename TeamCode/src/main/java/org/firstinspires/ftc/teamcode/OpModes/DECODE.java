@@ -80,7 +80,7 @@ public class DECODE extends LinearOpMode {
     public ActionRunner actionRunner;
     //public DisSensor disSensor;
     public BlinkinLedController ledController;
-    AprilTagDetector aprilTagDetector;
+//    AprilTagDetector aprilTagDetector;
     public static int tmpSpeed = 880;
     //暂时关闭发射时的速度限制
     public static int OpenSweeperSpeedThreshold = 1000;
@@ -122,8 +122,8 @@ public class DECODE extends LinearOpMode {
         chassis = new ChassisController(hardwareMap, startPose);
         elevatorController = new ElevatorController(hardwareMap);
         //disSensor = new DisSensor(hardwareMap);
-        aprilTagDetector = new AprilTagDetector();
-        aprilTagDetector.init(hardwareMap);
+//        aprilTagDetector = new AprilTagDetector();
+//        aprilTagDetector.init(hardwareMap);
         actionRunner = new ActionRunner();
         ledController = new BlinkinLedController(hardwareMap);
     }
@@ -250,25 +250,27 @@ public class DECODE extends LinearOpMode {
                 ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 break;
             case WAITING:
-                boolean AprilTagStatus = !Double.isNaN(aprilTagDetector.getPose().pose.position.x);
+                //boolean AprilTagStatus = !Double.isNaN(aprilTagDetector.getPose().pose.position.x);
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
                 if(teamColor == TEAM_COLOR.RED){
-                    if(AprilTagStatus){
-                        ledController.setColor(LedPreset.HEARTBEAT_RED.getPattern());
-                    }
-                    else{
-                        ledController.showRedTeam();
-                    }
+//                    if(AprilTagStatus){
+//                        ledController.setColor(LedPreset.HEARTBEAT_RED.getPattern());
+//                    }
+//                    else{
+//                        ledController.showRedTeam();
+//                    }
+                    ledController.showRedTeam();
                 }
                 else{
-                    if(AprilTagStatus){
-                        ledController.setColor(LedPreset.HEARTBEAT_BLUE.getPattern());
-                    }
-                    else{
-                        ledController.showBlueTeam();
-                    }
+//                    if(AprilTagStatus){
+//                        ledController.setColor(LedPreset.HEARTBEAT_BLUE.getPattern());
+//                    }
+//                    else{
+//                        ledController.showBlueTeam();
+//                    }
+                    ledController.showBlueTeam();
                 }
                 break;
             case SHOOTING:
