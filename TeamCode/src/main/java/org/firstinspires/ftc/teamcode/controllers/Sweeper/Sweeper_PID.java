@@ -41,7 +41,7 @@ public class Sweeper_PID {
     public static double k_i = 1.0;
     public static double k_d = 0.000;
     public static double max_i = 1;
-    public static double backRequireCycle=0.4;
+    public static double backRequireCycle=0.25;
     private PIDController pidController;
 
     public Sweeper_PID(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverseRC) {
