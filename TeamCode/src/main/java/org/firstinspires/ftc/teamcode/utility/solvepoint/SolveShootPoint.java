@@ -21,11 +21,11 @@ public class SolveShootPoint {
         int speed = 0;
         //大三角
         if(distance < r3 + 10 * genhao2){
-            speed = Math.toIntExact(Math.round(+0.008681131283 * distance * distance - 0.4419563936 * distance + 650));
+            speed = Math.toIntExact(Math.round(1.081183337 * distance + 586.1640982));
         }
         //小三角
         else{
-            speed = Math.toIntExact(Math.round(+0.388591305955534 * distance * distance - 110.97118934937072 * distance + 8746.12184605068));
+            speed = Math.toIntExact(Math.round(2.010562318 * distance + 540.4157073));
         }
         return speed;
     }
