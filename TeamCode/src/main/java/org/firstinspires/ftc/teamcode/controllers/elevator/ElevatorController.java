@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.controllers.elevator;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
@@ -14,7 +15,7 @@ public class ElevatorController {
     public static double BalancePower=0;
     public ElevatorController(HardwareMap hardwareMap){
         elevatorMotor=hardwareMap.get(DcMotorEx.class,"elevatorMotor");
-        elevatorMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        elevatorMotor.setDirection(DcMotorEx.Direction.FORWARD);
         elevatorMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         elevatorMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         pidController=new PIDController(kp,ki,kd,maxI);
