@@ -78,7 +78,6 @@ public class DECODE extends LinearOpMode {
     public Trigger trigger;
     public ElevatorController elevatorController;
     public ActionRunner actionRunner;
-    //public DisSensor disSensor;
     public BlinkinLedController ledController;
 //    AprilTagDetector aprilTagDetector;
     public static int tmpSpeed = 880;
@@ -121,7 +120,6 @@ public class DECODE extends LinearOpMode {
         shooter = new ShooterAction(hardwareMap, telemetry);
         chassis = new ChassisController(hardwareMap, startPose);
         elevatorController = new ElevatorController(hardwareMap);
-        //disSensor = new DisSensor(hardwareMap);
 //        aprilTagDetector = new AprilTagDetector();
 //        aprilTagDetector.init(hardwareMap);
         actionRunner = new ActionRunner();
@@ -240,10 +238,6 @@ public class DECODE extends LinearOpMode {
     void setStatus(){
         switch (robotStatus) {
             case EATING:
-                //如果吸满了，自动切换到waiting状态
-//                if(disSensor.Whether_full() && (!gamepad2.left_bumper)){
-//                    robotStatus = ROBOT_STATUS.WAITING;
-//                }
                 sweeperStatus = SWEEPER_STATUS.EAT;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
@@ -301,44 +295,6 @@ public class DECODE extends LinearOpMode {
                 }
                 break;
         }
-//        if(!actionRunner.isBusy()){
-//            if(chassis.getUseNoHeadMode()){
-//                //useNoHeadMode
-//                //LED常亮
-//                if(realTargetSpeed<=700)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-//                else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-//                else if(realTargetSpeed<=750)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-//                else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-//                else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-//            }else{
-//                long currentTimeMS=System.currentTimeMillis();
-//                //roboticBasedMode
-//                //LED闪烁
-//                if(currentTimeMS-lastSetTimeMS>500/*切换间隔，毫秒*/){
-//                    showSpeedColor=!showSpeedColor;
-//                    lastSetTimeMS=currentTimeMS;
-//                }
-//                if(!showSpeedColor) {
-//                    if (teamColor == TEAM_COLOR.BLUE) {
-//                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
-//                    }
-//                    else if (teamColor == TEAM_COLOR.RED) {
-//                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
-//                    }
-//                }else{
-//                    if(realTargetSpeed<=650)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-//                    else if(realTargetSpeed<=725)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-//                    else if(realTargetSpeed<=800)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-//                    else if(realTargetSpeed<=875)ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-//                    else ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-//                }
-//            }
-//        }
-
-
-//        else{
-//            ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
-//        }
 
     }
     long lastSetTimeMS=0;
@@ -389,12 +345,15 @@ public class DECODE extends LinearOpMode {
                     boolean hasReachedTargetSpeed = shooter.setShootSpeed(Math.toIntExact(Math.round(targetSpeed * Kspeed)));
                     double currentHeading = chassis.robotPosition.getData().headingRadian;
                     double targetHeading = chassis.getHeadingLockRadian();
-                    if(hasReachedTargetSpeed && Math.abs(currentHeading - targetHeading) < toleranceHeading){
+                    boolean passShootCheckPoint = hasReachedTargetSpeed && Math.abs(currentHeading - targetHeading) < toleranceHeading;
+                    if(passShootCheckPoint){
+                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }
                     else{
                         //TODO 留下距离传感器判断是否有球的接口
+                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
                         if(targetSpeed * Kspeed > OpenSweeperSpeedThreshold){
                             sweeperStatus = SWEEPER_STATUS.STOP;
                         }
