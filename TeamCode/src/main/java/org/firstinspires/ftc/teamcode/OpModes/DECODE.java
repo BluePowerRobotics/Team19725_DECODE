@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.controllers.chassis.ChassisController;
 import org.firstinspires.ftc.teamcode.controllers.elevator.ElevatorController;
 import org.firstinspires.ftc.teamcode.controllers.shooter.ShooterAction;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
+import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveClimbPoint;
 import org.firstinspires.ftc.teamcode.utility.solvepoint.SolveEatPoint;
@@ -138,9 +139,11 @@ public class DECODE extends LinearOpMode {
         //二操的修正功能
         if(gamepad2.dpadLeftWasPressed()){
             degreeOffset -= AdditionDegree;
+            chassis.robotPosition.mecanumDrive.localizer.setPose(new Pose2d(chassis.robotPosition.getData().getPose2d().position, chassis.robotPosition.getData().headingRadian + Math.toRadians(-AdditionDegree)));
         }
         if(gamepad2.dpadRightWasPressed()){
             degreeOffset += AdditionDegree;
+            chassis.robotPosition.mecanumDrive.localizer.setPose(new Pose2d(chassis.robotPosition.getData().getPose2d().position, chassis.robotPosition.getData().headingRadian + Math.toRadians(AdditionDegree)));
         }
         if(gamepad2.dpadDownWasPressed()){
             Kspeed -= AdditionK;
