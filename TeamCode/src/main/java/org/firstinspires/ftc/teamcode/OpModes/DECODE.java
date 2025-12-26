@@ -128,6 +128,9 @@ public class DECODE extends LinearOpMode {
         ledController = new BlinkinLedController(hardwareMap);
     }
     void inputRobotStatus(){
+        if(gamepad1.dpadRightWasPressed()){
+            toleranceHeading = toleranceHeading * 2;
+        }
         if(gamepad2.xWasPressed()){
             robotStatus = ROBOT_STATUS.WAITING;
             actionRunner = new ActionRunner();
