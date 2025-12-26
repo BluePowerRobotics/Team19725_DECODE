@@ -82,7 +82,8 @@ public class DECODE extends LinearOpMode {
     public BlinkinLedController ledController;
     AprilTagDetector aprilTagDetector;
     public static int tmpSpeed = 880;
-    public static int OpenSweeperSpeedThreshold = 750;
+    //暂时关闭发射时的速度限制
+    public static int OpenSweeperSpeedThreshold = 1000;
     //
     public double targetSpeed = ShooterAction.speed35_55;
     public Pose2d startPose = new Pose2d(0,0,0);
@@ -291,7 +292,7 @@ public class DECODE extends LinearOpMode {
                 triggerStatus = TRIGGER_STATUS.CLOSE;
                 break;
             case CLIMBING:
-                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
                 sweeperStatus = SWEEPER_STATUS.STOP;
                 shooterStatus = SHOOTER_STATUS.STOP;
                 triggerStatus = TRIGGER_STATUS.CLOSE;
@@ -409,7 +410,11 @@ public class DECODE extends LinearOpMode {
                         if(targetSpeed * Kspeed > OpenSweeperSpeedThreshold){
                             sweeperStatus = SWEEPER_STATUS.STOP;
                         }
+                    }
 
+                    if(gamepad2.y){
+                        sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
+                        triggerStatus = TRIGGER_STATUS.OPEN;
                     }
                 }
                 break;
