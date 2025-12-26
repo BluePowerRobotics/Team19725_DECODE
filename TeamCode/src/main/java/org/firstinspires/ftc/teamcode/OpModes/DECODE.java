@@ -154,13 +154,7 @@ public class DECODE extends LinearOpMode {
             Kspeed += AdditionK;
         }
         if(gamepad2.yWasPressed() && robotStatus != ROBOT_STATUS.CLIMBING){
-            if(robotStatus == ROBOT_STATUS.SHOOTING){
-                ReadyToShoot = false;
-                robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
-            }
-            else{
-                robotStatus = ROBOT_STATUS.SHOOTING;
-            }
+            robotStatus = ROBOT_STATUS.SHOOTING;
         }
 
         if((gamepad1.aWasPressed() || gamepad2.aWasPressed())  && robotStatus != ROBOT_STATUS.CLIMBING){
@@ -275,15 +269,9 @@ public class DECODE extends LinearOpMode {
                 }
                 break;
             case SHOOTING:
-                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                //ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 shooterStatus = SHOOTER_STATUS.SHOOTING;
                 //sweeper和trigger状态由shooter条件决定，在shoot()中
-                break;
-            case EMERGENCY_STOP:
-                ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
-                shooterStatus = SHOOTER_STATUS.STOP;
-                sweeperStatus = SWEEPER_STATUS.STOP;
-                triggerStatus = TRIGGER_STATUS.CLOSE;
                 break;
             case OUTPUTTING:
                 ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
@@ -393,11 +381,6 @@ public class DECODE extends LinearOpMode {
     void shoot(){
         switch (shooterStatus){
             case SHOOTING:
-                boolean ifHit = false;
-                if(ifHit){
-                    robotStatus = ROBOT_STATUS.EMERGENCY_STOP;
-                }
-                else{
                     boolean hasReachedTargetSpeed = shooter.setShootSpeed(Math.toIntExact(Math.round(targetSpeed * Kspeed)));
                     double currentHeading = chassis.robotPosition.getData().headingRadian;
                     double targetHeading = chassis.getHeadingLockRadian();
@@ -416,8 +399,7 @@ public class DECODE extends LinearOpMode {
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }
-                }
-                break;
+                    break;
 
             case STOP:
                 shooter.setShootSpeed(0);
