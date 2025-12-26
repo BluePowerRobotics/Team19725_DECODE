@@ -44,9 +44,11 @@ public class Auto_BlueSmall_3 extends LinearOpMode {
     public static final Vector2d INTAKE_END2_1 = new Vector2d(53.875, -63);
     public static final Vector2d INTAKE_START2_2 = new Vector2d(INTAKE_START_X, -48);
     public static final Vector2d INTAKE_END2_2 = new Vector2d(INTAKE_START_X + 5.875, -63);
-    public static final Vector2d INTAKE_START3 = new Vector2d(12, -24);
-    public static final Vector2d INTAKE_END3 = new Vector2d(12, INTAKE_END_Y);
-    public static double SHOOT_HEADING = 0.4993467217;
+    public static final Vector2d INTAKE_START2_3 = new Vector2d(12, -24);
+    public static final Vector2d INTAKE_END2_3 = new Vector2d(12, INTAKE_END_Y);
+    public static final Vector2d INTAKE_START3 = new Vector2d(60, -12);
+    public static final Vector2d INTAKE_END3 = new Vector2d(60, -63);
+    public static double SHOOT_HEADING = 0.4266274931;
     public static double EAT_HEADING1 = -Math.PI / 2;
     public static double EAT_HEADING2 = -1.197494436;
     public static double END_HEADING = Math.PI / 2;
@@ -82,7 +84,7 @@ public class Auto_BlueSmall_3 extends LinearOpMode {
         sweeper.Sweep(0);
 
 //        Action intakeAction1 = drive.actionBuilder(drive.localizer.getPose())
-//                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING)
+//                .strafeToLinearHeading(INTAKE_START1, EAT_HEADING1)
 //                .build();
 //        Actions.runBlocking(
 //                intakeAction1
@@ -176,46 +178,86 @@ public class Auto_BlueSmall_3 extends LinearOpMode {
 //        ));
 //        trigger.close();
 //        sweeper.Sweep(0);
-//
-//        Action intakeAction3 = drive.actionBuilder(drive.localizer.getPose())
-//                .strafeToLinearHeading(INTAKE_START3, EAT_HEADING)
-//                .build();
-//        Actions.runBlocking(
-//                intakeAction3
-//        );
-//
-//        Action collectAction3 = drive.actionBuilder(drive.localizer.getPose())
-//                .strafeTo(INTAKE_END3)
-//                .waitSeconds(collectWait)
-//                .build();
-//
-//        Actions.runBlocking(new RaceAction(
-//                sweeper.SweeperAction(Sweeper_PID.EatVel),
-//                collectAction3
-//        ));
-//        sweeper.Sweep(0);
-//
-//        Action returnToShootAction3 = drive.actionBuilder(drive.localizer.getPose())
-//                //.strafeTo(INTAKE_START3)
-//                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
-//                .build();
-//
-//        Actions.runBlocking(new SequentialAction(
-//                returnToShootAction3,
-//                sweeper.SweeperBack()
-//        ));
-//        //sleep(500);
-//        Actions.runBlocking(new SequentialAction(
-//                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
-//        ));
-//
-//        trigger.open();
-//        Actions.runBlocking(new RaceAction(
-//                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
-//                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
-//        ));
-//        trigger.close();
-//        sweeper.Sweep(0);
+
+        Action intakeAction3 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START3, EAT_HEADING1)
+                .build();
+        Actions.runBlocking(
+                intakeAction3
+        );
+
+        Action collectAction3 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END3)
+                .waitSeconds(collectWait)
+                .build();
+
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.EatVel),
+                collectAction3
+        ));
+        sweeper.Sweep(0);
+
+        Action returnToShootAction3 = drive.actionBuilder(drive.localizer.getPose())
+                //.strafeTo(INTAKE_START3)
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
+
+        Actions.runBlocking(new SequentialAction(
+                returnToShootAction3,
+                sweeper.SweeperBack()
+        ));
+        //sleep(500);
+        Actions.runBlocking(new SequentialAction(
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+        ));
+
+        trigger.open();
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+        ));
+        trigger.close();
+        sweeper.Sweep(0);
+
+        Action intakeAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START3, EAT_HEADING1)
+                .build();
+        Actions.runBlocking(
+                intakeAction
+        );
+
+        Action collectAction = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END3)
+                .waitSeconds(collectWait)
+                .build();
+
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.EatVel),
+                collectAction
+        ));
+        sweeper.Sweep(0);
+
+        Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
+                //.strafeTo(INTAKE_START3)
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
+
+        Actions.runBlocking(new SequentialAction(
+                returnToShootAction,
+                sweeper.SweeperBack()
+        ));
+        //sleep(500);
+        Actions.runBlocking(new SequentialAction(
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+        ));
+
+        trigger.open();
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+        ));
+        trigger.close();
+        sweeper.Sweep(0);
 
         Action endAction = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(Small_End, END_HEADING)

@@ -44,7 +44,7 @@ public class Auto_BlueSmall_3_3_3 extends LinearOpMode {
     public static final Vector2d INTAKE_END2_1 = new Vector2d(53.875, -63);
     public static final Vector2d INTAKE_START2_2 = new Vector2d(INTAKE_START_X, -48);
     public static final Vector2d INTAKE_END2_2 = new Vector2d(INTAKE_START_X + 5.875, -63);
-    public static double SHOOT_HEADING = 0.4993467217;
+    public static double SHOOT_HEADING = 0.4266274931;
     public static double EAT_HEADING1 = -Math.PI / 2;
     public static double EAT_HEADING2 = -1.197494436;
     public static double END_HEADING = Math.PI / 2;
