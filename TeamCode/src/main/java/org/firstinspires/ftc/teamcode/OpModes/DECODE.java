@@ -395,7 +395,7 @@ public class DECODE extends LinearOpMode {
                         }
                     }
 
-                    if(gamepad2.y){
+                    if(gamepad2.start){
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }
