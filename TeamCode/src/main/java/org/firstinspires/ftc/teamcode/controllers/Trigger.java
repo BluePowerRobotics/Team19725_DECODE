@@ -13,7 +13,7 @@ public class Trigger {
     Servo triggerServo_RIGHT;
     public static double TRIGGER_OPEN_POS = 0.405;
     public static double TRIGGER_CLOSE_POS = 0.17;
-    public static double TRIGGER_PUSH_POS = 0.42;
+    public static double TRIGGER_PUSH_POS = 0.45;
     public static double TRIGGER_PUSH_TIME_MS = 200;
     public static double TRIGGER_OPEN_TIME_MS = 200;
     public Trigger(HardwareMap hardwareMap){
