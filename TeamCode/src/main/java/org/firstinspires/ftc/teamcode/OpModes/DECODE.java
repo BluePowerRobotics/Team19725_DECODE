@@ -81,6 +81,7 @@ public class DECODE extends LinearOpMode {
     public BlinkinLedController ledController;
     AprilTagDetector aprilTagDetector;
     public static int tmpSpeed = 880;
+    public static int OpenSweeperSpeedThreshold = 750;
     //
     public double targetSpeed = ShooterAction.speed35_55;
     public Pose2d startPose = new Pose2d(0,0,0);
@@ -402,7 +403,10 @@ public class DECODE extends LinearOpMode {
                     }
                     else{
                         //TODO 留下距离传感器判断是否有球的接口
-                        sweeperStatus = SWEEPER_STATUS.STOP;
+                        if(targetSpeed * Kspeed > OpenSweeperSpeedThreshold){
+                            sweeperStatus = SWEEPER_STATUS.STOP;
+                        }
+
                     }
                 }
                 break;
