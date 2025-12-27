@@ -294,6 +294,7 @@ class ChassisCalculator {
         return output;
     }
 }
+@Config
 class ChassisOutputter {
     public static class Params {
         //todo 调整参数
@@ -301,6 +302,7 @@ class ChassisOutputter {
         double wheelDiameter = 104; // 轮子直径 (mm)
         double mmPerTick = (wheelDiameter * Math.PI) / CPR; // 每个编码器脉冲对应的线性位移 (mm)
         double maxRpm = 312; // 电机最大转速 (RPM)
+        double ZeroPowerTolerance=0.02;
     }
     public static Params PARAMS = new Params();
 
@@ -347,12 +349,16 @@ class ChassisOutputter {
             v_bl = v_bl / maxV * PARAMS.maxRpm / 60;
             v_br = v_br / maxV * PARAMS.maxRpm / 60;
         }
+        if(Math.abs(v_fl / (PARAMS.maxRpm / 60))<=PARAMS.ZeroPowerTolerance) v_fl = 0;
         leftFront.setPower(v_fl / (PARAMS.maxRpm / 60));
         InstanceTelemetry.getTelemetry().addData("LF",v_fl / (PARAMS.maxRpm / 60));
+        if(Math.abs(v_fr / (PARAMS.maxRpm / 60))<=PARAMS.ZeroPowerTolerance) v_fr = 0;
         rightFront.setPower(v_fr / (PARAMS.maxRpm / 60));
         InstanceTelemetry.getTelemetry().addData("RF",v_fr / (PARAMS.maxRpm / 60));
+        if(Math.abs(v_bl / (PARAMS.maxRpm / 60))<=PARAMS.ZeroPowerTolerance) v_bl = 0;
         leftBack.setPower(v_bl / (PARAMS.maxRpm / 60));
         InstanceTelemetry.getTelemetry().addData("LB",v_bl / (PARAMS.maxRpm / 60));
+        if(Math.abs(v_br / (PARAMS.maxRpm / 60))<=PARAMS.ZeroPowerTolerance) v_br = 0;
         rightBack.setPower(v_br / (PARAMS.maxRpm / 60));
         InstanceTelemetry.getTelemetry().addData("RB",v_br / (PARAMS.maxRpm / 60));
     }
