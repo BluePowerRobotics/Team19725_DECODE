@@ -29,7 +29,7 @@ public class ShooterAction {
     public int low_speed_threshold = 350;
 
     //第一个球被推入飞轮所需的时间
-    public static long waitTime = 300;
+    public static long waitTime = 200;
     public static long ShootTime = 2800;
     public static int WindowSize = 3;
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
