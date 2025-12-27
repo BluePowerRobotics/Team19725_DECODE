@@ -80,7 +80,7 @@ public class DECODE extends LinearOpMode {
     public ActionRunner actionRunner;
     public BlinkinLedController ledController;
 //    AprilTagDetector aprilTagDetector;
-    public static int tmpSpeed = 880;
+    public static int tmpSpeed = 700;
     //暂时关闭发射时的速度限制
     public static int OpenSweeperSpeedThreshold = 1000;
     //
@@ -142,14 +142,14 @@ public class DECODE extends LinearOpMode {
             }
         }
 
-        if(gamepad1.dpadUpWasPressed()){
-            if(teamColor == TEAM_COLOR.BLUE){
-                chassis.resetPosition(BlueResetPose);
-            }
-            if(teamColor == TEAM_COLOR.RED){
-                chassis.resetPosition(RedResetPose);
-            }
-        }
+//        if(gamepad1.dpadUpWasPressed()){
+//            if(teamColor == TEAM_COLOR.BLUE){
+//                chassis.resetPosition(BlueResetPose);
+//            }
+//            if(teamColor == TEAM_COLOR.RED){
+//                chassis.resetPosition(RedResetPose);
+//            }
+//        }
         if(gamepad2.xWasPressed()){
             robotStatus = ROBOT_STATUS.WAITING;
             actionRunner = new ActionRunner();
@@ -433,6 +433,17 @@ public class DECODE extends LinearOpMode {
                 if (teamColor == TEAM_COLOR.BLUE) {
                     chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r4));
                     targetSpeed = ShooterAction.speed25_55;
+                }
+            }
+
+            if (gamepad1.dpadUpWasPressed()) {
+                if (teamColor == TEAM_COLOR.RED) {
+                    chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r5));
+                    targetSpeed = ShooterAction.speed35_55;
+                }
+                if (teamColor == TEAM_COLOR.BLUE) {
+                    chassis.setTargetPoint(SolveShootPoint.solveBLUEShootPoint(pose, SolveShootPoint.r5));
+                    targetSpeed = ShooterAction.speed35_55;
                 }
             }
         }else{

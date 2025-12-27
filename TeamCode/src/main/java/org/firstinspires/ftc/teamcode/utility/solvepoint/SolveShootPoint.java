@@ -33,7 +33,7 @@ public class SolveShootPoint {
     public static double solveBLUEShootHeading(Pose2d poseRC){
         double x = poseRC.position.x;
         double y = poseRC.position.y;
-        double heading = Math.atan2(y+72,x+72);
+        double heading = Math.atan2(y+70.47,x+70.47);
         return heading;
     }
     public  static  double solveBLUEShootDistance(Pose2d poseRC){
@@ -47,10 +47,10 @@ public class SolveShootPoint {
     public static Pose2d solveBLUEShootPoint(Pose2d poseRC, double r) {
         //特别判断小三角情况 100表示小三角离球门进近侧，200表示小三角离球门进远侧
         if(r == 100){
-            return new Pose2d(44.71220495, -8.613385148, 0.4975317075);
+            return new Pose2d(60, -12, 0.4266274931);
         }
         if(r == 200){
-            return new Pose2d(60, 12, Math.atan(84.0/(60+72)));
+            return new Pose2d(60, 12, 0.5636930906);
         }
 
         double x = poseRC.position.x;
@@ -75,7 +75,7 @@ public class SolveShootPoint {
     public static double solveREDShootHeading(Pose2d poseRC){
         double x = poseRC.position.x;
         double y = poseRC.position.y;
-        double heading = Math.atan2(x+72,72-y) - Math.PI/2;
+        double heading = Math.atan2(x+70.47,70.47-y) - Math.PI/2;
         return heading;
     }
     public  static  double solveREDShootDistance(Pose2d poseRC){
@@ -87,10 +87,10 @@ public class SolveShootPoint {
     public static Pose2d solveREDShootPoint(Pose2d poseRC, double r) {
 
         if(r == 100){
-            return new Pose2d(44.71220495, 8.613385148, -0.4975317075);
+            return new Pose2d(60, 12, -0.4266274931);
         }
         if(r == 200){
-            return new Pose2d(60, -12, -Math.atan(84.0/(60+72)));
+            return new Pose2d(60, -12, -0.5636930906);
         }
 
         double x = poseRC.position.x;

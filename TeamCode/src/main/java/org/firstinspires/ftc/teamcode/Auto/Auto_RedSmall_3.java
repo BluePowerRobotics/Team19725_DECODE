@@ -29,8 +29,8 @@ public class Auto_RedSmall_3 extends LinearOpMode {
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static double endx = 24;
-    public static double endy = 20;
+    public static double endx = 60;
+    public static double endy = 40;
     public static int INTAKE_START_X = 56;
     public static int INTAKE_END_Y = 62;
     public static double front = ChassisController.PARAMS.FrontToCenterInch;
