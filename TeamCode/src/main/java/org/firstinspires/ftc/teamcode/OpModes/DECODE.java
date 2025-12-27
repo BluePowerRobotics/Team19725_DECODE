@@ -96,7 +96,7 @@ public class DECODE extends LinearOpMode {
     public double degreeOffset = 0;
     public static double AdditionDegree = 1.0;
     public static double startShootingHeading = Math.PI / 2;
-    public static double toleranceHeading = 0.034907;
+    public static double toleranceHeading = 0.068;
     public static double KtoleranceHeading = 1;
     public boolean ReadyToShoot = false;
     public  Pose2d BlueResetPose = new Pose2d(72 - ChassisController.PARAMS.SideToCenterInch,72 - ChassisController.PARAMS.FrontToCenterInch, Math.PI / 2);
@@ -384,9 +384,15 @@ public class DECODE extends LinearOpMode {
                     else{
                         ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
                     }
-                    if(gamepad2.start){
-                        sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
-                        triggerStatus = TRIGGER_STATUS.OPEN;
+                    if(gamepad2.startWasPressed()){
+                        if(sweeperStatus == SWEEPER_STATUS.GIVE_ARTIFACT){
+                            sweeperStatus = SWEEPER_STATUS.STOP;
+                            triggerStatus = TRIGGER_STATUS.CLOSE;
+                        }
+                        if(sweeperStatus == SWEEPER_STATUS.STOP){
+                            sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
+                            triggerStatus = TRIGGER_STATUS.OPEN;
+                        }
                     }
                     break;
 
