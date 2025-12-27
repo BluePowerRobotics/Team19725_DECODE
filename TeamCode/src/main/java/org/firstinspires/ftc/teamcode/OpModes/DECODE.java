@@ -97,6 +97,7 @@ public class DECODE extends LinearOpMode {
     public static double AdditionDegree = 1.0;
     public static double startShootingHeading = Math.PI / 2;
     public static double toleranceHeading = 0.034907;
+    public static double KtoleranceHeading = 1;
     public boolean ReadyToShoot = false;
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
@@ -127,7 +128,15 @@ public class DECODE extends LinearOpMode {
     }
     void inputRobotStatus(){
         if(gamepad1.dpadRightWasPressed()){
-            toleranceHeading = toleranceHeading * 2;
+            KtoleranceHeading += 0.5;
+        }
+        if(gamepad1.dpadLeftWasPressed()){
+            if (teamColor == TEAM_COLOR.RED) {
+                targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
+            }
+            if (teamColor == TEAM_COLOR.BLUE) {
+                targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
+            }
         }
         if(gamepad2.xWasPressed()){
             robotStatus = ROBOT_STATUS.WAITING;
@@ -345,20 +354,24 @@ public class DECODE extends LinearOpMode {
                     boolean hasReachedTargetSpeed = shooter.setShootSpeed(Math.toIntExact(Math.round(targetSpeed * Kspeed)));
                     double currentHeading = chassis.robotPosition.getData().headingRadian;
                     double targetHeading = chassis.getHeadingLockRadian();
-                    boolean passShootCheckPoint = hasReachedTargetSpeed && Math.abs(currentHeading - targetHeading) < toleranceHeading;
+                    boolean passShootCheckPoint = hasReachedTargetSpeed && Math.abs(currentHeading - targetHeading) < (toleranceHeading * KtoleranceHeading);
                     if(passShootCheckPoint){
-                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
                     }
                     else{
                         //TODO 留下距离传感器判断是否有球的接口
-                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
                         if(targetSpeed * Kspeed > OpenSweeperSpeedThreshold){
                             sweeperStatus = SWEEPER_STATUS.STOP;
                         }
                     }
 
+                    if(Math.abs(currentHeading - targetHeading) < toleranceHeading && hasReachedTargetSpeed){
+                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                    }
+                    else{
+                        ledController.setColor(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+                    }
                     if(gamepad2.start){
                         sweeperStatus = SWEEPER_STATUS.GIVE_ARTIFACT;
                         triggerStatus = TRIGGER_STATUS.OPEN;
