@@ -99,6 +99,9 @@ public class DECODE extends LinearOpMode {
     public static double toleranceHeading = 0.034907;
     public static double KtoleranceHeading = 1;
     public boolean ReadyToShoot = false;
+    public  Pose2d BlueResetPose = new Pose2d(72 - ChassisController.PARAMS.SideToCenterInch,72 - ChassisController.PARAMS.FrontToCenterInch, Math.PI / 2);
+    public  Pose2d RedResetPose = new Pose2d(72 - ChassisController.PARAMS.SideToCenterInch,-72 + ChassisController.PARAMS.FrontToCenterInch, -Math.PI / 2);
+
     void Init(){
         try (BufferedReader reader = new BufferedReader(new FileReader("/sdcard/FIRST/pose.txt"))) {
             String[] data = reader.readLine().split(",");
@@ -136,6 +139,15 @@ public class DECODE extends LinearOpMode {
             }
             if (teamColor == TEAM_COLOR.BLUE) {
                 targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
+            }
+        }
+
+        if(gamepad1.dpadUpWasPressed()){
+            if(teamColor == TEAM_COLOR.BLUE){
+                chassis.resetPosition(BlueResetPose);
+            }
+            if(teamColor == TEAM_COLOR.RED){
+                chassis.resetPosition(RedResetPose);
             }
         }
         if(gamepad2.xWasPressed()){
