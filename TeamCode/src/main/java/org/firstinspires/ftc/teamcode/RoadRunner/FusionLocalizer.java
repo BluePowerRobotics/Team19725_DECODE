@@ -162,8 +162,8 @@ public class FusionLocalizer implements Localizer{
     public static int PinPointLostMaxTime=40;
     public static int MixMaxTime=20;
     public static double IMUWeight = 0.1;
-    public static double EIMUWeight = 0.3;
-    public static double PINPWeight = 20;
+    public static double EIMUWeight = 20;
+    public static double PINPWeight = 1;
     double IMULastValue =0;
     double EIMULastValue =0;
     double PINPOINTLastValue=0;
