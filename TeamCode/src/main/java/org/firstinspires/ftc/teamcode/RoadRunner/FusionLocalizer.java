@@ -33,6 +33,7 @@ public class FusionLocalizer implements Localizer{
     double imuAddition = 0;
     double eimuAddition =0;
     double IMUsAddition = 0;
+    public static int initialWindowSize =3;
 
 //    // 可配置：一致性与数值离群阈值（原始说明中要求把“不可发生的误差”除以3，乘2作为阈值，因为重心在中线的2/3处）
 //    public static double CONSISTENCY_IMPOSSIBLE_ERROR = 0.3; // rad
@@ -63,8 +64,16 @@ public class FusionLocalizer implements Localizer{
             imuSensor.reset();
             EIMUBelievable=false;
         }
-        imuAddition  = MathSolver.normalizeAngle(initialPose.heading.log()- imuSensor.getYaw(AngleUnit.RADIANS));
-        eimuAddition = MathSolver.normalizeAngle(initialPose.heading.log()-eimuSensor.getYaw(AngleUnit.RADIANS));
+        AngleMeanFilter  imuInit = new AngleMeanFilter(initialWindowSize);
+        AngleMeanFilter eimuInit = new AngleMeanFilter(initialWindowSize);
+        int i =0;
+        while(i<initialWindowSize){
+             imuInit.filter( imuSensor.getYaw(AngleUnit.RADIANS));
+            eimuInit.filter(eimuSensor.getYaw(AngleUnit.RADIANS));
+            i++;
+        }
+        imuAddition  = MathSolver.normalizeAngle(initialPose.heading.log()- imuInit.getAverageAngle());
+        eimuAddition = MathSolver.normalizeAngle(initialPose.heading.log()-eimuInit.getAverageAngle());
         fusedAngle = initialPose.heading.log();
         this.hardwareMap=hardwareMap;
         this.inPerTick=inPerTick;
