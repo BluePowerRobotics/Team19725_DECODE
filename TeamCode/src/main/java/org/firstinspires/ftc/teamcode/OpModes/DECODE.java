@@ -486,13 +486,13 @@ public class DECODE extends LinearOpMode {
         }
     }
 
-
+    boolean InitStarted=false;
     @Override
     public void runOpMode() throws InterruptedException {
         //先初始化硬件
         Init();
         //留下更改一些参数的后门(??
-        while(opModeInInit()){
+        while(opModeInInit()||!InitStarted){
             if(gamepad1.a){
                 teamColor = TEAM_COLOR.BLUE;
             }
@@ -515,6 +515,7 @@ public class DECODE extends LinearOpMode {
             telemetry.addData("TEAM_COLOR", teamColor.toString());
             telemetry.addData("FPS",1000000000.0/(System.nanoTime()-lastNanoTime));
             telemetry.update();
+            InitStarted = true;
         }
         waitForStart();
         lastNanoTime=System.nanoTime();
