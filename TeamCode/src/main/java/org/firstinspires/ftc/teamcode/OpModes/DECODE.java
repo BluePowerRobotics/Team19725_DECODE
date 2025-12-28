@@ -115,7 +115,7 @@ public class DECODE extends LinearOpMode {
         }
 
         //todo set team color
-        teamColor = TEAM_COLOR.BLUE;
+        teamColor = TEAM_COLOR.RED;
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);

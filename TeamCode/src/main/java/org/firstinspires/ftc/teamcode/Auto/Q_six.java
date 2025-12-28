@@ -23,13 +23,14 @@ import java.io.IOException;
 
 @Autonomous
 @Config
+//RED
 public class Q_six extends LinearOpMode {
     MecanumDrive drive;
     ShooterAction shooterAction;
     Sweeper_PID sweeper;
     Trigger trigger;
-    public static double endx = 24;
-    public static double endy = 20;
+    public static double endx = 60;
+    public static double endy = 40;
     public static int INTAKE_START_X = 56;
     public static double front = ChassisController.PARAMS.FrontToCenterInch;
     public static double side = ChassisController.PARAMS.SideToCenterInch;
@@ -39,10 +40,11 @@ public class Q_six extends LinearOpMode {
     public static final Vector2d INTAKE_START1 = new Vector2d(48, 48);
     public static final Vector2d INTAKE_END1 = new Vector2d(53.875, 63);
     public static final Vector2d INTAKE_START2 = new Vector2d(INTAKE_START_X, 48);
-    public static final Vector2d INTAKE_END2 = new Vector2d(INTAKE_START_X + 5.875, 63);
-    public static double SHOOT_HEADING = 0.4266274931;
-    public static double EAT_HEADING = -1.197494436;
-    public static double END_HEADING = Math.PI / 2;
+    //try 5.875
+    public static final Vector2d INTAKE_END2 = new Vector2d(INTAKE_START_X + 7, 63);
+    public static double SHOOT_HEADING = -0.4266274931;
+    public static double EAT_HEADING = 1.197494436;
+    public static double END_HEADING = -Math.PI / 2;
     public static double collectWait = 1;
 
     @Override
@@ -91,30 +93,69 @@ public class Q_six extends LinearOpMode {
                 collectAction1
         ));
 
-        Action intakeAction2 = drive.actionBuilder(drive.localizer.getPose())
+        Action intakeAction2_1 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(INTAKE_START2, EAT_HEADING)
                 .build();
         Actions.runBlocking(
-                intakeAction2
+                intakeAction2_1
         );
 
-        Action collectAction2 = drive.actionBuilder(drive.localizer.getPose())
+        Action collectAction2_1 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeTo(INTAKE_END2)
                 .waitSeconds(collectWait)
                 .build();
 
         Actions.runBlocking(new RaceAction(
                 sweeper.SweeperAction(Sweeper_PID.EatVel),
-                collectAction2
+                collectAction2_1
         ));
         sweeper.Sweep(0);
 
-        Action returnToShootAction = drive.actionBuilder(drive.localizer.getPose())
+        Action returnToShootAction2_1 = drive.actionBuilder(drive.localizer.getPose())
                 .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
                 .build();
 
         Actions.runBlocking(new SequentialAction(
-                returnToShootAction,
+                returnToShootAction2_1,
+                sweeper.SweeperBack()
+        ));
+        //sleep(500);
+        Actions.runBlocking(new SequentialAction(
+                shooterAction.SpeedUp(ShooterAction.targetSpeed_high)
+        ));
+
+        trigger.open();
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.GiveTheArtifactVel),
+                shooterAction.ShootThreeArtifacts(ShooterAction.targetSpeed_high)
+        ));
+        trigger.close();
+        sweeper.Sweep(0);
+
+        Action intakeAction2_2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(INTAKE_START2, EAT_HEADING)
+                .build();
+        Actions.runBlocking(
+                intakeAction2_2
+        );
+
+        Action collectAction2_2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeTo(INTAKE_END2)
+                .waitSeconds(collectWait)
+                .build();
+
+        Actions.runBlocking(new RaceAction(
+                sweeper.SweeperAction(Sweeper_PID.EatVel),
+                collectAction2_2
+        ));
+        sweeper.Sweep(0);
+
+        Action returnToShootAction2_2 = drive.actionBuilder(drive.localizer.getPose())
+                .strafeToLinearHeading(SHOOT_POSE, SHOOT_HEADING)
+                .build();
+
+        Actions.runBlocking(new SequentialAction(
+                returnToShootAction2_2,
                 sweeper.SweeperBack()
         ));
         //sleep(500);
