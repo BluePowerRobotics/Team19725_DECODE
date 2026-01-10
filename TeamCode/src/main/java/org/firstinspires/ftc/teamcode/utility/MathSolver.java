@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class MathSolver {
     private static final double EPSILON = 1e-10; // 误差容限
-    public static double sgn(double n){return Math.abs(n)/n;}
+    public static double sgn(double n){return Math.signum(n);}
 
     // 求解四次方程 ax^4 + bx^3 + cx^2 + dx + e = 0 的实根
     public static double[] solve4(double a, double b, double c, double d, double e) {
@@ -134,7 +134,7 @@ y_2
             double z = D * D - D * (cbrtZ1 + cbrtZ2) + (cbrtZ1 + cbrtZ2) * (cbrtZ1 + cbrtZ2) - 3 * A;
 
             double signE = sgn(E); // E的符号因子
-            double realPart = (-b + signE * Math.sqrt((D + cbrtZ1 + cbrtZ2) / 3)) / (4 * a);
+            double realPart = (-b + signE * Math.sqrt(Math.max((D + cbrtZ1 + cbrtZ2) / 3, 0))) / (4 * a);
             double imagPart = Math.sqrt((2 * D - (cbrtZ1 + cbrtZ2) + 2 * Math.sqrt(z)) / 3) / (4 * a);
 
             double x1 = realPart + imagPart;
