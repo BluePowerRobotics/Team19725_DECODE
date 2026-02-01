@@ -310,20 +310,11 @@ class ChassisOutputter {
     DcMotorEx leftFront, rightFront, leftBack, rightBack;
 
     ChassisOutputter(HardwareMap hardwareMap) {
-        //TODO 以下配置需要与MecanumDrive.java中保持一致
         this.hardwareMap = hardwareMap;
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront = RobotPosition.getInstance().mecanumDrive.leftFront;
+        rightFront = RobotPosition.getInstance().mecanumDrive.rightFront;
+        leftBack = RobotPosition.getInstance().mecanumDrive.leftBack;
+        rightBack = RobotPosition.getInstance().mecanumDrive.rightBack;
     }
 
     /**
