@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.controllers.chassis;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -42,7 +44,6 @@ public class ChassisController {
     public double noHeadModeStartError;
     public ActionRunner actionRunner=new ActionRunner();
     static ChassisCalculator chassisCalculator= new ChassisCalculator();
-    ChassisOutputter chassisOutputter;
 
     /**
      * OpMode初始化时调用
@@ -50,7 +51,6 @@ public class ChassisController {
     public ChassisController(HardwareMap hardwareMap){
         robotPosition= RobotPosition.refresh(hardwareMap);
         this.hardwareMap=hardwareMap;
-        chassisOutputter=new ChassisOutputter(hardwareMap);
         HeadingLockRadian = robotPosition.getData().headingRadian;
         noHeadModeStartError=robotPosition.getData().headingRadian;
     }
@@ -65,7 +65,6 @@ public class ChassisController {
         robotPosition= RobotPosition.refresh(hardwareMap,initialPosition,initialHeadingRadian);
         this.hardwareMap=hardwareMap;
         //fullyAutoMode=true;
-        chassisOutputter=new ChassisOutputter(hardwareMap);
         HeadingLockRadian = robotPosition.getData().headingRadian;
         noHeadModeStartError=robotPosition.getData().headingRadian;
     }
@@ -114,7 +113,6 @@ public class ChassisController {
         robotPosition=RobotPosition.refresh(hardwareMap,pose2d);
     }
 
-    public double[] wheelSpeeds={0,0,0,0};
     Point2D targetPoint=new Point2D(0,0);
     double targetRadian=0;
     public void gamepadInput(double vx,double vy,double omega){
@@ -161,10 +159,9 @@ public class ChassisController {
                     }
                 }
                 if (useNoHeadMode)
-                    wheelSpeeds = chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian-noHeadModeStartError);
+                    chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian-noHeadModeStartError);
                 else
-                    wheelSpeeds = chassisCalculator.solveChassis(vx, vy, omega);
-                chassisOutputter.setWheelVelocities(wheelSpeeds);
+                    chassisCalculator.solveChassis(vx, vy, omega);
             }
         }
     }
@@ -204,20 +201,17 @@ class ChassisCalculator {
     }
 
     /**
-     * 逆运动学公式
+     *
      *
      * @param vx    机器人相对于自身的横移速度 (m/s) —— +右
      * @param vy    机器人相对于自身的前进速度 (m/s) —— +前
      * @param omega 机器人旋转角速度 (rad/s) —— +逆时针
-     * @return 各个车轮的线速度 (m/s)
      */
-    public double[] solveChassis(double vx, double vy, double omega) {
-        double v_fl = vy + vx - (2 * PARAMS.rb * omega);
-        double v_bl = vy - vx - (2 * PARAMS.rb * omega);
-        double v_br = vy + vx + (2 * PARAMS.rb * omega);
-        double v_fr = vy - vx + (2 * PARAMS.rb * omega);
-
-        return new double[]{v_fl, v_fr, v_bl, v_br};
+    public void solveChassis(double vx, double vy, double omega) {
+        RobotPosition.getInstance().mecanumDrive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(vy,-vx),
+                omega
+        ));
     }
 
     /**
@@ -226,16 +220,15 @@ class ChassisCalculator {
      * @param vy 机器人相对于地面的前进速度 (m/s) —— +前
      * @param omega 机器人旋转角速度 (rad/s) —— +逆时针
      * @param headingRadian 机器人朝向，弧度制
-     * @return 各个车轮的线速度 (m/s)
      */
-    public double[] solveGround(double vx, double vy, double omega, double headingRadian) {
+    public void solveGround(double vx, double vy, double omega, double headingRadian) {
 
         double vxPro = vx * Math.cos(headingRadian) + vy * Math.sin(headingRadian);
         double vyPro = -vx * Math.sin(headingRadian) + vy * Math.cos(headingRadian);
-        return solveChassis(vxPro, vyPro, omega);
+        solveChassis(vxPro, vyPro, omega);
     }
-    public double[] solveGround(double[] vxy,double vOmega,double headingRadian){
-        return solveGround(vxy[0],vxy[1],vOmega,headingRadian);
+    public void solveGround(double[] vxy,double vOmega,double headingRadian){
+        solveGround(vxy[0],vxy[1],vOmega,headingRadian);
     }
 
     long lastTimeXY = 0;
@@ -292,69 +285,5 @@ class ChassisCalculator {
         double output = pidRadianHeadLock.calculate(errorRadian, 0, (System.nanoTime() - lastTimeRadian) / 1e9);
         lastTimeRadian = System.nanoTime();
         return output;
-    }
-}
-@Config
-class ChassisOutputter {
-    public static class Params {
-        //todo 调整参数
-        double CPR = ((((1.0 + (46.0 / 17.0))) * (1.0 + (46.0 / 11.0))) * 28.0); // 电机每转一圈的编码器脉冲数
-        double wheelDiameter = 104; // 轮子直径 (mm)
-        double mmPerTick = (wheelDiameter * Math.PI) / CPR; // 每个编码器脉冲对应的线性位移 (mm)
-        double maxRpm = 312; // 电机最大转速 (RPM)
-        double ZeroPowerTolerance=0.02;
-    }
-    public static Params PARAMS = new Params();
-
-    HardwareMap hardwareMap;
-    DcMotorEx leftFront, rightFront, leftBack, rightBack;
-
-    ChassisOutputter(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
-        leftFront = RobotPosition.getInstance().mecanumDrive.leftFront;
-        rightFront = RobotPosition.getInstance().mecanumDrive.rightFront;
-        leftBack = RobotPosition.getInstance().mecanumDrive.leftBack;
-        rightBack = RobotPosition.getInstance().mecanumDrive.rightBack;
-    }
-
-    /**
-     * 设置各个车轮的线速度 (m/s)
-     *
-     * @param v_fl 左前轮速度
-     * @param v_fr 右前轮速度
-     * @param v_bl 左后轮速度
-     * @param v_br 右后轮速度
-     */
-    public void setWheelVelocities(double v_fl, double v_fr, double v_bl, double v_br) {
-        v_fl = v_fl * 1000 / PARAMS.wheelDiameter;// (m/s) -> (r/s)
-        v_fr = v_fr * 1000 / PARAMS.wheelDiameter;
-        v_bl = v_bl * 1000 / PARAMS.wheelDiameter;
-        v_br = v_br * 1000 / PARAMS.wheelDiameter;
-        if(     Math.abs(v_fl) > PARAMS.maxRpm / 60 ||
-                Math.abs(v_fr) > PARAMS.maxRpm / 60 ||
-                Math.abs(v_bl) > PARAMS.maxRpm / 60 ||
-                Math.abs(v_br) > PARAMS.maxRpm / 60){
-            double maxV = Math.max(Math.max(Math.abs(v_fl), Math.abs(v_fr)), Math.max(Math.abs(v_bl), Math.abs(v_br)));
-            v_fl = v_fl / maxV * PARAMS.maxRpm / 60;// range to [-maxRpm/60, maxRpm/60]
-            v_fr = v_fr / maxV * PARAMS.maxRpm / 60;
-            v_bl = v_bl / maxV * PARAMS.maxRpm / 60;
-            v_br = v_br / maxV * PARAMS.maxRpm / 60;
-        }
-        if(Math.abs(v_fl / (PARAMS.maxRpm / 60))<=PARAMS.ZeroPowerTolerance) v_fl = 0;
-        leftFront.setPower(v_fl / (PARAMS.maxRpm / 60));
-        InstanceTelemetry.getTelemetry().addData("LF",v_fl / (PARAMS.maxRpm / 60));
-        if(Math.abs(v_fr / (PARAMS.maxRpm / 60))<=PARAMS.ZeroPowerTolerance) v_fr = 0;
-        rightFront.setPower(v_fr / (PARAMS.maxRpm / 60));
-        InstanceTelemetry.getTelemetry().addData("RF",v_fr / (PARAMS.maxRpm / 60));
-        if(Math.abs(v_bl / (PARAMS.maxRpm / 60))<=PARAMS.ZeroPowerTolerance) v_bl = 0;
-        leftBack.setPower(v_bl / (PARAMS.maxRpm / 60));
-        InstanceTelemetry.getTelemetry().addData("LB",v_bl / (PARAMS.maxRpm / 60));
-        if(Math.abs(v_br / (PARAMS.maxRpm / 60))<=PARAMS.ZeroPowerTolerance) v_br = 0;
-        rightBack.setPower(v_br / (PARAMS.maxRpm / 60));
-        InstanceTelemetry.getTelemetry().addData("RB",v_br / (PARAMS.maxRpm / 60));
-    }
-
-    public void setWheelVelocities(double[] velocities) {
-        setWheelVelocities(velocities[0], velocities[1], velocities[2], velocities[3]);
     }
 }
