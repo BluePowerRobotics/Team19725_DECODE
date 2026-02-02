@@ -23,7 +23,7 @@ public class ChassisControlTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         ChassisController chassis = new ChassisController(hardwareMap);
-        chassis.robotPosition.setMinUpdateIntervalMs(1);//todo 测试更小的时间间隔是否能带来更好的效果
+        RobotPosition.getInstance().setMinUpdateIntervalMs(1);//todo 测试更小的时间间隔是否能带来更好的效果
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
         waitForStart();
@@ -42,8 +42,8 @@ public class ChassisControlTester extends LinearOpMode {
             telemetry.addData("x-power",strafe);
             telemetry.addData("r-power",rotate);
             telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
-            telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
-            telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
+            telemetry.addData("NoHeadMode",chassis.getUseNoHeadMode()?"NoHead":"Manual");
+            telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");//chassis.isTargetPointReached()
             telemetry.addData("Position",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
             telemetry.update();
             lastNanoTime = System.nanoTime();
