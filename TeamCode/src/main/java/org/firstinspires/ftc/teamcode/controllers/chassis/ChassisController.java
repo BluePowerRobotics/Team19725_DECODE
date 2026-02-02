@@ -5,14 +5,10 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
-import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
@@ -23,7 +19,6 @@ public class ChassisController {
     public static class Params{
         //todo 调整参数
         public double maxV=0.5; // 最大线速度 (m/s)
-        public double maxA=0.5; // 最大加速度 (m/s²)
         public double maxOmega=Math.PI*1/2; // 最大角速度 (rad/s)
         public double zeroThresholdV =0.05; // 速度零点阈值 (m/s)
         public double zeroThresholdOmega =Math.toRadians(0.5); // 角速度零点阈值 (rad/s)
@@ -34,7 +29,6 @@ public class ChassisController {
     public static Params PARAMS = new Params();
     public RobotPosition robotPosition;
     HardwareMap hardwareMap;
-    boolean fullyAutoMode = false;
     boolean useNoHeadMode=false;
     public boolean runningToPoint=false;
     boolean autoLockHeading=true;
@@ -46,7 +40,7 @@ public class ChassisController {
     static ChassisCalculator chassisCalculator= new ChassisCalculator();
 
     /**
-     * OpMode初始化时调用
+     * 使用上次位置
      */
     public ChassisController(HardwareMap hardwareMap){
         robotPosition= RobotPosition.refresh(hardwareMap);
@@ -56,7 +50,7 @@ public class ChassisController {
     }
 
     /**
-     * Auto初始化时调用
+     * 初始化时设置位置
      * @param hardwareMap 硬件映射
      * @param initialPosition 初始位置
      * @param initialHeadingRadian 初始朝向，弧度制
@@ -64,14 +58,13 @@ public class ChassisController {
     public ChassisController(HardwareMap hardwareMap, Point2D initialPosition, double initialHeadingRadian){
         robotPosition= RobotPosition.refresh(hardwareMap,initialPosition,initialHeadingRadian);
         this.hardwareMap=hardwareMap;
-        //fullyAutoMode=true;
         HeadingLockRadian = robotPosition.getData().headingRadian;
         noHeadModeStartError=robotPosition.getData().headingRadian;
     }
     /**
-     * Auto初始化时调用
+     * 初始化时设置位置
      * @param hardwareMap 硬件映射
-     * @param initialPose 初始位置（roadrunner方向）
+     * @param initialPose 初始位置（前x左y逆时针rotation）
      */
     public ChassisController(HardwareMap hardwareMap, Pose2d initialPose){
         this(hardwareMap,new Point2D(+initialPose.position.y,-initialPose.position.x),initialPose.heading.log());
@@ -119,50 +112,36 @@ public class ChassisController {
         vx=vx*PARAMS.maxV;
         vy=vy*PARAMS.maxV;
         omega=omega*PARAMS.maxOmega;
-        if(!fullyAutoMode){
-            if(runningToPoint){
-                if (Math.abs(Math.hypot(vx,vy))>=PARAMS.zeroThresholdV||Math.abs(omega)>=PARAMS.zeroThresholdOmega) {
-                    runningToPoint = false;//打断自动驾驶
+        if(runningToPoint){
+            if (Math.abs(Math.hypot(vx,vy))>=PARAMS.zeroThresholdV||Math.abs(omega)>=PARAMS.zeroThresholdOmega) {
+                runningToPoint = false;//打断自动驾驶
+            }else{
+                actionRunner.update();
+                if(!actionRunner.isBusy()){
+                    runningToPoint = false;
+                }
+            }
+        }
+        if(!runningToPoint) {
+            if(autoLockHeading){
+                if(omega!=0){
+                    HeadingLockRadianReset=true;
                 }else{
-                    actionRunner.update();
-                    if(!actionRunner.isBusy()){
-                        runningToPoint = false;
+                    if(HeadingLockRadianReset){
+                        HeadingLockRadianReset=false;
+                        chassisCalculator.firstRunRadian=true;
+                        HeadingLockRadian=robotPosition.getData().headingRadian;
                     }
-//                    if(targetPoint==null){
-//                        targetPoint=robotPosition.getData().getPosition(DistanceUnit.MM);
-//                    }
-//                    if(Double.isNaN(targetRadian)){
-//                        if(HeadingLockRadianReset) {
-//                            targetRadian = robotPosition.getData().headingRadian;
-//                        }else{
-//                            targetRadian=HeadingLockRadian;
-//                        }
-//                    }
-//                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM)),
-//                            chassisCalculator.calculatePIDRadian(targetRadian,robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
+                    if(Math.abs(robotPosition.getData().headingRadian-HeadingLockRadian)<= PARAMS.zeroThresholdOmega) {
+                        chassisCalculator.pidRadianHeadLock.reset();
+                    }
+                    omega=chassisCalculator.calculatePIDRadian(HeadingLockRadian,robotPosition.getData().headingRadian);
                 }
             }
-            if(!runningToPoint) {
-                if(autoLockHeading){
-                    if(omega!=0){
-                        HeadingLockRadianReset=true;
-                    }else{
-                        if(HeadingLockRadianReset){
-                            HeadingLockRadianReset=false;
-                            chassisCalculator.firstRunRadian=true;
-                            HeadingLockRadian=robotPosition.getData().headingRadian;
-                        }
-                        if(Math.abs(robotPosition.getData().headingRadian-HeadingLockRadian)<= PARAMS.zeroThresholdOmega) {
-                            chassisCalculator.pidRadianHeadLock.reset();
-                        }
-                        omega=chassisCalculator.calculatePIDRadian(HeadingLockRadian,robotPosition.getData().headingRadian);
-                    }
-                }
-                if (useNoHeadMode)
-                    chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian-noHeadModeStartError);
-                else
-                    chassisCalculator.solveChassis(vx, vy, omega);
-            }
+            if (useNoHeadMode)
+                chassisCalculator.solveGround(vx, vy, omega, robotPosition.getData().headingRadian-noHeadModeStartError);
+            else
+                chassisCalculator.solveChassis(vx, vy, omega);
         }
     }
 }
@@ -170,16 +149,9 @@ public class ChassisController {
 class ChassisCalculator {
     public static class Params {
         //todo 调整参数
-        public double rb = 0.23; // rb 车轮中心到机器人中心的基本半径 (m)
-        public double skP = 0.002;//speed k
-        public double skI = 0;
-        public double skD = 0.00025;
         public double rkP = 0.8;//radian k
         public double rkI = 1;
         public double rkD = 0.1;
-        public double hkP = 0.7;//speedHeading k
-        public double hkI = 0;
-        public double hkD = 0.1;
         public double drkP=0.2;
         public double drkI=0;
         public double drkD=0.05;
@@ -187,15 +159,11 @@ class ChassisCalculator {
     }
     public static Params PARAMS = new Params();
     long lastHeadingSetTimeMS=0;
-    PIDController pidSpeed;
-    PIDController pidSpeedHeading;
     PIDController pidRadianHeadLock;
     PIDController pidRadianDrive;
 
     ChassisCalculator() {
         // 私有构造函数，防止外部实例化
-        pidSpeed = new PIDController(PARAMS.skP, PARAMS.skI, PARAMS.skD);
-        pidSpeedHeading = new PIDController(PARAMS.hkP, PARAMS.hkI, PARAMS.hkD);
         pidRadianHeadLock = new PIDController(PARAMS.rkP, PARAMS.rkI, PARAMS.rkD);
         pidRadianDrive = new PIDController(PARAMS.drkP, PARAMS.drkI, PARAMS.drkD);
     }
@@ -231,36 +199,6 @@ class ChassisCalculator {
         solveGround(vxy[0],vxy[1],vOmega,headingRadian);
     }
 
-    long lastTimeXY = 0;
-    boolean firstRunXY = true;
-    double thisTimeHeadingRadian = 0;
-    AngleMeanFilter meanFilter = new AngleMeanFilter(10);
-    Point2D lastcurrent=new Point2D(0,0);
-    public double[] calculatePIDXY(Point2D target, Point2D current) {
-        double errorX = target.getX() - current.getX();
-        double errorY = target.getY() - current.getY();
-        double distance = Math.hypot(errorX, errorY);
-        double angleToTarget = Math.atan2(errorY, errorX);
-        if (firstRunXY) {
-            firstRunXY = false;
-            lastTimeXY = System.nanoTime();
-            pidSpeed.reset();
-            pidSpeedHeading.reset();
-            lastcurrent = current;
-            meanFilter.reset();
-        }
-        thisTimeHeadingRadian = meanFilter.filter(Point2D.translate(current,Point2D.rotate(lastcurrent,Math.PI)).getRadian());
-        lastcurrent=current;
-        pidSpeed.setPID(PARAMS.skP, PARAMS.skI, PARAMS.skD);
-        pidSpeedHeading.setPID(PARAMS.hkP, PARAMS.hkI, PARAMS.hkD);
-        double headingError = MathSolver.normalizeAngle(angleToTarget - thisTimeHeadingRadian);
-        double v = pidSpeed.calculate(distance, 0, (System.nanoTime() - lastTimeXY) / 1e9);
-        double heading = pidSpeedHeading.calculate(0,headingError,(System.nanoTime() - lastTimeXY) / 1e9);
-        lastTimeXY = System.nanoTime();
-        double vx = v * Math.cos(angleToTarget-heading);
-        double vy = v * Math.sin(angleToTarget-heading);
-        return new double[]{vx, vy};
-    }
 
     long lastTimeRadian = 0;
     boolean firstRunRadian = true;
