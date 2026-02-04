@@ -14,25 +14,98 @@ import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 import org.firstinspires.ftc.teamcode.utility.filter.AngleWeightedMeanFilter;
 import org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter.OneDimensionKalmanFilter;
 import org.firstinspires.ftc.teamcode.utility.filter.kalmanfilter.PosVelTuple;
+
+/**
+ * 融合定位器，融合了多个IMU传感器和Pinpoint定位器的数据。
+ * 
+ * 此定位器使用加权平均滤波器来融合多个IMU和Pinpoint的航向数据，
+ * 并包含异常检测和修正机制，以提高定位的准确性和稳定性。
+ */
 @Config
 public class FusionLocalizer implements Localizer{
+    /**
+     * IMU传感器数据的加权平均滤波器。
+     */
     AngleWeightedMeanFilter imusFilter = new AngleWeightedMeanFilter(3);
+    
+    /**
+     * 角度均值滤波器数组，用于平滑IMU和Pinpoint的角度数据。
+     */
     AngleMeanFilter[] angleMeanFilters = new AngleMeanFilter[]{new AngleMeanFilter(10),new AngleMeanFilter(10),new AngleMeanFilter(10)};
+    
+    /**
+     * 主IMU传感器实例。
+     */
     IMUSensor imuSensor;
+    
+    /**
+     * 辅助IMU传感器实例。
+     */
     IMUSensor eimuSensor;
+    
+    /**
+     * 内部使用的定位器实例，实际使用PinpointLocalizer进行基本定位。
+     */
     Localizer localizer;
-    //AprilTagDetector aprilTagDetector;
+    
+    /**
+     * X轴方向的卡尔曼滤波器（当前未使用）。
+     */
     OneDimensionKalmanFilter filter_x,filter_y;
+    
+    /**
+     * 硬件映射，用于获取硬件设备。
+     */
     HardwareMap hardwareMap;
+    
+    /**
+     * 每个编码器tick对应的英寸数。
+     */
     double inPerTick;
+    
+    /**
+     * 当前机器人的姿态估计。
+     */
     Pose2d pose;
+    
+    /**
+     * AprilTag视觉定位的状态（当前未使用，始终为false）。
+     */
     boolean AprilTagStatus = false;
+    
+    /**
+     * 主IMU传感器数据是否可信。
+     */
     boolean IMUBelievable=true;
+    
+    /**
+     * 辅助IMU传感器数据是否可信。
+     */
     boolean EIMUBelievable=true;
+    
+    /**
+     * Pinpoint定位器数据是否可信。
+     */
     boolean PINPOINTBelievable=true;
+    
+    /**
+     * 主IMU传感器的角度偏移量，用于将IMU读数转换为世界坐标系。
+     */
     double imuAddition = 0;
+    
+    /**
+     * 辅助IMU传感器的角度偏移量，用于将IMU读数转换为世界坐标系。
+     */
     double eimuAddition =0;
+    
+    /**
+     * IMU传感器的总角度偏移量（当前未使用）。
+     */
     double IMUsAddition = 0;
+    
+    /**
+     * 初始化时的窗口大小，用于计算初始IMU偏移量。
+     */
     public static int initialWindowSize =3;
 
 //    // 可配置：一致性与数值离群阈值（原始说明中要求把“不可发生的误差”除以3，乘2作为阈值，因为重心在中线的2/3处）
@@ -53,38 +126,147 @@ public class FusionLocalizer implements Localizer{
 //    int valEIMUCount = 0;
 //    int valPINCount = 0;
 
+    /**
+     * 主IMU传感器的丢失时间计数器。
+     */
+    int IMULostTime =0;
+    
+    /**
+     * 辅助IMU传感器的丢失时间计数器。
+     */
+    int EIMULostTime =0;
+    
+    /**
+     * Pinpoint定位器的丢失时间计数器。
+     */
+    int PINPOINTLostTime=0;
+    
+    /**
+     * IMU传感器的最大丢失时间阈值。
+     */
+    public static int LostMaxTime=40;
+    
+    /**
+     * Pinpoint定位器的最大丢失时间阈值。
+     */
+    public static int PinPointLostMaxTime=40;
+    
+    /**
+     * 混合使用的最大时间阈值。
+     */
+    public static int MixMaxTime=20;
+    
+    /**
+     * 主IMU传感器的权重。
+     */
+    public static double IMUWeight = 0.1;
+    
+    /**
+     * 辅助IMU传感器的权重。
+     */
+    public static double EIMUWeight = 20;
+    
+    /**
+     * Pinpoint定位器的权重。
+     */
+    public static double PINPWeight = 1;
+    
+    /**
+     * 主IMU传感器的上次读数。
+     */
+    double IMULastValue =0;
+    
+    /**
+     * 辅助IMU传感器的上次读数。
+     */
+    double EIMULastValue =0;
+    
+    /**
+     * Pinpoint定位器的上次读数。
+     */
+    double PINPOINTLastValue=0;
+    
+    /**
+     * 融合后的角度值。
+     */
+    double fusedAngle = 0;
+    
+    /**
+     * IMU滤波器，用于平滑IMU数据（当前未使用）。
+     */
+    AngleMeanFilter imuFilter = new AngleMeanFilter(10);
+    
+    /**
+     * AprilTag滤波器，用于平滑AprilTag数据（当前未使用）。
+     */
+    AngleMeanFilter aprilTagFilter = new AngleMeanFilter(10);
+    
+    /**
+     * 误差滤波器，用于平滑误差数据（当前未使用）。
+     */
+    AngleMeanFilter errorFilter = new AngleMeanFilter(20);
+
+    /**
+     * 构造函数，初始化融合定位器。
+     * 
+     * @param hardwareMap 硬件映射，用于获取硬件设备
+     * @param inPerTick 每个编码器tick对应的英寸数
+     * @param initialPose 初始姿态估计
+     */
     public FusionLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose){
+        // 初始化辅助IMU传感器
         eimuSensor = new IMUSensor(hardwareMap, "eimu", new RevHubOrientationOnRobot(RevHubOrientationOnRobot.xyzOrientation(90,-(180-Math.toDegrees(Math.atan2(3,4))),0)));
-         imuSensor = new IMUSensor(hardwareMap, "imu", new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        // 初始化主IMU传感器
+        imuSensor = new IMUSensor(hardwareMap, "imu", new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        
+        // 检查主IMU传感器是否初始化成功
         if (!imuSensor.ifInitiated()){
             imuSensor.reset();
             IMUBelievable=false;
         }
+        
+        // 检查辅助IMU传感器是否初始化成功
         if (!eimuSensor.ifInitiated()){
             imuSensor.reset();
             EIMUBelievable=false;
         }
+        
+        // 初始化IMU角度滤波器，用于计算初始偏移量
         AngleMeanFilter  imuInit = new AngleMeanFilter(initialWindowSize);
         AngleMeanFilter eimuInit = new AngleMeanFilter(initialWindowSize);
+        
+        // 收集初始IMU数据
         int i =0;
         while(i<initialWindowSize){
-             imuInit.filter( imuSensor.getYaw(AngleUnit.RADIANS));
+            imuInit.filter(imuSensor.getYaw(AngleUnit.RADIANS));
             eimuInit.filter(eimuSensor.getYaw(AngleUnit.RADIANS));
             i++;
         }
-        imuAddition  = MathSolver.normalizeAngle(initialPose.heading.log()- imuInit.getAverageAngle());
+        
+        // 计算IMU传感器的初始偏移量
+        imuAddition  = MathSolver.normalizeAngle(initialPose.heading.log()-imuInit.getAverageAngle());
         eimuAddition = MathSolver.normalizeAngle(initialPose.heading.log()-eimuInit.getAverageAngle());
+        
+        // 设置初始融合角度
         fusedAngle = initialPose.heading.log();
+        
+        // 存储硬件映射和编码器参数
         this.hardwareMap=hardwareMap;
         this.inPerTick=inPerTick;
+        
+        // 初始化PinpointLocalizer作为基础定位器
         localizer = new PinpointLocalizer(hardwareMap,inPerTick,initialPose);
-        //aprilTagDetector = new AprilTagDetector();
-        //aprilTagDetector.init(hardwareMap);
+        
+        // 初始化卡尔曼滤波器（当前未使用）
         filter_x=new OneDimensionKalmanFilter(initialPose.position.x, 0.0);
         filter_y=new OneDimensionKalmanFilter(initialPose.position.y, 0.0);
+        
+        // 初始化角度滤波器
         angleMeanFilters[0].filter(initialPose.heading.log());
         angleMeanFilters[1].filter(initialPose.heading.log());
         angleMeanFilters[2].filter(initialPose.heading.log());
+        
+        // 设置初始姿态
         pose=initialPose;
     }
     @Override
