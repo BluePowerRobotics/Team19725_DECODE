@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
@@ -104,6 +105,22 @@ public class ChassisController {
 
     public void resetPosition(Pose2d pose2d){
         robotPosition=RobotPosition.refresh(hardwareMap,pose2d);
+    }
+    
+    /**
+     * 获取机器人的X方向速度（m/s）
+     * @return X方向速度
+     */
+    public double getVelocityX() {
+        return robotPosition.getData().getSpeed(DistanceUnit.METER).x;
+    }
+    
+    /**
+     * 获取机器人的Y方向速度（m/s）
+     * @return Y方向速度
+     */
+    public double getVelocityY() {
+        return robotPosition.getData().getSpeed(DistanceUnit.METER).y;
     }
 
     Point2D targetPoint=new Point2D(0,0);

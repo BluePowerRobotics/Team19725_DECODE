@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.shooter.DRL.Agent;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 
 //单个弹射飞轮的PID控制器
@@ -48,6 +49,11 @@ public class Shooter {
 
     private PIDController pidController;
 
+    private Agent drlAgent;
+    private boolean drlModelLoaded = false;
+    public static boolean useDRLModel = false;
+    public static double turretAngle = Math.PI / 4;
+
     public Shooter(HardwareMap hardwareMap, Telemetry telemetryrc, String motorName, boolean ifReverse){
         shooterMotor = hardwareMap.get(DcMotorEx.class, motorName);
         shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -60,6 +66,75 @@ public class Shooter {
         this.telemetry = telemetryrc;
         pidController = new PIDController(k_p, k_i, k_d, max_i);
         previous_time = System.currentTimeMillis();
+        
+        loadDRLModel();
+    }
+
+    private void loadDRLModel() {
+        try {
+            drlAgent = Agent.load("/sdcard/FIRST/agent_DDPG.ser");
+            drlModelLoaded = true;
+            telemetry.addData("DRL Model", "Loaded successfully");
+            telemetry.update();
+        } catch (Exception e) {
+            drlModelLoaded = false;
+            telemetry.addData("DRL Model", "Load failed: " + e.getMessage());
+            telemetry.update();
+        }
+    }
+
+    public double[] calculateDRLSpeed(double robotVx, double robotVy, double targetRelX, double targetRelY) {
+        if (!drlModelLoaded || !useDRLModel) {
+            return new double[]{0, 0, 0};
+        }
+
+        try {
+            double[] input = new double[4];
+            input[0] = robotVx;  // 机器人速度 x 分量
+            input[1] = robotVy;  // 机器人速度 y 分量
+            input[2] = targetRelX;  // 目标相对于机器人的 x 坐标
+            input[3] = targetRelY;  // 目标相对于机器人的 y 坐标
+
+            double[] action = drlAgent.decide(input);
+            double[] launchVelocity = new double[3];
+            
+            // 确保输出是三维向量
+            if (action.length >= 3) {
+                launchVelocity[0] = action[0];
+                launchVelocity[1] = action[1];
+                launchVelocity[2] = action[2];
+            } else {
+                // 如果输出维度不足，使用默认值
+                launchVelocity[0] = 0;
+                launchVelocity[1] = 0;
+                launchVelocity[2] = 0;
+            }
+
+            telemetry.addData("DRL Input", String.format("v(%.2f, %.2f), target(%.2f, %.2f)", robotVx, robotVy, targetRelX, targetRelY));
+            telemetry.addData("DRL Output", String.format("(%.2f, %.2f, %.2f)", launchVelocity[0], launchVelocity[1], launchVelocity[2]));
+            telemetry.update();
+
+            return launchVelocity;
+        } catch (Exception e) {
+            telemetry.addData("DRL Error", e.getMessage());
+            telemetry.update();
+            return new double[]{0, 0, 0};
+        }
+    }
+
+    public int calculateLaunchSpeedFromVector(double[] launchVelocity) {
+        // 计算发射速度的模长（假设是三维向量的模）
+        double speed = Math.sqrt(
+            launchVelocity[0] * launchVelocity[0] +
+            launchVelocity[1] * launchVelocity[1] +
+            launchVelocity[2] * launchVelocity[2]
+        );
+        
+        // 转换为适合电机的速度值（度/秒）
+        int motorSpeed = (int) Math.round(speed);
+        motorSpeed = Math.max(600, Math.min(1000, motorSpeed));
+        
+        return motorSpeed;
     }
 
     /**
@@ -120,7 +195,35 @@ public class Shooter {
         return current_speed;
     }
 
+    public boolean shootWithDRL(int targetSpeed, double robotVx, double robotVy, double targetRelX, double targetRelY) {
+        int actualTargetSpeed = targetSpeed;
+        
+        if (useDRLModel && drlModelLoaded) {
+            double[] launchVelocity = calculateDRLSpeed(robotVx, robotVy, targetRelX, targetRelY);
+            int drlSpeed = calculateLaunchSpeedFromVector(launchVelocity);
+            if (drlSpeed > 0) {
+                actualTargetSpeed = drlSpeed;
+            }
+        }
+        
+        return shoot(actualTargetSpeed);
+    }
 
+    public void setTurretAngle(double angle) {
+        turretAngle = angle;
+    }
 
+    public double getTurretAngle() {
+        return turretAngle;
+    }
 
+    public boolean isDRLModelLoaded() {
+        return drlModelLoaded;
+    }
+
+    public void setUseDRLModel(boolean use) {
+        useDRLModel = use;
+        telemetry.addData("DRL Mode", use ? "Enabled" : "Disabled");
+        telemetry.update();
+    }
 }

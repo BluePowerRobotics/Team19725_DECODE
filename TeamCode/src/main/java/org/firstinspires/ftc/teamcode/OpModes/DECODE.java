@@ -72,6 +72,15 @@ public class DECODE extends LinearOpMode {
         STOP
     }
     SHOOTER_STATUS shooterStatus = SHOOTER_STATUS.STOP;
+    
+    // DRL 模式枚举
+    public enum DRL_MODE {
+        FullDRL,  // 使用 DRL 计算速度
+        RunDRL,   // 小车速度大于预设值时使用 DRL，否则使用传统方法
+        NoDRL     // 使用传统方法
+    }
+    DRL_MODE drlMode = DRL_MODE.RunDRL;  // 默认使用 RunDRL 模式
+    public static double drlSpeedThreshold = 0.1;  // 速度阈值（m/s）
     public ChassisController chassis; // 底盘控制器实例，负责机器人的移动控制
     public Sweeper_PID sweeper; // 清扫器控制器实例
     public ShooterAction shooter; // 发射器控制器实例
@@ -80,7 +89,6 @@ public class DECODE extends LinearOpMode {
     public ActionRunner actionRunner; // 动作运行器实例
     public BlinkinLedController ledController; // LED控制器实例
 //    AprilTagDetector aprilTagDetector;
-    public static int tmpSpeed = 700;
     //暂时关闭发射时的速度限制
     public static int OpenSweeperSpeedThreshold = 1000;
     //
@@ -128,17 +136,80 @@ public class DECODE extends LinearOpMode {
 //        aprilTagDetector.init(hardwareMap);
         actionRunner = new ActionRunner();
         ledController = new BlinkinLedController(hardwareMap);
+        
+        // 初始化 DRL
+        SolveShootPoint.initDRL(telemetry);
+        SolveShootPoint.setUseDRLModel(true); // 初始启用 DRL
+        ShooterAction.useDRL = true; // 初始启用 DRL
     }
+    // 计算发射速度，根据当前 DRL 模式
+    private int calculateShootSpeed(double distance) {
+        switch (drlMode) {
+            case FullDRL:
+                // 始终使用 DRL
+                return calculateShootSpeedWithDRL(distance);
+            case RunDRL:
+                // 检查机器人速度是否超过阈值
+                double robotSpeed = Math.sqrt(
+                    Math.pow(chassis.getVelocityX(), 2) +
+                    Math.pow(chassis.getVelocityY(), 2)
+                );
+                if (robotSpeed > drlSpeedThreshold) {
+                    // 速度超过阈值，使用 DRL
+                    return calculateShootSpeedWithDRL(distance);
+                } else {
+                    // 速度低于阈值，使用传统方法
+                    return SolveShootPoint.solveShootSpeed(distance);
+                }
+            case NoDRL:
+            default:
+                // 始终使用传统方法
+                return SolveShootPoint.solveShootSpeed(distance);
+        }
+    }
+    
+    // 使用 DRL 计算发射速度
+    private int calculateShootSpeedWithDRL(double distance) {
+        // 计算目标相对位置
+        double targetX = 0; // 目标绝对 x 坐标
+        double targetY = 0; // 目标绝对 y 坐标
+        
+        // 根据队伍颜色设置目标坐标
+        if (teamColor == TEAM_COLOR.RED) {
+            // 红色队伍的目标位置
+            targetX = -72;
+            targetY = 72;
+        } else if (teamColor == TEAM_COLOR.BLUE) {
+            // 蓝色队伍的目标位置
+            targetX = -72;
+            targetY = -72;
+        }
+        
+        double robotX = pose.position.x;
+        double robotY = pose.position.y;
+        double targetRelX = targetX - robotX;
+        double targetRelY = targetY - robotY;
+        
+        // 计算机器人速度
+        double robotVx = chassis.getVelocityX();
+        double robotVy = chassis.getVelocityY();
+        
+        // 使用 DRL 计算速度
+        return SolveShootPoint.solveShootSpeed(
+            distance, robotVx, robotVy, targetRelX, targetRelY
+        );
+    }
+    
     void inputRobotStatus(){
         if(gamepad1.dpadRightWasPressed()){
             KtoleranceHeading += 0.5;
         }
         if(gamepad1.dpadLeftWasPressed()){
             if (teamColor == TEAM_COLOR.RED) {
-                targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
+                targetSpeed = calculateShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
             }
             if (teamColor == TEAM_COLOR.BLUE) {
-                targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
+                targetSpeed = calculateShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
             }
         }
 
@@ -155,9 +226,7 @@ public class DECODE extends LinearOpMode {
             actionRunner = new ActionRunner();
             actionRunner.add(sweeper.SweeperBack());
         }
-        if(gamepad2.bWasPressed()){
-            targetSpeed = tmpSpeed;
-        }
+
 
 
         //二操的修正功能
@@ -238,14 +307,37 @@ public class DECODE extends LinearOpMode {
                 double heading = 0;
                 if (teamColor == TEAM_COLOR.RED) {
                     heading = SolveShootPoint.solveREDShootHeading(pose);
-                    targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
+                    targetSpeed = calculateShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
                 }
                 if (teamColor == TEAM_COLOR.BLUE) {
                     heading = SolveShootPoint.solveBLUEShootHeading(pose);
-                    targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
+                    targetSpeed = calculateShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
                 }
                 chassis.setHeadingLockRadian(heading);
             }
+        }
+        
+        // 切换 DRL 模式
+        if(gamepad2.bWasPressed()){
+            switch (drlMode) {
+                case NoDRL:
+                    drlMode = DRL_MODE.FullDRL;
+                    break;
+                case FullDRL:
+                    drlMode = DRL_MODE.RunDRL;
+                    break;
+                case RunDRL:
+                    drlMode = DRL_MODE.NoDRL;
+                    break;
+            }
+            
+            // 更新 DRL 模式设置
+            SolveShootPoint.setUseDRLModel(drlMode != DRL_MODE.NoDRL);
+            ShooterAction.useDRL = drlMode != DRL_MODE.NoDRL;
+            
+            telemetry.addData("DRL Mode", drlMode.toString());
+            telemetry.update();
+            sleep(200);
         }
 
         if(ReadyToShoot){
@@ -332,6 +424,8 @@ public class DECODE extends LinearOpMode {
         telemetry.addData("RobotSTATUS", robotStatus.toString());
         telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
         telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
+        telemetry.addData("DRL Mode", drlMode.toString());
+        telemetry.addData("DRL Model Loaded", SolveShootPoint.isDRLModelLoaded() ? "Yes" : "No");
 //        telemetry.addData("shooterSTATUS", shooterStatus.toString());
 //        telemetry.addData("sweeperSTATUS", sweeperStatus.toString());
 //        telemetry.addData("triggerSTATUS", triggerStatus.toString());
@@ -434,11 +528,11 @@ public class DECODE extends LinearOpMode {
                 double heading = 0;
                 if (teamColor == TEAM_COLOR.RED) {
                     heading = SolveShootPoint.solveREDShootHeading(pose);
-                    targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
+                    targetSpeed = calculateShootSpeed(SolveShootPoint.solveREDShootDistance(pose));
                 }
                 if (teamColor == TEAM_COLOR.BLUE) {
                     heading = SolveShootPoint.solveBLUEShootHeading(pose);
-                    targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
+                    targetSpeed = calculateShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
                 }
                 // 设置航向锁定角度
                 chassis.setHeadingLockRadian(heading);

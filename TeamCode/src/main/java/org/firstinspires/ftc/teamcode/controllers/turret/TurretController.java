@@ -2,7 +2,8 @@ package org.firstinspires.ftc.teamcode.controllers.turret;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.controllers.shooter.DRL.Agent;
 import org.firstinspires.ftc.teamcode.controllers.turret.model.TurretInfo;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point3D;
@@ -11,13 +12,141 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TurretController {
-}
+    private Agent drlAgent;
+    private boolean drlModelLoaded = false;
+    private boolean useDRLModel = false;
+    private Telemetry telemetry;
+
+    public TurretController(Telemetry telemetry) {
+        this.telemetry = telemetry;
+        loadDRLModel();
+    }
+
+    public TurretController() {
+        this.telemetry = null;
+        loadDRLModel();
+    }
+
+    private void loadDRLModel() {
+        try {
+            drlAgent = Agent.load("/sdcard/FIRST/agent_DDPG.ser");
+            drlModelLoaded = true;
+            if (telemetry != null) {
+                telemetry.addData("DRL Model", "Loaded successfully");
+                telemetry.update();
+            }
+        } catch (Exception e) {
+            drlModelLoaded = false;
+            if (telemetry != null) {
+                telemetry.addData("DRL Model", "Load failed: " + e.getMessage());
+                telemetry.update();
+            }
+        }
+    }
+
+    public void setUseDRLModel(boolean use) {
+        useDRLModel = use;
+        if (telemetry != null) {
+            telemetry.addData("DRL Mode", use ? "Enabled" : "Disabled");
+            telemetry.update();
+        }
+    }
+
+    public boolean isDRLModelLoaded() {
+        return drlModelLoaded;
+    }
+
+    public boolean isUseDRLModel() {
+        return useDRLModel;
+    }
+
+    public TurretCalculator createCalculator() {
+        return new TurretCalculator(drlAgent, useDRLModel);
+    }
+
+    public TurretCalculator createCalculator(boolean useDRL) {
+        return new TurretCalculator(drlAgent, useDRL);
+    }
 class TurretCalculator{
+    private Agent drlAgent;
+    private boolean useDRLModel;
+    
+    public TurretCalculator(Agent drlAgent, boolean useDRLModel) {
+        this.drlAgent = drlAgent;
+        this.useDRLModel = useDRLModel;
+    }
+    
+    public void setDRLAgent(Agent drlAgent) {
+        this.drlAgent = drlAgent;
+    }
+    
+    public void setUseDRLModel(boolean use) {
+        this.useDRLModel = use;
+    }
+    
     public static class Param{
         public static double g=9.8; // 重力加速度 (m/s²)
         public static Point3D target = new Point3D(0,0,0); // 目标位置 (m)
         public static double turretHeight=0; // 炮台高度 (m)
     }
+    /**
+     * 使用 DRL 模型解算炮台发射参数(固定仰角)
+     * @param theta 炮台仰角 (rad)
+     * @param x 炮台x位置
+     * @param y 炮台y位置
+     * @param vx 炮台x方向速度
+     * @param vy 炮台y方向速度
+     * @return List<TurretInfo> 所有可能解
+     */
+    public List<TurretInfo> solveSpeedWithDRL(double theta, double x, double y, double vx, double vy){
+        if (!useDRLModel || drlAgent == null) {
+            return solveSpeed(theta, x, y, vx, vy);
+        }
+
+        try {
+            double x0 = Param.target.getX() - x;
+            double y0 = Param.target.getY() - y;
+            double h = Param.target.getZ() - Param.turretHeight;
+            double vtx = -vx;
+            double vty = -vy;
+
+            double[] input = new double[4];
+            input[0] = vx;  // 机器人速度 x 分量
+            input[1] = vy;  // 机器人速度 y 分量
+            input[2] = x0;  // 目标相对于机器人的 x 坐标
+            input[3] = y0;  // 目标相对于机器人的 y 坐标
+
+            double[] action = drlAgent.decide(input);
+            List<TurretInfo> results = new ArrayList<>();
+
+            if (action.length >= 3) {
+                double v = Math.sqrt(action[0] * action[0] + action[1] * action[1] + action[2] * action[2]);
+                double phi = Math.atan2(action[1], action[0]);
+                
+                double xt = x0 + vtx * 0.1;
+                double yt = y0 + vty * 0.1;
+                double phi_traditional = Math.atan2(yt, xt);
+
+                results.add(new TurretInfo(v, phi_traditional, theta, 0.1));
+            }
+
+            return results;
+        } catch (Exception e) {
+            return solveSpeed(theta, x, y, vx, vy);
+        }
+    }
+
+    /**
+     * 使用 DRL 模型解算炮台发射参数(固定仰角)
+     * @param theta 炮台仰角 (rad)
+     * @param pose2d 炮台坐标
+     * @param poseVelocity2d 炮台速度
+     * @return List<TurretInfo> 所有可能解
+     */
+    public List<TurretInfo> solveSpeedWithDRL(double theta, Pose2d pose2d, PoseVelocity2d poseVelocity2d){
+        return solveSpeedWithDRL(theta,-pose2d.position.y,+pose2d.position.x,-poseVelocity2d.linearVel.y,+poseVelocity2d.linearVel.x);
+    }
+
     /**
      * 解算炮台发射参数(固定仰角)
      * @param theta 炮台仰角 (rad)
