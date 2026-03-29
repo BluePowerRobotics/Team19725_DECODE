@@ -32,6 +32,15 @@ public class ShooterAction {
     public static long waitTime = 200;
     public static long ShootTime = 2800;
     public static int WindowSize = 3;
+    
+    // DRL 相关参数
+    public static boolean useDRL = false;
+    public static double robotVx = 0;  // 机器人速度 x 分量
+    public static double robotVy = 0;  // 机器人速度 y 分量
+    public static double targetRelX = 72;  // 目标相对于机器人的 x 坐标
+    public static double targetRelY = 0;  // 目标相对于机器人的 y 坐标
+    public static double turretAngle = Math.PI / 4;
+
     public ShooterAction(HardwareMap hardwareMap, Telemetry telerc) {
         FilterLeft = new MeanFilter(WindowSize);
         FilterRight = new MeanFilter(WindowSize);
@@ -145,5 +154,154 @@ public class ShooterAction {
     }
     public double getCurrent_speed2(){
         return shooter_Right.current_speed;
+    }
+
+    public boolean setShootSpeedWithDRL(int targetSpeedRC, double robotVx, double robotVy, double targetRelX, double targetRelY) {
+        boolean left;
+        boolean right;
+        
+        if (useDRL) {
+            left = shooter_Left.shootWithDRL(targetSpeedRC, robotVx, robotVy, targetRelX, targetRelY);
+            right = shooter_Right.shootWithDRL(targetSpeedRC, robotVx, robotVy, targetRelX, targetRelY);
+        } else {
+            left = shooter_Left.shoot(targetSpeedRC);
+            right = shooter_Right.shoot(targetSpeedRC);
+        }
+        
+        FilterLeft.filter(shooter_Left.getCurrent_speed());
+        FilterRight.filter(shooter_Right.getCurrent_speed());
+        
+        int actualTargetSpeed = targetSpeedRC;
+        if (useDRL && shooter_Left.isDRLModelLoaded()) {
+            double[] launchVelocity = shooter_Left.calculateDRLSpeed(robotVx, robotVy, targetRelX, targetRelY);
+            int drlSpeed = shooter_Left.calculateLaunchSpeedFromVector(launchVelocity);
+            if (drlSpeed > 0) {
+                actualTargetSpeed = drlSpeed;
+            }
+        }
+        
+        left = (Math.abs(FilterLeft.getMean() - actualTargetSpeed) < Shooter.SpeedTolerance);
+        right = (Math.abs(FilterRight.getMean() - actualTargetSpeed) < Shooter.SpeedTolerance);
+        
+        return (left && right);
+    }
+
+    public void setTurretAngle(double angle) {
+        turretAngle = angle;
+        shooter_Left.setTurretAngle(angle);
+        shooter_Right.setTurretAngle(angle);
+    }
+
+    public double getTurretAngle() {
+        return turretAngle;
+    }
+
+    public void setUseDRL(boolean use) {
+        useDRL = use;
+        shooter_Left.setUseDRLModel(use);
+        shooter_Right.setUseDRLModel(use);
+    }
+
+    public boolean isDRLModelLoaded() {
+        return shooter_Left.isDRLModelLoaded() && shooter_Right.isDRLModelLoaded();
+    }
+
+    public class SpeedUpWithDRL implements Action {
+        private int targetSpeed;
+        public SpeedUpWithDRL(int targetSpeed) {
+            this.targetSpeed = targetSpeed;
+        }
+
+        @Override
+        public boolean run(TelemetryPacket packet) {
+            telemetry.addData("Speed", shooter_Left.current_speed);
+            telemetry.addData("DRL Mode", useDRL ? "Enabled" : "Disabled");
+            telemetry.addData("Turret Angle", Math.toDegrees(turretAngle));
+            telemetry.update();
+            
+            boolean leftOK;
+            boolean rightOK;
+            
+            if (useDRL) {
+                leftOK = shooter_Left.shootWithDRL(targetSpeed, robotVx, robotVy, targetRelX, targetRelY);
+                rightOK = shooter_Right.shootWithDRL(targetSpeed, robotVx, robotVy, targetRelX, targetRelY);
+            } else {
+                leftOK = shooter_Left.shoot(targetSpeed);
+                rightOK = shooter_Right.shoot(targetSpeed);
+            }
+            
+            if(leftOK || rightOK) {
+                return false;
+            }
+            return true;
+        }
+    }
+    public Action SpeedUpWithDRL(int targetSpeed) {
+        return new SpeedUpWithDRL(targetSpeed);
+    }
+
+    public class ShootThreeArtifactsWithDRL implements Action {
+        boolean ifStart = false;
+        boolean hasSetStopTime = false;
+        long StartTime = 0;
+        long StopTime = 0;
+        int targetSpeed;
+        private int cnt = 0;
+        boolean hasShot = false;
+        
+        public ShootThreeArtifactsWithDRL(int targetSpeed) {
+            this.targetSpeed = targetSpeed;
+        }
+
+        @Override
+        public boolean run(TelemetryPacket packet) {
+            if(!ifStart){
+                low_speed_threshold = this.targetSpeed - speedDescend;
+                StartTime = System.currentTimeMillis();
+                ifStart = true;
+            }
+            telemetry.addData("Speed", shooter_Left.current_speed);
+            telemetry.addData("cnt", cnt);
+            telemetry.addData("DRL Mode", useDRL ? "Enabled" : "Disabled");
+            telemetry.addData("Turret Angle", Math.toDegrees(turretAngle));
+            telemetry.update();
+            
+            boolean leftOK;
+            boolean rightOK;
+            
+            if (useDRL) {
+                leftOK = shooter_Left.shootWithDRL(targetSpeed, robotVx, robotVy, targetRelX, targetRelY);
+                rightOK = shooter_Right.shootWithDRL(targetSpeed, robotVx, robotVy, targetRelX, targetRelY);
+            } else {
+                leftOK = shooter_Left.shoot(targetSpeed);
+                rightOK = shooter_Right.shoot(targetSpeed);
+            }
+            
+            if( ( (System.currentTimeMillis() - StartTime) > waitTime) && !hasShot  &&  (shooter_Left.getCurrent_speed() < low_speed_threshold || shooter_Right.getCurrent_speed() < low_speed_threshold)) {
+                cnt++;
+                hasShot = true;
+            }
+            if(leftOK || rightOK) {
+                hasShot = false;
+            }
+            if(cnt >= 3){
+                if(!hasSetStopTime){
+                    StopTime = System.currentTimeMillis();
+                    hasSetStopTime = true;
+                }
+                if( (System.currentTimeMillis() - StopTime) > 200){
+                    shooter_Left.shoot(0);
+                    shooter_Right.shoot(0);
+                    return  false;
+                }
+            }
+            if(System.currentTimeMillis() - StartTime > ShootTime){
+                cnt += 10;
+            }
+            return true;
+        }
+    }
+    public Action ShootThreeArtifactsWithDRL(int targetSpeed) {
+        return new ShootThreeArtifactsWithDRL(targetSpeed);
     }
 }

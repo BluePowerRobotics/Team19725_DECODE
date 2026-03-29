@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.utility.solvepoint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.controllers.shooter.DRL.Agent;
 
 //工具类，用于计算发射点位置
 @Config
@@ -16,18 +18,119 @@ public class SolveShootPoint {
     private static double genhao2 = Math.sqrt(2);
 
     public static double k = 50 / (r3 - r1);
+    
+    // DRL 相关变量
+    private static Agent drlAgent;
+    private static boolean drlModelLoaded = false;
+    public static boolean useDRLModel = false;
+    private static Telemetry telemetry;
+    
+    public static void initDRL(Telemetry telemetry) {
+        SolveShootPoint.telemetry = telemetry;
+        loadDRLModel();
+    }
+    
+    private static void loadDRLModel() {
+        try {
+            drlAgent = Agent.load("/sdcard/FIRST/agent_DDPG.ser");
+            drlModelLoaded = true;
+            if (telemetry != null) {
+                telemetry.addData("DRL Model", "Loaded successfully");
+                telemetry.update();
+            }
+        } catch (Exception e) {
+            drlModelLoaded = false;
+            if (telemetry != null) {
+                telemetry.addData("DRL Model", "Load failed: " + e.getMessage());
+                telemetry.update();
+            }
+        }
+    }
+    
+    public static void setUseDRLModel(boolean use) {
+        useDRLModel = use;
+        if (telemetry != null) {
+            telemetry.addData("DRL Mode", use ? "Enabled" : "Disabled");
+            telemetry.update();
+        }
+    }
+    
+    public static boolean isDRLModelLoaded() {
+        return drlModelLoaded;
+    }
 
-    public static int solveShootSpeed(double distance){
-        int speed = 0;
-        //大三角
-        if(distance < r3 + 10 * genhao2){
-            speed = Math.toIntExact(Math.round(1.081183337 * distance + 586.1640982));
-        }
-        //小三角
-        else{
-            speed = Math.toIntExact(Math.round(2.010562318 * distance + 540.4157073));
-        }
-        return speed;
+    public static int solveShootSpeed(double distance){  
+        return solveShootSpeed(distance, 0, 0, 0, 0);  
+    }
+    
+    public static int solveShootSpeed(double distance, double robotVx, double robotVy, double targetRelX, double targetRelY){  
+        if (useDRLModel && drlModelLoaded && drlAgent != null) {  
+            return solveShootSpeedWithDRL(robotVx, robotVy, targetRelX, targetRelY);  
+        } else {  
+            // 传统方法  
+            int speed = 0;  
+            //大三角  
+            if(distance < r3 + 10 * genhao2){  
+                speed = Math.toIntExact(Math.round(1.081183337 * distance + 586.1640982));  
+            }  
+            //小三角  
+            else{  
+                speed = Math.toIntExact(Math.round(2.010562318 * distance + 540.4157073));  
+            }  
+            return speed;  
+        }  
+    }
+    
+    private static int solveShootSpeedWithDRL(double robotVx, double robotVy, double targetRelX, double targetRelY){  
+        try {  
+            double[] input = new double[4];  
+            input[0] = robotVx;  // 机器人速度 x 分量  
+            input[1] = robotVy;  // 机器人速度 y 分量  
+            input[2] = targetRelX;  // 目标相对于机器人的 x 坐标  
+            input[3] = targetRelY;  // 目标相对于机器人的 y 坐标  
+
+            double[] action = drlAgent.decide(input);  
+            double[] launchVelocity = new double[3];  
+            
+            // 确保输出是三维向量  
+            if (action.length >= 3) {  
+                launchVelocity[0] = action[0];  
+                launchVelocity[1] = action[1];  
+                launchVelocity[2] = action[2];  
+            } else {  
+                // 如果输出维度不足，使用默认值  
+                launchVelocity[0] = 0;  
+                launchVelocity[1] = 0;  
+                launchVelocity[2] = 0;  
+            }  
+
+            // 计算速度向量的模长  
+            double speed = Math.sqrt(  
+                launchVelocity[0] * launchVelocity[0] +  
+                launchVelocity[1] * launchVelocity[1] +  
+                launchVelocity[2] * launchVelocity[2]  
+            );  
+            
+            // 转换为适合电机的速度值（度/秒）  
+            int motorSpeed = (int) Math.round(speed);  
+            motorSpeed = Math.max(600, Math.min(1000, motorSpeed));  
+            
+            if (telemetry != null) {  
+                telemetry.addData("DRL Input", String.format("v(%.2f, %.2f), target(%.2f, %.2f)", robotVx, robotVy, targetRelX, targetRelY));  
+                telemetry.addData("DRL Output", String.format("(%.2f, %.2f, %.2f)", launchVelocity[0], launchVelocity[1], launchVelocity[2]));  
+                telemetry.addData("Calculated Speed", motorSpeed);  
+                telemetry.update();  
+            }  
+
+            return motorSpeed;  
+        } catch (Exception e) {  
+            if (telemetry != null) {  
+                telemetry.addData("DRL Error", e.getMessage());  
+                telemetry.update();  
+            }  
+            // 出错时使用传统方法  
+            return solveShootSpeed(Math.sqrt(targetRelX * targetRelX + targetRelY * targetRelY));  
+        }  
     }
 
     public static double solveBLUEShootHeading(Pose2d poseRC){
