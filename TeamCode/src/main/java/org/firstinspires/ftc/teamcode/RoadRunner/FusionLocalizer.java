@@ -346,19 +346,16 @@ public class FusionLocalizer implements Localizer{
     public boolean getAprilTagStatus(){
         return AprilTagStatus;
     }
-    int IMULostTime =0;
-    int EIMULostTime =0;
-    int PINPOINTLostTime=0;
-    public static int LostMaxTime=40;
-    public static int PinPointLostMaxTime=40;
-    public static int MixMaxTime=20;
-    public static double IMUWeight = 0.1;
-    public static double EIMUWeight = 20;
-    public static double PINPWeight = 1;
-    double IMULastValue =0;
-    double EIMULastValue =0;
-    double PINPOINTLastValue=0;
-    double fusedAngle = 0;
+    // 注意：以下变量已在类开头定义，此处删除重复定义
+    // int IMULostTime =0;
+    // int EIMULostTime =0;
+    // int PINPOINTLostTime=0;
+    // public static int LostMaxTime=40;
+    // public static int PinPointLostMaxTime=40;
+    // public static int MixMaxTime=20;
+    // public static double IMUWeight = 0.1;
+    // public static double EIMUWeight = 20;
+    // public static double PINPWeight = 1;
     private double fusionIMU(double IMU, double EIMU, double pinpoint){
         if(!Double.isNaN(IMU)){
             if(IMULastValue ==IMU){
@@ -420,9 +417,7 @@ public class FusionLocalizer implements Localizer{
             PINPOINTLostTime=MixMaxTime;
         }
     }
-    AngleMeanFilter imuFilter = new AngleMeanFilter(10);
-    AngleMeanFilter aprilTagFilter = new AngleMeanFilter(10);
-    AngleMeanFilter errorFilter = new AngleMeanFilter(20);
+    // 注意：imuFilter, aprilTagFilter, errorFilter 已在类开头定义，此处删除重复定义
     private void fusionAprilTag(double IMU, double AprilTag){
         double fusedIMU = imuFilter.filter(IMU);
         double fusedAprilTag = aprilTagFilter.filter(AprilTag);
