@@ -72,13 +72,13 @@ public class DECODE extends LinearOpMode {
         STOP
     }
     SHOOTER_STATUS shooterStatus = SHOOTER_STATUS.STOP;
-    public ChassisController chassis;
-    public Sweeper_PID sweeper;
-    public ShooterAction shooter;
-    public Trigger trigger;
-    public ElevatorController elevatorController;
-    public ActionRunner actionRunner;
-    public BlinkinLedController ledController;
+    public ChassisController chassis; // 底盘控制器实例，负责机器人的移动控制
+    public Sweeper_PID sweeper; // 清扫器控制器实例
+    public ShooterAction shooter; // 发射器控制器实例
+    public Trigger trigger; // 触发器控制器实例
+    public ElevatorController elevatorController; // 电梯控制器实例
+    public ActionRunner actionRunner; // 动作运行器实例
+    public BlinkinLedController ledController; // LED控制器实例
 //    AprilTagDetector aprilTagDetector;
     public static int tmpSpeed = 700;
     //暂时关闭发射时的速度限制
@@ -405,17 +405,31 @@ public class DECODE extends LinearOpMode {
     public static double time_2=0.3;
     public static int IntervalMS=1;
     Pose2d pose = new Pose2d(0,0,0);
+    /**
+     * 底盘控制方法
+     * 负责处理底盘的运动控制，包括：
+     * 1. 设置自动航向锁定
+     * 2. 更新机器人位置
+     * 3. 处理游戏手柄输入
+     * 4. 自动对准和目标点设置
+     * 5. 无头模式切换
+     */
     void chassis() {
+        // 设置自动航向锁定（攀爬模式下不使用）
         chassis.setAutoLockHeading(robotStatus!=ROBOT_STATUS.CLIMBING);
 
+        // 设置位置更新间隔
         chassis.robotPosition.setMinUpdateIntervalMs(IntervalMS);
+        // 获取当前机器人位置
         pose = chassis.robotPosition.getData().getPose2d();
 
+        // 计算驱动速度
         double drive = -time * gamepad1.left_stick_y - time_2 * gamepad2.left_stick_y; // 前后
         double strafe = time * gamepad1.left_stick_x + time_2 * gamepad2.left_stick_x; // 左右
         double rotate = -time * gamepad1.right_stick_x - time_2 * gamepad2.right_stick_x; // 旋转
+        
         if(robotStatus!= ROBOT_STATUS.CLIMBING) {
-            //自动对准
+            // 自动对准到射击角度
             if (gamepad1.left_trigger > 0.6) {
                 double heading = 0;
                 if (teamColor == TEAM_COLOR.RED) {
@@ -426,11 +440,11 @@ public class DECODE extends LinearOpMode {
                     heading = SolveShootPoint.solveBLUEShootHeading(pose);
                     targetSpeed = SolveShootPoint.solveShootSpeed(SolveShootPoint.solveBLUEShootDistance(pose));
                 }
+                // 设置航向锁定角度
                 chassis.setHeadingLockRadian(heading);
             }
 
-            //自瞄
-
+            // 自动导航到射击位置
             if (gamepad1.dpadDownWasPressed()) {
                 if (teamColor == TEAM_COLOR.RED) {
                     chassis.setTargetPoint(SolveShootPoint.solveREDShootPoint(pose, SolveShootPoint.r4));
@@ -453,20 +467,24 @@ public class DECODE extends LinearOpMode {
                 }
             }
         }else{
+            // 攀爬模式下导航到攀爬点
             if(gamepad2.rightStickButtonWasPressed() || gamepad2.leftStickButtonWasPressed()){
                 chassis.setTargetPoint(SolveClimbPoint.solveClimbPoint(teamColor,pose));
             }
         }
 
-
+        // 处理游戏手柄输入，控制机器人运动
         chassis.gamepadInput(strafe, drive, rotate);
+        
+        // 切换无头模式
         if(gamepad1.xWasReleased()) chassis.exchangeNoHeadMode();
+        
+        // 添加遥测数据
         telemetry.addData("y-power",drive);
         telemetry.addData("x-power",strafe);
         telemetry.addData("r-power",rotate);
 
-
-
+        // 发送机器人位置到FtcDashboard
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
         Drawing.drawRobot(packet.fieldOverlay(), pose);

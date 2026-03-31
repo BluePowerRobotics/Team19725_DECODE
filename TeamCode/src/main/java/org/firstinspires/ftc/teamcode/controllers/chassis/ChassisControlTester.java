@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.chassis.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
 @Config
@@ -22,10 +23,9 @@ public class ChassisControlTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         ChassisController chassis = new ChassisController(hardwareMap);
-        chassis.robotPosition.setMinUpdateIntervalMs(1);//todo 测试更小的时间间隔是否能带来更好的效果
+        RobotPosition.getInstance().setMinUpdateIntervalMs(1);//todo 测试更小的时间间隔是否能带来更好的效果
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
-        //chassis.init(hardwareMap);
         waitForStart();
         lastNanoTime=System.nanoTime();
         while (opModeIsActive()) {
@@ -42,13 +42,14 @@ public class ChassisControlTester extends LinearOpMode {
             telemetry.addData("x-power",strafe);
             telemetry.addData("r-power",rotate);
             telemetry.addData("NoHeadModeStartError:",chassis.noHeadModeStartError);
-            telemetry.addData("NoHeadMode",chassis.useNoHeadMode?"NoHead":"Manual");
-            telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");
+            telemetry.addData("NoHeadMode",chassis.getUseNoHeadMode()?"NoHead":"Manual");
+            telemetry.addData("RunMode",chassis.runningToPoint?"RUNNING_TO_POINT":"MANUAL");//chassis.isTargetPointReached()
             telemetry.addData("Position",chassis.robotPosition.getData().getPosition(DistanceUnit.MM).toString());
             telemetry.update();
             lastNanoTime = System.nanoTime();
 
-            Pose2d pose = chassis.robotPosition.mecanumDrive.localizer.getPose();
+            Pose2d pose = /*chassis.robotPosition.mecanumDrive.localizer.getPose();*/ //不建议写法
+                    RobotPosition.getInstance().getData().getPose2d();
 
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay().setStroke("#3F51B5");
